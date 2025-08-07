@@ -1,0 +1,3 @@
+void vm_init() {
+
+}
