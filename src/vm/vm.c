@@ -80,6 +80,36 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
+      case MUL: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
+          printf("Cannot add these types");
+          return;
+        }
+
+        if (operand_1.type == TYPE_NUMBER) {
+          double result = operand_1.number * operand_2.number;
+          vm_push_stack(vm->stack, NUMBER(result));
+        }
+        break;
+      }
+      case DIV: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
+          printf("Cannot divide these types");
+          return;
+        }
+
+        if (operand_1.type == TYPE_NUMBER) {
+          double result = operand_1.number / operand_2.number;
+          vm_push_stack(vm->stack, NUMBER(result));
+        }
+        break;
+      }
     }
  
   } 
