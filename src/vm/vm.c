@@ -50,6 +50,16 @@ void vm_exec(struct VM *vm) {
         uint8_t const_index = *(vm->program_counter++);
         vm_push_stack(vm->stack, vm->constants[const_index]);
         break;
+      case ADD:
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (VALUES_ARE_SAME_TYPE(operand_1, operand_2)){
+          if (operand_1.type == TYPE_NUMBER) {
+            double result = operand_1.number + operand_2.number;
+            vm_push_stack(vm->stack, NUMBER(result));
+          }
+        } 
     }
  
   } 
