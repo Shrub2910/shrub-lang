@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "vm/stack.h"
 #include "vm/values.h"
+#include "error/error.h"
+#include "error/error_types.h"
 
 struct Stack *vm_init_stack() {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
@@ -15,14 +17,16 @@ struct Stack *vm_init_stack() {
 
 void vm_push_stack(struct Stack *stack, struct Value value) {
   if (stack->used == stack->size) {
-    printf("Stack overflow"); // TEMPORARY
-    return;
+    error_throw(STACK_ERROR, "Stack Overflow");
   }
 
   stack->stack_pointer[stack->used++] = value;
 }
 
 struct Value vm_pop_stack(struct Stack *stack) {
+  if (stack->used == 0) {
+    error_throw(STACK_ERROR, "Stack underflow");
+  }
   return stack->stack_pointer[--stack->used];
 }
 

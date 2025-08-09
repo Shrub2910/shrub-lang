@@ -5,6 +5,8 @@
 #include "vm/vm.h"
 #include "vm/values.h"
 #include "vm/stack.h"
+#include "error/error.h"
+#include "error/error_types.h"
 
 struct VM *vm_init() {
   
@@ -43,7 +45,7 @@ void vm_exec(struct VM *vm) {
             printf("Value: %f\n", value_to_print.number);
             break;
           default:
-            printf("Cannot print this object\n"); // TEMPORARY
+            error_throw(TYPE_ERROR, "Object not printable");
         }
         break;
       case LOAD_CONST:
@@ -55,8 +57,7 @@ void vm_exec(struct VM *vm) {
         struct Value operand_1 = vm_pop_stack(vm->stack);
 
         if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)){
-          printf("Cannot add these types"); // Temporary
-          return;
+          error_throw(TYPE_ERROR, "Attempt to add values of different types");
         }
 
         if (operand_1.type == TYPE_NUMBER) {
@@ -70,8 +71,7 @@ void vm_exec(struct VM *vm) {
         struct Value operand_1 = vm_pop_stack(vm->stack);
 
         if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
-          printf("Cannot add these types");
-          return;
+          error_throw(TYPE_ERROR, "Attempt to subtract values of different types");
         }
         
         if (operand_1.type == TYPE_NUMBER) {
@@ -85,8 +85,7 @@ void vm_exec(struct VM *vm) {
         struct Value operand_1 = vm_pop_stack(vm->stack);
 
         if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
-          printf("Cannot add these types");
-          return;
+          error_throw(TYPE_ERROR, "Attempt to multiply values of different types");
         }
 
         if (operand_1.type == TYPE_NUMBER) {
@@ -100,8 +99,7 @@ void vm_exec(struct VM *vm) {
         struct Value operand_1 = vm_pop_stack(vm->stack);
 
         if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
-          printf("Cannot divide these types");
-          return;
+          error_throw(TYPE_ERROR, "Attempt to divide values of different types");
         }
 
         if (operand_1.type == TYPE_NUMBER) {

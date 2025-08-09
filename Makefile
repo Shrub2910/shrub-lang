@@ -5,11 +5,12 @@ CFLAGS := -Wall -Wextra -Iinclude -g
 # Directories
 SRC_DIR := src
 VM_DIR := $(SRC_DIR)/vm
+ERROR_DIR := $(SRC_DIR)/error
 OBJ_DIR := build/objects
 BIN_DIR := build/output
 
 # Source files
-SRCS := $(SRC_DIR)/main.c $(VM_DIR)/vm.c $(VM_DIR)/instruction_buffer.c $(VM_DIR)/stack.c
+SRCS := $(SRC_DIR)/main.c $(VM_DIR)/vm.c $(VM_DIR)/instruction_buffer.c $(VM_DIR)/stack.c $(ERROR_DIR)/error.c
 # Object files (replace .c with .o and prefix with OBJ_DIR)
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 
