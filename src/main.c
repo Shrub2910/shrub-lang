@@ -9,14 +9,15 @@ int main() {
 
   INSERT_CONST_VALUES(
     vm,
-    NUMBER(2),
+    NUMBER(10),
+    NUMBER(5)
   );
 
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
     LOAD_CONST, 0,
-    LOAD_CONST, 0,
-    ADD,
+    LOAD_CONST, 1,
+    SUB,
     PRINT,
     HALT
   );
