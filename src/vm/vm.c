@@ -1,31 +1,71 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "vm/instruction_buffer.h"
 #include "vm/opcodes.h"
 #include "vm/vm.h"
+#include "vm/values.h"
+#include "vm/stack.h"
 
 struct VM *vm_init() {
+  
+  // Main instruction buffer 
+  // Holds instructions outside of methods
+  struct InstructionBuffer *instruction_buffer = 
+    (struct InstructionBuffer*) malloc(sizeof(struct InstructionBuffer));
 
-  struct InstructionBuffer *instruction_buffer = (struct InstructionBuffer*) malloc(sizeof(struct InstructionBuffer));
-  vm_init_instruction_buffer(instruction_buffer, 1);
-  vm_insert_instruction_buffer(instruction_buffer, HALT);
-
+  vm_init_instruction_buffer(instruction_buffer, INSTRUCTION_BUFFER_INITIAL_CAPACITY);
+  
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
   vm->instruction_buffer = instruction_buffer;
   vm->program_counter = vm->instruction_buffer->buffer;
+  
+  vm->constant_count = 0;
+  vm->constants = (struct Value *) malloc(CONST_POOL_SIZE * sizeof(struct Value));
+
+  vm->stack = vm_init_stack();
 
   return vm;
 }
 
 void vm_exec(struct VM *vm) {
-
+  
+  // Program only finishes execution when it should
   for (;;) {
     uint8_t current_instruction = *(vm->program_counter++);
     switch (current_instruction) {
+      // Must be used to terminate the program
       case HALT:
-      return;
+        return;
+      case PRINT:
+        struct Value value_to_print = vm_pop_stack(vm->stack);
+        switch (value_to_print.type) {
+          case TYPE_NUMBER:
+            printf("Value: %f\n", value_to_print.number);
+            break;
+          default:
+            printf("Cannot print this object\n"); // TEMPORARY
+        }
+        break;
+      case LOAD_CONST:
+        uint8_t const_index = *(vm->program_counter++);
+        vm_push_stack(vm->stack, vm->constants[const_index]);
+        break;
     }
  
   } 
+}
+
+void vm_add_const(struct VM *vm, const struct Value value) {
+  if (vm->constant_count == CONST_POOL_SIZE) {
+    printf("Error Too Many Constants!"); // TEMPORARY
+  }
+  
+  vm->constants[vm->constant_count++] = value; 
+}
+
+void vm_free_consts(struct VM *vm) {
+  vm->constants = NULL;
+  free(vm->constants);
 }
 
 void vm_free(struct VM *vm) {
@@ -33,6 +73,11 @@ void vm_free(struct VM *vm) {
   vm->instruction_buffer = NULL;
 
   vm->program_counter = NULL;
+
+  vm_free_consts(vm);
+
+  vm_free_stack(vm->stack);
+  vm->stack = NULL;
 
   free(vm);
 }

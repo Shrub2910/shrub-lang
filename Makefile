@@ -9,8 +9,7 @@ OBJ_DIR := build/objects
 BIN_DIR := build/output
 
 # Source files
-SRCS := $(SRC_DIR)/main.c $(VM_DIR)/vm.c $(VM_DIR)/instruction_buffer.c
-
+SRCS := $(SRC_DIR)/main.c $(VM_DIR)/vm.c $(VM_DIR)/instruction_buffer.c $(VM_DIR)/stack.c
 # Object files (replace .c with .o and prefix with OBJ_DIR)
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 

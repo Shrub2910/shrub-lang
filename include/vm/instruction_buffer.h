@@ -1,7 +1,8 @@
+#include <stdint.h>
+#include <stddef.h>
+
 #ifndef INSTRUCTION_BUFFER_H
 #define INSTRUCTION_BUFFER_H
-
-#include <stdint.h>
 
 struct InstructionBuffer {
   uint8_t *buffer;
@@ -13,6 +14,23 @@ void vm_init_instruction_buffer(struct InstructionBuffer *instruction_buffer, si
 void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, uint8_t instruction);
 void vm_free_instruction_buffer(struct InstructionBuffer *instruction_buffer);
 
-#endif // !INSTRUCTION_BUFFER_H 
+// Instruction Buffer Setup
+
+#define INSTRUCTION_BUFFER_INITIAL_CAPACITY 64
+
+// Instruction Buffer Utils
+
+// Macro for quickly inserting instructions into the vm
+// Should only be used for testing
+#define INSERT_INSTRUCTIONS(buf, ...)             \
+  do {                                            \
+    uint8_t temp[] = {__VA_ARGS__};               \
+    for (size_t i = 0; i < sizeof(temp); ++i) {   \
+      vm_insert_instruction_buffer(buf, temp[i]); \
+    }                                             \
+  } while(0)
+
+
+#endif  
 
 
