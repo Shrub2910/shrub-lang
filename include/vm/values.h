@@ -1,20 +1,25 @@
+#include "objects/string.h"
+
 #ifndef VALUES_H
 #define VALUES_H
 
 enum Type {
-  TYPE_NUMBER
+  TYPE_NUMBER,
+  TYPE_STRING
 };
 
 struct Value {
   enum Type type;
   union {
     double number;
+    struct String *string;
   };
 };
 
 // Constructors
 
 #define NUMBER(value) ((struct Value){.type = TYPE_NUMBER, .number = value}) 
+#define STRING(value, length) ((struct Value){.type = TYPE_STRING, .string = string_init(value, length)})
 
 // Utils
 

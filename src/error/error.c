@@ -12,6 +12,8 @@ void error_throw(enum ErrorType error, char *error_message) {
     case STACK_ERROR:
       strcat(buffer, "Stack Error: ");
       break;
+    case MALLOC_ERROR:
+      strcat(buffer, "Malloc Error: ");
   }
 
   strcat(buffer, error_message);

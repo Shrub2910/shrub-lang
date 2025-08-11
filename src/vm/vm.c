@@ -7,6 +7,7 @@
 #include "vm/stack.h"
 #include "error/error.h"
 #include "error/error_types.h"
+#include "objects/string.h"
 
 struct VM *vm_init() {
   
@@ -44,14 +45,21 @@ void vm_exec(struct VM *vm) {
           case TYPE_NUMBER:
             printf("Value: %f\n", value_to_print.number);
             break;
+          case TYPE_STRING:
+            printf("Value: %s\n", value_to_print.string->buffer);
+            break;
           default:
             error_throw(TYPE_ERROR, "Object not printable");
         }
         break;
-      case LOAD_CONST:
+      case LOAD_CONST: {
         uint8_t const_index = *(vm->program_counter++);
-        vm_push_stack(vm->stack, vm->constants[const_index]);
+        struct Value value = vm->constants[const_index];
+
+        vm_push_stack(vm->stack, value);
+
         break;
+      }
       case ADD: {
         struct Value operand_2 = vm_pop_stack(vm->stack);
         struct Value operand_1 = vm_pop_stack(vm->stack);
@@ -122,8 +130,16 @@ void vm_add_const(struct VM *vm, const struct Value value) {
 }
 
 void vm_free_consts(struct VM *vm) {
-  vm->constants = NULL;
+  for (size_t i = 0; i < vm->constant_count; ++i) {
+    struct Value value = vm->constants[i];
+
+    if (value.type == TYPE_STRING) {
+      string_free(value.string);
+    }
+  }
+
   free(vm->constants);
+  vm->constants = NULL;
 }
 
 void vm_free(struct VM *vm) {

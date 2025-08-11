@@ -13,7 +13,9 @@ int main() {
     NUMBER(5),
     NUMBER(17),
     NUMBER(3),
-    NUMBER(12)
+    NUMBER(12),
+    STRING("Hello World!", 12),
+    STRING("Bye World!", 10)
   );
 
   INSERT_INSTRUCTIONS(
@@ -28,6 +30,10 @@ int main() {
     LOAD_CONST, 4,
     SUB,
     PRINT,
+    LOAD_CONST, 6,
+    LOAD_CONST, 5,
+    PRINT,
+    PRINT,    
     HALT
   ); // ((3 + 5) * 17 / 10) - 12 
 

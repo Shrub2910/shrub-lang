@@ -4,6 +4,7 @@
 #include "vm/values.h"
 #include "error/error.h"
 #include "error/error_types.h"
+#include "objects/string.h"
 
 struct Stack *vm_init_stack() {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
@@ -21,13 +22,24 @@ void vm_push_stack(struct Stack *stack, struct Value value) {
   }
 
   stack->stack_pointer[stack->used++] = value;
+
+  if (value.type == TYPE_STRING) {
+    string_retain(value.string);
+  }
 }
 
 struct Value vm_pop_stack(struct Stack *stack) {
   if (stack->used == 0) {
     error_throw(STACK_ERROR, "Stack underflow");
   }
-  return stack->stack_pointer[--stack->used];
+
+  struct Value value = stack->stack_pointer[--stack->used];
+  
+  if (value.type == TYPE_STRING) {
+    string_release(value.string);
+  }
+
+  return value;
 }
 
 void vm_free_stack(struct Stack *stack) {
