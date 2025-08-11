@@ -5,6 +5,7 @@
 #include "vm/vm.h"
 #include "vm/values.h"
 #include "vm/stack.h"
+#include "vm/variables/environment.h"
 #include "error/error.h"
 #include "error/error_types.h"
 #include "objects/string.h"
@@ -39,6 +40,13 @@ struct VM *vm_init() {
   if (!vm->stack) {
     vm_free(vm);
     error_throw(MALLOC_ERROR, "Failed to allocate stack");
+  }
+
+  vm->environment = vm_init_environment();
+
+  if (!vm->environment) {
+    vm_free(vm);
+    error_throw(MALLOC_ERROR, "Failed to allocate environment");
   }
 
   return vm;
@@ -128,6 +136,28 @@ void vm_exec(struct VM *vm) {
           double result = operand_1.number / operand_2.number;
           vm_push_stack(vm->stack, NUMBER(result));
         }
+        break;
+      }
+      case STORE_VAR: {
+        struct Value value = vm_pop_stack(vm->stack);
+        size_t offset = *(vm->program_counter++);
+        
+        vm_set_variable_environment(vm->environment, value, offset); 
+        break;
+      }
+      case LOAD_VAR: {
+        size_t depth = *(vm->program_counter++);
+        size_t offset = *(vm->program_counter++);
+        vm_push_stack(vm->stack, vm_get_variable_environment(vm->environment, depth, offset));
+        break;
+      }
+      case PUSH_SCOPE: {
+        size_t size = *(vm->program_counter++);
+        vm_push_environment(vm->environment, size);
+        break;
+      }
+      case POP_SCOPE: {
+        vm_pop_environment(vm->environment);
         break;
       }
     }

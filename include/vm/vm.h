@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "vm/instruction_buffer.h"
 #include "vm/values.h"
+#include "vm/variables/environment.h"
 
 #ifndef VM_H
 #define VM_H
@@ -12,6 +13,8 @@ struct VM {
   size_t constant_count;
 
   struct InstructionBuffer *instruction_buffer;
+
+  struct Environment *environment;
 
   uint8_t *program_counter;
 };

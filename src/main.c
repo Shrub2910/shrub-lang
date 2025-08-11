@@ -9,31 +9,27 @@ int main() {
 
   INSERT_CONST_VALUES(
     vm,
-    NUMBER(10),
-    NUMBER(5),
-    NUMBER(17),
     NUMBER(3),
-    NUMBER(12),
-    STRING("Hello World!", 12),
-    STRING("Bye World!", 10)
+    NUMBER(7),
+    NUMBER(20)
   );
 
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
-    LOAD_CONST, 3,
+    PUSH_SCOPE, 1,
+    LOAD_CONST, 0,
     LOAD_CONST, 1,
     ADD,
+    STORE_VAR, 0,
+    PUSH_SCOPE, 1,
     LOAD_CONST, 2,
-    MUL,
-    LOAD_CONST, 0,
-    DIV,
-    LOAD_CONST, 4,
-    SUB,
+    STORE_VAR, 0,
+    LOAD_VAR, 0, 0,
     PRINT,
-    LOAD_CONST, 6,
-    LOAD_CONST, 5,
+    POP_SCOPE,
+    LOAD_VAR, 0, 0,
     PRINT,
-    PRINT,    
+    POP_SCOPE,    
     HALT
   ); // ((3 + 5) * 17 / 10) - 12 
 

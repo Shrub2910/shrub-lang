@@ -14,6 +14,10 @@ void error_throw(enum ErrorType error, char *error_message) {
       break;
     case MALLOC_ERROR:
       strcat(buffer, "Malloc Error: ");
+      break;
+    case INDEX_ERROR:
+      strcat(buffer, "Index Error: ");
+      break;
   }
 
   strcat(buffer, error_message);
