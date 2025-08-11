@@ -3,8 +3,9 @@ Shrub lang is a stack-based programming language designed for learning and exper
 The project implements a virtual machine (VM) that runs shrub lang bytecode.
 
 ## Current Features
-* Loading constants onto the VM stack 
-* Printing numberic values from the stack to the console
+* Loading constants onto the VM stack (numbers, strings)
+* Basic reference counting for strings 
+* Printing values to the stack from the console
 * Performing arithmetic operations
 * Halting program execution 
 
@@ -31,7 +32,9 @@ INSERT_CONST_VALUES(
     NUMBER(5),
     NUMBER(17),
     NUMBER(3),
-    NUMBER(12)
+    NUMBER(12),
+    STRING("Hello World!", 12),
+    STRING("Bye World!", 10)
   );
 
   INSERT_INSTRUCTIONS(
@@ -46,16 +49,21 @@ INSERT_CONST_VALUES(
     LOAD_CONST, 4,
     SUB,
     PRINT,
+    LOAD_CONST, 6,
+    LOAD_CONST, 5,
+    PRINT,
+    PRINT,    
     HALT
   ); // ((3 + 5) * 17 / 10) - 12 
 ```
 
 ## Planned Features 
 * Support for more data types
+* Storing data in memory
 * Logic operations
 * Control flow constructs
 * A front end
-* Error handling and debuggin tools
+* Error handling and debugging tools
 
 ## Contributing
 Contributions and suggestions are welcome. 
