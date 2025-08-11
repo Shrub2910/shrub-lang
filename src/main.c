@@ -31,7 +31,7 @@ int main() {
     PRINT,
     POP_SCOPE,    
     HALT
-  ); // ((3 + 5) * 17 / 10) - 12 
+  ); 
 
   vm_exec(vm);
   vm_free(vm);
