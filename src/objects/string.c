@@ -6,7 +6,10 @@
 
 struct String *string_init(const char *buffer, size_t length) {
   struct String *string = malloc(sizeof(struct String));
-  if (!string) error_throw(MALLOC_ERROR, "Failed to allocate string object");
+
+  if (!string) {
+    error_throw(MALLOC_ERROR, "Failed to allocate string object");
+  }
 
   string->length = length;
   string->references = 1;

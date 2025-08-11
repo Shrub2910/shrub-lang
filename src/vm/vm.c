@@ -12,13 +12,34 @@
 struct VM *vm_init() {
    
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
+
+  if (!vm) {
+    error_throw(MALLOC_ERROR, "Failed to allocate vm");
+  }
+
   vm->instruction_buffer = vm_init_instruction_buffer();
+
+  if (!vm->instruction_buffer) {
+    vm_free(vm);
+    error_throw(MALLOC_ERROR, "Failed to allocate instruction buffer");
+  }
+
   vm->program_counter = vm->instruction_buffer->buffer;
   
   vm->constant_count = 0;
   vm->constants = (struct Value *) malloc(CONST_POOL_SIZE * sizeof(struct Value));
 
+  if (!vm->constants) {
+    vm_free(vm);
+    error_throw(MALLOC_ERROR, "Failed to allocate constants pool");
+  }
+
   vm->stack = vm_init_stack();
+
+  if (!vm->stack) {
+    vm_free(vm);
+    error_throw(MALLOC_ERROR, "Failed to allocate stack");
+  }
 
   return vm;
 }

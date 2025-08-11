@@ -9,7 +9,16 @@
 struct Stack *vm_init_stack() {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
 
+  if (!stack) {
+    error_throw(MALLOC_ERROR, "Failed to allocate stack");
+  }
+
   stack->stack_pointer = (struct Value *) malloc(STACK_SIZE * sizeof(struct Value));
+
+  if (!stack->stack_pointer) {
+    error_throw(MALLOC_ERROR, "Failed to allocate value array");
+  }
+
   stack->used = 0;
   stack->size = STACK_SIZE;
 
