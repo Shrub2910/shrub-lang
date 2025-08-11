@@ -10,16 +10,9 @@
 #include "objects/string.h"
 
 struct VM *vm_init() {
-  
-  // Main instruction buffer 
-  // Holds instructions outside of methods
-  struct InstructionBuffer *instruction_buffer = 
-    (struct InstructionBuffer*) malloc(sizeof(struct InstructionBuffer));
-
-  vm_init_instruction_buffer(instruction_buffer, INSTRUCTION_BUFFER_INITIAL_CAPACITY);
-  
+   
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
-  vm->instruction_buffer = instruction_buffer;
+  vm->instruction_buffer = vm_init_instruction_buffer();
   vm->program_counter = vm->instruction_buffer->buffer;
   
   vm->constant_count = 0;

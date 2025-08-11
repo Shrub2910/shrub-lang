@@ -10,7 +10,7 @@ struct InstructionBuffer {
   size_t size;
 };
 
-void vm_init_instruction_buffer(struct InstructionBuffer *instruction_buffer, size_t initial_size);
+struct InstructionBuffer *vm_init_instruction_buffer();
 void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, uint8_t instruction);
 void vm_free_instruction_buffer(struct InstructionBuffer *instruction_buffer);
 

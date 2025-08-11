@@ -1,10 +1,15 @@
 #include <stdlib.h>
 #include "vm/instruction_buffer.h"
 
-void vm_init_instruction_buffer(struct InstructionBuffer *instruction_buffer, size_t initial_size) {
-  instruction_buffer->buffer = malloc(initial_size * sizeof(struct InstructionBuffer));
+struct InstructionBuffer *vm_init_instruction_buffer() {
+  struct InstructionBuffer *instruction_buffer = malloc(sizeof(struct InstructionBuffer));
+
+  instruction_buffer->buffer = 
+    malloc(INSTRUCTION_BUFFER_INITIAL_CAPACITY * sizeof(uint8_t));
   instruction_buffer->used = 0;
-  instruction_buffer->size = initial_size;
+  instruction_buffer->size = INSTRUCTION_BUFFER_INITIAL_CAPACITY;
+
+  return instruction_buffer;
 }
 
 void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, uint8_t instruction) {
@@ -12,7 +17,7 @@ void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, 
     instruction_buffer->size *= 2;
     instruction_buffer->buffer = realloc(
       instruction_buffer->buffer,
-      instruction_buffer->size * sizeof(struct InstructionBuffer)
+      instruction_buffer->size * sizeof(uint8_t)
     );
   }
 
