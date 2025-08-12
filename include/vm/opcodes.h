@@ -17,5 +17,8 @@
 #define JUMP_IF_FALSE 0x0D
 #define EQUAL 0x0E
 #define NOT_EQUAL 0x0F
-
+#define GREATER 0x10
+#define LESS 0x11
+#define GREATER_EQUAL 0x12
+#define LESS_EQUAL 0x13
 #endif 

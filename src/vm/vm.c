@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "vm/instruction_buffer.h"
 #include "vm/opcodes.h"
 #include "vm/vm.h"
@@ -12,9 +13,62 @@
 #include "objects/string.h"
 #include "utils/operand_conversion.h"
 
+#define COMPARISON() \
+
+// Helper function to be called for all comparison operations 
+bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
+  if (operand_1.type != operand_2.type) {
+    // NOT_EQUAL is the only instruction that can return true
+    return opcode == NOT_EQUAL;
+  }
+
+  bool result;
+
+  if (operand_1.type == TYPE_NUMBER) {
+    switch (opcode) {
+      case EQUAL: result = operand_1.number == operand_2.number; break;
+      case NOT_EQUAL: result = operand_1.number != operand_2.number; break;
+      case GREATER: result = operand_1.number > operand_2.number; break;
+      case LESS: result = operand_1.number < operand_2.number; break;
+      case GREATER_EQUAL: result = operand_1.number >= operand_2.number; break;
+      case LESS_EQUAL: result = operand_1.number <= operand_2.number; break;
+    }
+  }
+
+  if (operand_1.type == TYPE_BOOLEAN) {
+    switch (opcode) {
+      case EQUAL: result = operand_1.boolean == operand_2.boolean; break;
+      case NOT_EQUAL: result = operand_1.boolean != operand_2.boolean; break;
+      case GREATER: result = operand_1.boolean > operand_2.boolean; break;
+      case LESS: result = operand_1.boolean < operand_2.boolean; break;
+      case GREATER_EQUAL: result = operand_1.boolean >= operand_2.boolean; break;
+      case LESS_EQUAL: result = operand_1.boolean <= operand_2.boolean; break;
+    }
+  }
+  
+  if (operand_1.type == TYPE_STRING) {
+    switch (opcode) {
+      case EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) == 0;
+        break;
+      case NOT_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) != 0;
+				break;
+      case GREATER: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) > 0;
+				break;
+      case LESS: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) < 0;
+				break;
+      case GREATER_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) >= 0;
+				break;
+      case LESS_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) <= 0;
+				break;
+    }
+  }
+
+  return result;
+}
+
 struct VM *vm_init() {
    
-struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
+  struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
 
   if (!vm) {
     error_throw(MALLOC_ERROR, "Failed to allocate vm");
@@ -208,60 +262,19 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
-      case EQUAL: {
+      case EQUAL:
+      case NOT_EQUAL:
+      case GREATER:
+      case LESS:
+      case GREATER_EQUAL:
+      case LESS_EQUAL: {
         struct Value operand_2 = vm_pop_stack(vm->stack);
         struct Value operand_1 = vm_pop_stack(vm->stack);
-
-        if (operand_1.type != operand_2.type) {
-          vm_push_stack(vm->stack, BOOLEAN(0));
-          break;
-        }
-
-        if (operand_1.type == TYPE_NUMBER) {
-          vm_push_stack(vm->stack, BOOLEAN(operand_1.number == operand_2.number));
-          break;
-        }
-
-        if (operand_1.type == TYPE_BOOLEAN) {
-          vm_push_stack(vm->stack, BOOLEAN(operand_1.boolean == operand_2.boolean));
-          break;
-        }
-
-        if (operand_1.type == TYPE_STRING) {
-          vm_push_stack
-            (vm->stack, BOOLEAN(!strcmp(operand_1.string->buffer, operand_2.string->buffer)));
-          break;
-        }
+        
+        vm_push_stack(vm->stack, BOOLEAN(compare(operand_1, operand_2, current_instruction)));
         break;
-      }
-      case NOT_EQUAL: {
-        struct Value operand_2 = vm_pop_stack(vm->stack);
-        struct Value operand_1 = vm_pop_stack(vm->stack);
-
-        if (operand_1.type != operand_2.type) {
-          vm_push_stack(vm->stack, BOOLEAN(1));
-          break;
-        }
-
-        if (operand_1.type == TYPE_NUMBER) {
-          vm_push_stack(vm->stack, BOOLEAN(operand_1.number != operand_2.number));
-          break;
-        }
-
-        if (operand_1.type == TYPE_BOOLEAN) {
-          vm_push_stack(vm->stack, BOOLEAN(operand_1.boolean != operand_2.boolean));
-          break;
-        }
-
-        if (operand_1.type == TYPE_STRING) {
-          vm_push_stack
-            (vm->stack, BOOLEAN(strcmp(operand_1.string->buffer, operand_2.string->buffer)));
-          break;
-        }
-        break;
-      }
+      } 
     }
- 
   } 
 }
 

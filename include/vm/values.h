@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "objects/string.h"
 
 #ifndef VALUES_H
@@ -13,7 +14,7 @@ struct Value {
   enum Type type;
   union {
     double number;
-    _Bool boolean;
+    bool boolean;
     struct String *string;
   };
 };
