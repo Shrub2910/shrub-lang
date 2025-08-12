@@ -12,5 +12,6 @@
 #define LOAD_VAR 0x08
 #define PUSH_SCOPE 0x09
 #define POP_SCOPE 0x0A
+#define JUMP 0x0B
 
 #endif 

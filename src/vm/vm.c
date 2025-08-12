@@ -9,6 +9,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 #include "objects/string.h"
+#include "utils/operand_conversion.h"
 
 struct VM *vm_init() {
    
@@ -158,6 +159,15 @@ void vm_exec(struct VM *vm) {
       }
       case POP_SCOPE: {
         vm_pop_environment(vm->environment);
+        break;
+      }
+      case JUMP: {
+        uint8_t lo = *(vm->program_counter++);
+        uint8_t hi = *(vm->program_counter++);
+
+        int16_t offset = TO_SIGNED_WORD(lo, hi);
+
+        vm->program_counter += offset;
         break;
       }
     }

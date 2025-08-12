@@ -5,6 +5,7 @@
 
 enum Type {
   TYPE_NUMBER,
+  TYPE_BOOLEAN,
   TYPE_STRING
 };
 
@@ -12,6 +13,7 @@ struct Value {
   enum Type type;
   union {
     double number;
+    _Bool boolean;
     struct String *string;
   };
 };
@@ -19,6 +21,7 @@ struct Value {
 // Constructors
 
 #define NUMBER(value) ((struct Value){.type = TYPE_NUMBER, .number = value}) 
+#define BOOLEAN(value) ((struct Value){.type = TYPE_BOOLEAN, .boolean = value})
 #define STRING(value, length) ((struct Value){.type = TYPE_STRING, .string = string_init(value, length)})
 
 // Utils
