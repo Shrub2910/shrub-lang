@@ -13,5 +13,9 @@
 #define PUSH_SCOPE 0x09
 #define POP_SCOPE 0x0A
 #define JUMP 0x0B
+#define JUMP_IF_TRUE 0x0C
+#define JUMP_IF_FALSE 0x0D
+#define EQUAL 0x0E
+#define NOT_EQUAL 0x0F
 
 #endif 

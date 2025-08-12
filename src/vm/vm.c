@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "vm/instruction_buffer.h"
 #include "vm/opcodes.h"
 #include "vm/vm.h"
@@ -13,7 +14,7 @@
 
 struct VM *vm_init() {
    
-  struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
+struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
 
   if (!vm) {
     error_throw(MALLOC_ERROR, "Failed to allocate vm");
@@ -70,6 +71,9 @@ void vm_exec(struct VM *vm) {
             break;
           case TYPE_STRING:
             printf("Value: %s\n", value_to_print.string->buffer);
+            break;
+          case TYPE_BOOLEAN:
+            printf("Value: %s\n", value_to_print.boolean ? "true" : "false");
             break;
           default:
             error_throw(TYPE_ERROR, "Object not printable");
@@ -168,6 +172,92 @@ void vm_exec(struct VM *vm) {
         int16_t offset = TO_SIGNED_WORD(lo, hi);
 
         vm->program_counter += offset;
+        break;
+      }
+      case JUMP_IF_TRUE: {
+        uint8_t lo = *(vm->program_counter++);
+        uint8_t hi = *(vm->program_counter++);
+        
+        int16_t offset = TO_SIGNED_WORD(lo, hi);
+
+        struct Value value = vm_pop_stack(vm->stack);
+
+        if (value.type != TYPE_BOOLEAN) {
+          error_throw(TYPE_ERROR, "Jumps must use boolean types");
+        }
+
+        if (value.boolean) {
+          vm->program_counter += offset;
+        }
+        break;
+      }
+      case JUMP_IF_FALSE: {
+        uint8_t lo = *(vm->program_counter++);
+        uint8_t hi = *(vm->program_counter++);
+
+        int16_t offset = TO_SIGNED_WORD(lo, hi);
+
+        struct Value value = vm_pop_stack(vm->stack);
+
+        if (value.type != TYPE_BOOLEAN) {
+          error_throw(TYPE_ERROR, "Jumps must use boolean types");
+        }
+
+        if (!value.boolean) {
+          vm->program_counter += offset;
+        }
+        break;
+      }
+      case EQUAL: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (operand_1.type != operand_2.type) {
+          vm_push_stack(vm->stack, BOOLEAN(0));
+          break;
+        }
+
+        if (operand_1.type == TYPE_NUMBER) {
+          vm_push_stack(vm->stack, BOOLEAN(operand_1.number == operand_2.number));
+          break;
+        }
+
+        if (operand_1.type == TYPE_BOOLEAN) {
+          vm_push_stack(vm->stack, BOOLEAN(operand_1.boolean == operand_2.boolean));
+          break;
+        }
+
+        if (operand_1.type == TYPE_STRING) {
+          vm_push_stack
+            (vm->stack, BOOLEAN(!strcmp(operand_1.string->buffer, operand_2.string->buffer)));
+          break;
+        }
+        break;
+      }
+      case NOT_EQUAL: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (operand_1.type != operand_2.type) {
+          vm_push_stack(vm->stack, BOOLEAN(1));
+          break;
+        }
+
+        if (operand_1.type == TYPE_NUMBER) {
+          vm_push_stack(vm->stack, BOOLEAN(operand_1.number != operand_2.number));
+          break;
+        }
+
+        if (operand_1.type == TYPE_BOOLEAN) {
+          vm_push_stack(vm->stack, BOOLEAN(operand_1.boolean != operand_2.boolean));
+          break;
+        }
+
+        if (operand_1.type == TYPE_STRING) {
+          vm_push_stack
+            (vm->stack, BOOLEAN(strcmp(operand_1.string->buffer, operand_2.string->buffer)));
+          break;
+        }
         break;
       }
     }

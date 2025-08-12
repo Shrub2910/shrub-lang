@@ -10,7 +10,8 @@ int main() {
   INSERT_CONST_VALUES(
     vm,
     NUMBER(0),
-    NUMBER(1)
+    NUMBER(1),
+    NUMBER(10)
   );
 
   INSERT_INSTRUCTIONS(
@@ -24,7 +25,10 @@ int main() {
     LOAD_CONST, 1,
     ADD,
     STORE_VAR, 0,
-    JUMP, FROM_SIGNED_WORD(-15),
+    LOAD_VAR, 0, 0,
+    LOAD_CONST, 2,
+    EQUAL,
+    JUMP_IF_FALSE, FROM_SIGNED_WORD(-21),
     POP_SCOPE, 
     HALT
   ); 
