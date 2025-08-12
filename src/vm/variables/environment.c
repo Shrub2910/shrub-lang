@@ -5,6 +5,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 
+// Returns a preconfigured environment to be used inside the vm 
 struct Environment *vm_init_environment() {
   struct Environment *environment = malloc(sizeof(struct Environment));
   
@@ -24,6 +25,8 @@ struct Environment *vm_init_environment() {
   return environment;
 }
 
+// Pushes a new scope onto the environment
+// Used when entering a new scope 
 void vm_push_environment(struct Environment *environment, size_t size) {
   if (environment->used == environment->size) {
     environment->size *= 2;
@@ -35,6 +38,8 @@ void vm_push_environment(struct Environment *environment, size_t size) {
   environment->scopes[environment->used++] = scope;
 }
 
+// Pops the top scope off the environment
+// Used when leaving the current scope 
 void vm_pop_environment(struct Environment *environment) {
   if (environment->used == 0) {
     error_throw(STACK_ERROR, "Stack underflow in environment");
@@ -45,6 +50,7 @@ void vm_pop_environment(struct Environment *environment) {
   vm_free_scope(scope);
 }
 
+// Used by the LOAD_VAR instruction to get a variable from the current scope or above
 struct Value vm_get_variable_environment(struct Environment *environment, size_t depth, size_t offset) {
   if (depth >= environment->used) {
     error_throw(STACK_ERROR, "Tried to access variable from too many scopes back");
@@ -53,10 +59,12 @@ struct Value vm_get_variable_environment(struct Environment *environment, size_t
   return vm_index_scope(environment->scopes[environment->used - depth - 1], offset);
 }
 
+// Used by the STORE_VAR instruction to store a variable on the current scope 
 void vm_set_variable_environment(struct Environment *environment, struct Value value, size_t offset) {
   vm_insert_scope(environment->scopes[environment->used - 1], value, offset);
 }
 
+// Clean up
 void vm_free_environment(struct Environment *environment) {
   for (size_t i = 0; i < environment->used; ++i) {
     vm_free_scope(environment->scopes[i]);

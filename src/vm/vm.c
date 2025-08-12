@@ -46,6 +46,7 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
     }
   }
   
+  // Uses strcmp to evalutate equality, inequality and lexicographical ordering 
   if (operand_1.type == TYPE_STRING) {
     switch (opcode) {
       case EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) == 0;
@@ -66,6 +67,7 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
   return result;
 }
 
+// Returns a preconfigured vm struct to be used in the main function 
 struct VM *vm_init() {
    
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
@@ -117,6 +119,7 @@ void vm_exec(struct VM *vm) {
       // Must be used to terminate the program
       case HALT:
         return;
+      // Useful for debugging the vm 
       case PRINT:
         struct Value value_to_print = vm_pop_stack(vm->stack);
         switch (value_to_print.type) {
@@ -133,6 +136,7 @@ void vm_exec(struct VM *vm) {
             error_throw(TYPE_ERROR, "Object not printable");
         }
         break;
+      // Push constants onto the stack 
       case LOAD_CONST: {
         uint8_t const_index = *(vm->program_counter++);
         struct Value value = vm->constants[const_index];
@@ -141,6 +145,8 @@ void vm_exec(struct VM *vm) {
 
         break;
       }
+      // These 4 instructions will pop 2 values of the top of the stack and push the result
+      // of the calculation
       case ADD: {
         struct Value operand_2 = vm_pop_stack(vm->stack);
         struct Value operand_1 = vm_pop_stack(vm->stack);
@@ -197,6 +203,7 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
+      // Will store a variable at an offset to the current scope address
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
         size_t offset = *(vm->program_counter++);
@@ -204,21 +211,25 @@ void vm_exec(struct VM *vm) {
         vm_set_variable_environment(vm->environment, value, offset); 
         break;
       }
+      // Will load a variable at an offset to the specified scope address 
       case LOAD_VAR: {
         size_t depth = *(vm->program_counter++);
         size_t offset = *(vm->program_counter++);
         vm_push_stack(vm->stack, vm_get_variable_environment(vm->environment, depth, offset));
         break;
       }
+      // Entering scope 
       case PUSH_SCOPE: {
         size_t size = *(vm->program_counter++);
         vm_push_environment(vm->environment, size);
         break;
       }
+      // Leaving scope 
       case POP_SCOPE: {
         vm_pop_environment(vm->environment);
         break;
       }
+      // Useful for infinite loops or goto statements
       case JUMP: {
         uint8_t lo = *(vm->program_counter++);
         uint8_t hi = *(vm->program_counter++);
@@ -228,6 +239,7 @@ void vm_exec(struct VM *vm) {
         vm->program_counter += offset;
         break;
       }
+      // Performs a jump depending on the boolean at the top of the stack
       case JUMP_IF_TRUE: {
         uint8_t lo = *(vm->program_counter++);
         uint8_t hi = *(vm->program_counter++);
@@ -262,6 +274,8 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
+      // Compares values and pushes a boolean to the top of the vm_pop_stack
+      // Useful for branching
       case EQUAL:
       case NOT_EQUAL:
       case GREATER:
@@ -278,6 +292,7 @@ void vm_exec(struct VM *vm) {
   } 
 }
 
+// Helper function for adding constants to the constant pool 
 void vm_add_const(struct VM *vm, const struct Value value) {
   if (vm->constant_count == CONST_POOL_SIZE) {
     printf("Error Too Many Constants!"); // TEMPORARY
@@ -286,6 +301,7 @@ void vm_add_const(struct VM *vm, const struct Value value) {
   vm->constants[vm->constant_count++] = value; 
 }
 
+// Handles clean up of constants 
 void vm_free_consts(struct VM *vm) {
   for (size_t i = 0; i < vm->constant_count; ++i) {
     struct Value value = vm->constants[i];
@@ -299,6 +315,7 @@ void vm_free_consts(struct VM *vm) {
   vm->constants = NULL;
 }
 
+// Cleans up the virtual machine when no longer needed
 void vm_free(struct VM *vm) {
   vm_free_instruction_buffer(vm->instruction_buffer);
   vm->instruction_buffer = NULL;

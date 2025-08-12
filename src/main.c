@@ -6,14 +6,15 @@
 #include "utils/operand_conversion.h"
 int main() {
   struct VM *vm = vm_init();
-
+  
+  // All the constants the program will use
   INSERT_CONST_VALUES(
     vm,
     NUMBER(0),
     NUMBER(1),
     NUMBER(10)
   );
-
+  
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
     PUSH_SCOPE, 1,
@@ -33,7 +34,10 @@ int main() {
     HALT
   ); 
 
+  // Infinitely consumes instructions until halted
   vm_exec(vm);
+
+  // Clean up
   vm_free(vm);
 
   printf("\n");
