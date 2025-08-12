@@ -37,6 +37,7 @@ void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, 
 }
 
 void vm_free_instruction_buffer(struct InstructionBuffer *instruction_buffer) {
+  free(instruction_buffer->buffer);
   instruction_buffer->buffer = NULL;
   instruction_buffer->size = instruction_buffer->used = 0;
   free(instruction_buffer);

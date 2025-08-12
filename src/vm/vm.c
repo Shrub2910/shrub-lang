@@ -82,8 +82,6 @@ struct VM *vm_init() {
     vm_free(vm);
     error_throw(MALLOC_ERROR, "Failed to allocate instruction buffer");
   }
-
-  vm->program_counter = vm->instruction_buffer->buffer;
   
   vm->constant_count = 0;
   vm->constants = (struct Value *) malloc(CONST_POOL_SIZE * sizeof(struct Value));
@@ -111,7 +109,7 @@ struct VM *vm_init() {
 }
 
 void vm_exec(struct VM *vm) {
-  
+  vm->program_counter = vm->instruction_buffer->buffer;
   // Program only finishes execution when it should
   for (;;) {
     uint8_t current_instruction = *(vm->program_counter++);
@@ -124,13 +122,13 @@ void vm_exec(struct VM *vm) {
         struct Value value_to_print = vm_pop_stack(vm->stack);
         switch (value_to_print.type) {
           case TYPE_NUMBER:
-            printf("Value: %f\n", value_to_print.number);
+            printf("%f\n", value_to_print.number);
             break;
           case TYPE_STRING:
-            printf("Value: %s\n", value_to_print.string->buffer);
+            printf("%s\n", value_to_print.string->buffer);
             break;
           case TYPE_BOOLEAN:
-            printf("Value: %s\n", value_to_print.boolean ? "true" : "false");
+            printf("%s\n", value_to_print.boolean ? "true" : "false");
             break;
           default:
             error_throw(TYPE_ERROR, "Object not printable");
@@ -206,9 +204,10 @@ void vm_exec(struct VM *vm) {
       // Will store a variable at an offset to the current scope address
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
+        size_t depth = *(vm->program_counter++);
         size_t offset = *(vm->program_counter++);
         
-        vm_set_variable_environment(vm->environment, value, offset); 
+        vm_set_variable_environment(vm->environment, value, depth, offset); 
         break;
       }
       // Will load a variable at an offset to the specified scope address 

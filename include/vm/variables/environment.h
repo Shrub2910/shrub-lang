@@ -13,7 +13,8 @@ struct Environment *vm_init_environment();
 void vm_push_environment(struct Environment *environment, size_t size);
 void vm_pop_environment(struct Environment *environment);
 struct Value vm_get_variable_environment(struct Environment *environment, size_t depth, size_t offset);
-void vm_set_variable_environment(struct Environment *environment, struct Value value, size_t offset); 
+void vm_set_variable_environment
+(struct Environment *environment, struct Value value, size_t depth, size_t offset); 
 void vm_free_environment(struct Environment *environment);
 
 // Setup

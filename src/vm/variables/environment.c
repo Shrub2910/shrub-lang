@@ -60,8 +60,13 @@ struct Value vm_get_variable_environment(struct Environment *environment, size_t
 }
 
 // Used by the STORE_VAR instruction to store a variable on the current scope 
-void vm_set_variable_environment(struct Environment *environment, struct Value value, size_t offset) {
-  vm_insert_scope(environment->scopes[environment->used - 1], value, offset);
+void vm_set_variable_environment
+(struct Environment *environment, struct Value value, size_t depth, size_t offset) {
+  if (depth >= environment->used) {
+    error_throw(STACK_ERROR, "Tried to access variable from too many scopes back");
+  }
+
+  vm_insert_scope(environment->scopes[environment->used - depth - 1], value, offset);
 }
 
 // Clean up
