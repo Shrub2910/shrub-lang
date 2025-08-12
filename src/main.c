@@ -37,7 +37,8 @@ int main() {
     JUMP_IF_TRUE, FROM_SIGNED_WORD(-22),
     POP_SCOPE, 
   ); 
-
+  
+  // Fibonacci sequence 
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
     PUSH_SCOPE, 2,

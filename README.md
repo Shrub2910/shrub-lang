@@ -16,44 +16,86 @@ The project implements a virtual machine (VM) that runs shrub lang bytecode.
 make
 ```
 ### Running a program 
-Currently the program supports only simple programs comprised of:
-* `LOAD_CONST <index>` - Pushes a constant to the stack 
-* `PRINT` - Pops then prints the top of the stack
-* `ADD` - Pops two numbers of the stack, adds them, and then pushes the result,
-* `SUB` - Pops two numbers of the stack, subtracts them, and then pushes the result,
-* `MUL` - Pops two numbers of the stack, multiplies them, and then pushes the result,
-* `DIV` - Pops two numbers of the stack, divides them, and then pushes the result,
-* `STORE_VAR <offset>` - Pops a value from the stack, stores it in the current scope + offset
-* `LOAD_VAR <depth> <offset>` - Pushes onto the stack the value at (current scope - depth) + offset
-* `PUSH_SCOPE <size>` - Pushes a new scope onto the environment, size determines number of variables 
-* `POP_SCOPE` - Pops the current scope off the environment 
-* `HALT` - Halts execution of the program 
+For list of instructions see include/vm/opcodes.h
+```
+HALT 0x00
+PRINT 0x01
+LOAD_CONST 0x02 <index>
+ADD 0x03
+SUB 0x04
+MUL 0x05
+DIV 0x06
+STORE_VAR 0x07 <depth> <offset>
+LOAD_VAR 0x08 <depth> <offset>
+PUSH_SCOPE 0x09 <size>
+POP_SCOPE 0x0A
+JUMP 0x0B <offset>
+JUMP_IF_TRUE 0x0C <offset>
+JUMP_IF_FALSE 0x0D <offset>
+EQUAL 0x0E
+NOT_EQUAL 0x0F
+GREATER 0x10
+LESS 0x11
+GREATER_EQUAL 0x12
+LESS_EQUAL 0x13
+```
 
 Example usage see (src/main.c):
 ```c 
-INSERT_CONST_VALUES(
-    vm,
-    NUMBER(3),
-    NUMBER(7),
-    NUMBER(20)
-  );
-
+// Prints numbers from 0 to 10
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
     PUSH_SCOPE, 1,
+    LOAD_CONST, 3,
+    PRINT,
     LOAD_CONST, 0,
+    STORE_VAR, 0, 0,
+    LOAD_VAR, 0, 0,
+    PRINT,
+    LOAD_VAR, 0, 0,
     LOAD_CONST, 1,
     ADD,
-    STORE_VAR, 0,
-    PUSH_SCOPE, 1,
+    STORE_VAR, 0, 0,
+    LOAD_VAR, 0, 0,
     LOAD_CONST, 2,
-    STORE_VAR, 0,
-    LOAD_VAR, 0, 0,
+    LESS_EQUAL,
+    JUMP_IF_TRUE, FROM_SIGNED_WORD(-22),
+    POP_SCOPE, 
+  ); 
+  
+  // Fibonacci sequence 
+  INSERT_INSTRUCTIONS(
+    vm->instruction_buffer,
+    PUSH_SCOPE, 2,
+    LOAD_CONST, 4,
     PRINT,
+    LOAD_CONST, 1, 
+    LOAD_CONST, 0, 
+    STORE_VAR, 0, 0, // x = 1
+    STORE_VAR, 0, 1, // y = 1
+    PUSH_SCOPE, 2,
+    LOAD_CONST, 0,
+    STORE_VAR, 0, 0, // i = 0
+    LOAD_VAR, 1, 0,
+    STORE_VAR, 0, 1, // temp = x
+    LOAD_VAR, 1, 1,
+    STORE_VAR, 1, 0, // a = b 
+    LOAD_VAR, 0, 1,
+    LOAD_VAR, 1, 1,
+    ADD,
+    STORE_VAR, 1, 1, // b = a + b 
+    LOAD_CONST, 1, 
+    LOAD_VAR, 0, 0,
+    ADD,
+    STORE_VAR, 0, 0, // i += 1
+    LOAD_VAR, 1, 0,
+    PRINT,
+    LOAD_VAR, 0, 0,
+    LOAD_CONST, 2,
+    LESS,
+    JUMP_IF_TRUE, FROM_SIGNED_WORD(-44),
     POP_SCOPE,
-    LOAD_VAR, 0, 0,
-    PRINT,
-    POP_SCOPE,    
+    POP_SCOPE,
     HALT
   ); 
 ```
@@ -61,7 +103,6 @@ INSERT_CONST_VALUES(
 ## Planned Features 
 * Support for more data types
 * Logic operations
-* Control flow constructs
 * A front end
 * Error handling and debugging tools
 
