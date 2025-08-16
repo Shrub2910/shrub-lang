@@ -4,6 +4,8 @@
 #include "error/error.h"
 #include "error/error_types.h"
 
+// Initialises string object copying the contents of the buffer provided into the string object 
+// Adds a null byte to the string so it is known where it termintates
 struct String *string_init(const char *buffer, size_t length) {
   struct String *string = malloc(sizeof(struct String));
 
@@ -26,16 +28,19 @@ struct String *string_init(const char *buffer, size_t length) {
   return string;
 }
 
+// Insures the string object will continue to live
 void string_retain(struct String *string) {
   string->references++;
 }
 
+// Insures the string object will be freed if necessary 
 void string_release(struct String *string) {
   if (--(string->references) == 0) {
     string_free(string);
   }
 }
 
+// Clean up
 void string_free(struct String *string) {
   free(string->buffer);
   string->buffer = NULL;

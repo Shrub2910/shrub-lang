@@ -15,7 +15,7 @@
 #include "utils/operand_conversion.h"
 #include "vm/variables/stack_frame.h"
 
-// Helper function to be called for all comparison operations 
+// To be called for all comparison operations 
 bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
   if (operand_1.type != operand_2.type) {
     // NOT_EQUAL is the only instruction that can return true
@@ -214,6 +214,7 @@ void vm_exec(struct VM *vm) {
         vm_push_stack(vm->stack, value);
         break;
       }
+      // Will load an argument at an offset to the frame pointer 
       case LOAD_ARG: {
         size_t offset = *(vm->program_counter++);
         struct Value value = vm_get_arg(vm->stack_frame, offset);
@@ -221,11 +222,16 @@ void vm_exec(struct VM *vm) {
         vm_push_stack(vm->stack, value);
         break;
       }
+      // Call popped function passing in popped values 
+      // function_call handles the popping of arguments 
+      // Stack underflow will occur if insufficient arguments are provided
       case CALL: {
         struct Value value = vm_pop_stack(vm->stack);
         function_call(value.function, vm); 
         break;
       }
+      // Pops the current stack frame 
+      // Program counter returns back to where it was prior to the call 
       case RETURN: {
         function_return(vm);
         break;
@@ -293,7 +299,7 @@ void vm_exec(struct VM *vm) {
   } 
 }
 
-// Helper function for adding constants to the constant pool 
+// Adding constants to the constant pool 
 void vm_add_const(struct VM *vm, const struct Value value) {
   if (vm->constant_count == CONST_POOL_SIZE) {
     printf("Error Too Many Constants!"); // TEMPORARY

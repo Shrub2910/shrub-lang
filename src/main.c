@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stddef.h>
 #include "vm/vm.h"
 #include "vm/instruction_buffer.h"
 #include "vm/values.h"
@@ -7,16 +8,20 @@
 int main() {
   struct VM *vm = vm_init();
   
-  struct Value function_value = FUNCTION(1, 0);
+  size_t num_args = 1; // n value (factorial (n)) 
+  size_t num_locals = 0; // No new variables defined in the function
 
-  // All the constants the program will use
+  struct Value function_value = FUNCTION(num_args, num_locals);
+
+  // Inserts constant values to be used by the whole program
   INSERT_CONST_VALUES(
     vm,
     NUMBER(10),
     function_value,
     NUMBER(1)
   );
-
+  
+  // Insert instructions into recursive function that generates 10!
   INSERT_INSTRUCTIONS(
     function_value.function->instruction_buffer,
     LOAD_ARG, 1,
@@ -35,7 +40,7 @@ int main() {
     RETURN
   );
   
-  // Prints numbers from 0 to 10
+  // Insert instructions into top level scope
   INSERT_INSTRUCTIONS(
     vm->instruction_buffer,
     LOAD_CONST, 0,

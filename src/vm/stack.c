@@ -7,6 +7,7 @@
 #include "objects/string.h"
 #include "objects/function.h"
 
+// Initialises stack and sets its size to be what is specified in the header file 
 struct Stack *vm_init_stack() {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
 
@@ -26,6 +27,8 @@ struct Stack *vm_init_stack() {
   return stack;
 }
 
+// Used by many instructions to push a value to the stack 
+// Often the result of a calculation
 void vm_push_stack(struct Stack *stack, struct Value value) {
   if (stack->used == stack->size) {
     error_throw(STACK_ERROR, "Stack Overflow");
@@ -40,6 +43,7 @@ void vm_push_stack(struct Stack *stack, struct Value value) {
   }
 }
 
+// Used by many instructions to pop a value from the stack 
 struct Value vm_pop_stack(struct Stack *stack) {
   if (stack->used == 0) {
     error_throw(STACK_ERROR, "Stack underflow");
@@ -56,6 +60,7 @@ struct Value vm_pop_stack(struct Stack *stack) {
   return value;
 }
 
+// Clean up of the stack 
 void vm_free_stack(struct Stack *stack) {
   stack->stack_pointer = NULL;
   stack->used = stack->size = 0;

@@ -3,6 +3,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 
+// Initialises the instruction buffer and sets its size to be what is defined in instruction_buffer.h
 struct InstructionBuffer *vm_init_instruction_buffer() {
   struct InstructionBuffer *instruction_buffer = malloc(sizeof(struct InstructionBuffer));
 
@@ -19,6 +20,7 @@ struct InstructionBuffer *vm_init_instruction_buffer() {
   return instruction_buffer;
 }
 
+// Pushes an instruction to the buffer and allocates more memory if needed
 void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, uint8_t instruction) {
   if (instruction_buffer->used == instruction_buffer->size) {
     instruction_buffer->size *= 2;
@@ -36,6 +38,7 @@ void vm_insert_instruction_buffer(struct InstructionBuffer *instruction_buffer, 
   instruction_buffer->buffer[instruction_buffer->used++] = instruction;
 }
 
+// Clean up 
 void vm_free_instruction_buffer(struct InstructionBuffer *instruction_buffer) {
   free(instruction_buffer->buffer);
   instruction_buffer->buffer = NULL;
