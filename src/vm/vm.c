@@ -13,8 +13,6 @@
 #include "objects/string.h"
 #include "utils/operand_conversion.h"
 
-#define COMPARISON() \
-
 // Helper function to be called for all comparison operations 
 bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
   if (operand_1.type != operand_2.type) {
