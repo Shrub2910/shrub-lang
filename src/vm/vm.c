@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "vm/instruction_buffer.h"
 #include "vm/opcodes.h"
 #include "vm/vm.h"
 #include "vm/values.h"
 #include "vm/stack.h"
-#include "vm/variables/environment.h"
 #include "error/error.h"
 #include "error/error_types.h"
 #include "objects/string.h"
@@ -95,13 +95,10 @@ struct VM *vm_init() {
     vm_free(vm);
     error_throw(MALLOC_ERROR, "Failed to allocate stack");
   }
-
-  vm->environment = vm_init_environment();
-
-  if (!vm->environment) {
-    vm_free(vm);
-    error_throw(MALLOC_ERROR, "Failed to allocate environment");
-  }
+  
+  // For testing purposes the top level stack frame is initalised with a lot of space
+  // No return address or previous stack frame; they are both NULL 
+  vm->stack_frame = vm_init_stack_frame(255, 255, NULL, NULL);
 
   return vm;
 }

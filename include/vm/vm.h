@@ -14,7 +14,7 @@ struct VM {
 
   struct InstructionBuffer *instruction_buffer;
 
-  struct Environment *environment;
+  struct StackFrame *stack_frame;
 
   uint8_t *program_counter;
 };
