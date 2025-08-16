@@ -1,4 +1,6 @@
 #include <stddef.h>
+#include <stdint.h>
+
 #include "vm/values.h"
 
 #ifndef STACK_FRAME_H
@@ -9,12 +11,13 @@ struct StackFrame {
   size_t num_args;
   size_t num_locals;
   struct Value data[];
-}
+};
 
 struct StackFrame *vm_init_stack_frame(
   size_t num_args,
   size_t num_locals,
-  struct StackFrame *previous_stack_frame
+  struct StackFrame *previous_stack_frame,
+  struct Value return_address
 );
 
 struct Value vm_get_local(struct StackFrame *stack_frame, size_t offset);
@@ -30,7 +33,7 @@ void vm_push_frame
  struct StackFrame **current_stack_frame,
  size_t num_args,
  size_t num_locals,
- uint8_t *return_address
+ struct Value return_address
 );
 
 void vm_pop_frame(struct StackFrame **current_stack_frame, uint8_t **current_program_counter);

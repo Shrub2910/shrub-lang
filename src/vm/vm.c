@@ -12,6 +12,7 @@
 #include "error/error_types.h"
 #include "objects/string.h"
 #include "utils/operand_conversion.h"
+#include "vm/variables/stack_frame.h"
 
 // Helper function to be called for all comparison operations 
 bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
@@ -98,7 +99,7 @@ struct VM *vm_init() {
   
   // For testing purposes the top level stack frame is initalised with a lot of space
   // No return address or previous stack frame; they are both NULL 
-  vm->stack_frame = vm_init_stack_frame(255, 255, NULL, NULL);
+  vm->stack_frame = vm_init_stack_frame(255, 256, NULL, NULL);
 
   return vm;
 }
@@ -196,31 +197,20 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
-      // Will store a variable at an offset to the current scope address
+      // Will store a variable at an offset to the frame pointer
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
-        size_t depth = *(vm->program_counter++);
         size_t offset = *(vm->program_counter++);
         
-        vm_set_variable_environment(vm->environment, value, depth, offset); 
+        vm_set_local(vm->stack_frame, offset, value); 
         break;
       }
-      // Will load a variable at an offset to the specified scope address 
+      // Will load a variable at an offset to the frame pointer  
       case LOAD_VAR: {
-        size_t depth = *(vm->program_counter++);
         size_t offset = *(vm->program_counter++);
-        vm_push_stack(vm->stack, vm_get_variable_environment(vm->environment, depth, offset));
-        break;
-      }
-      // Entering scope 
-      case PUSH_SCOPE: {
-        size_t size = *(vm->program_counter++);
-        vm_push_environment(vm->environment, size);
-        break;
-      }
-      // Leaving scope 
-      case POP_SCOPE: {
-        vm_pop_environment(vm->environment);
+        struct Value value = vm_get_local(vm->stack_frame, offset);
+
+        vm_push_stack(vm->stack, value);
         break;
       }
       // Useful for infinite loops or goto statements

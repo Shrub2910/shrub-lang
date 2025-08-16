@@ -3,22 +3,30 @@
 
 #include "vm/variables/stack_frame.h"
 #include "vm/values.h"
-#include "vm/objects/string.h";
+#include "objects/string.h"
 
 // Allocate and initialise new stack frame for function call or top level scope
 // data[0] = return address 
 // arguments come first, then locals 
 struct StackFrame *vm_init_stack_frame
-(size_t num_args, size_t num_locals, struct StackFrame *previous_stack_frame, uint8_t *return_address) {
+(
+  size_t num_args,
+  size_t num_locals,
+  struct StackFrame *previous_stack_frame,
+  struct Value return_address
+) 
+{
   struct StackFrame *stack_frame = 
     malloc(sizeof(struct StackFrame) + sizeof(struct Value) * (num_args + num_locals + 1));
 
   stack_frame->previous_stack_frame = previous_stack_frame;
-
-  stack_frame->num_args = num_args;
+  
+  stack_frame->num_args = num_args + 1; // Return address is an argument
   stack_frame->num_locals = num_locals;
   
   stack_frame->data[0] = return_address;
+
+  return stack_frame;
 }
 
 // Retrieve the value of a local variable from the stack frame 
@@ -58,7 +66,7 @@ void vm_push_frame
   struct StackFrame **current_stack_frame,
   size_t num_args,
   size_t num_locals,
-  uint8_t *return_address
+  struct Value return_address
 ) 
 {
   struct StackFrame *new_stack_frame = 
@@ -76,8 +84,8 @@ void vm_pop_frame(
 {
   struct StackFrame *old_stack_frame = *current_stack_frame;
 
-  *current_stack_frame = *current_stack_frame->previous_stack_frame;
-  *current_program_counter = old_stack_frame->data[0];
+  *current_stack_frame = (*current_stack_frame)->previous_stack_frame;
+  *current_program_counter = old_stack_frame->data[0].return_address;
 
   vm_free_frame(old_stack_frame);
 }
@@ -95,7 +103,6 @@ void vm_free_frame(struct StackFrame *stack_frame) {
   stack_frame->previous_stack_frame = NULL;
   stack_frame->num_args = 0;
   stack_frame->num_locals = 0;
-  stack_frame->data = NULL;
 
   free(stack_frame);
 }

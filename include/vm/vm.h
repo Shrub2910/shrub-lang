@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include "vm/instruction_buffer.h"
 #include "vm/values.h"
-#include "vm/variables/environment.h"
 
 #ifndef VM_H
 #define VM_H
