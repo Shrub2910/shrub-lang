@@ -5,6 +5,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 #include "objects/string.h"
+#include "objects/function.h"
 
 struct Stack *vm_init_stack() {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
@@ -34,6 +35,8 @@ void vm_push_stack(struct Stack *stack, struct Value value) {
 
   if (value.type == TYPE_STRING) {
     string_retain(value.string);
+  } else if (value.type == TYPE_FUNCTION) {
+    function_retain(value.function);
   }
 }
 
@@ -46,6 +49,8 @@ struct Value vm_pop_stack(struct Stack *stack) {
   
   if (value.type == TYPE_STRING) {
     string_release(value.string);
+  } else if (value.type == TYPE_FUNCTION) {
+    function_retain(value.function);
   }
 
   return value;

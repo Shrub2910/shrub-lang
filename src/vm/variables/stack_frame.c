@@ -4,6 +4,7 @@
 #include "vm/variables/stack_frame.h"
 #include "vm/values.h"
 #include "objects/string.h"
+#include "objects/function.h"
 
 // Allocate and initialise new stack frame for function call or top level scope
 // data[0] = return address 
@@ -39,6 +40,8 @@ void vm_set_local(struct StackFrame *stack_frame, size_t offset, struct Value va
   // Ensure heap allocated objects continue to live
   if (value.type == TYPE_STRING) {
     string_retain(value.string);
+  } else if (value.type == TYPE_FUNCTION) {
+    function_retain(value.function);
   }
 
   stack_frame->data[stack_frame->num_args + offset] = value;
@@ -54,6 +57,8 @@ void vm_set_arg(struct StackFrame *stack_frame, size_t offset, struct Value valu
   // Ensure heap allocated objects continue to live
   if (value.type == TYPE_STRING) {
     string_retain(value.string);
+  } else if (value.type == TYPE_FUNCTION) {
+    function_retain(value.function);
   }
 
   stack_frame->data[offset] = value;
@@ -97,7 +102,9 @@ void vm_free_frame(struct StackFrame *stack_frame) {
     struct Value value = stack_frame->data[i];
     if (value.type == TYPE_STRING) {
       string_release(value.string);
-    }
+    } else if (value.type == TYPE_FUNCTION) {
+      function_retain(value.function);
+    } 
   }
 
   stack_frame->previous_stack_frame = NULL;

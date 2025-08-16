@@ -1,9 +1,10 @@
+#ifndef VM_H
+#define VM_H
+
 #include <stdint.h>
 #include "vm/instruction_buffer.h"
 #include "vm/values.h"
 
-#ifndef VM_H
-#define VM_H
 
 struct VM {
   struct Stack *stack;

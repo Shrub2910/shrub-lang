@@ -11,6 +11,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 #include "objects/string.h"
+#include "objects/function.h"
 #include "utils/operand_conversion.h"
 #include "vm/variables/stack_frame.h"
 
@@ -99,7 +100,7 @@ struct VM *vm_init() {
   
   // For testing purposes the top level stack frame is initalised with a lot of space
   // No return address or previous stack frame; they are both NULL 
-  vm->stack_frame = vm_init_stack_frame(255, 256, NULL, NULL);
+  vm->stack_frame = vm_init_stack_frame(255, 256, NULL, RETURN_ADDRESS(NULL));
 
   return vm;
 }
@@ -211,6 +212,22 @@ void vm_exec(struct VM *vm) {
         struct Value value = vm_get_local(vm->stack_frame, offset);
 
         vm_push_stack(vm->stack, value);
+        break;
+      }
+      case LOAD_ARG: {
+        size_t offset = *(vm->program_counter++);
+        struct Value value = vm_get_arg(vm->stack_frame, offset);
+
+        vm_push_stack(vm->stack, value);
+        break;
+      }
+      case CALL: {
+        struct Value value = vm_pop_stack(vm->stack);
+        function_call(value.function, vm); 
+        break;
+      }
+      case RETURN: {
+        function_return(vm);
         break;
       }
       // Useful for infinite loops or goto statements

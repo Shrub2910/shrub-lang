@@ -1,7 +1,7 @@
-#include <stdint.h>
-
 #ifndef OPERAND_CONVERSION_H
 #define OPERAND_CONVERSION_H
+
+#include <stdint.h>
 
 // Conversion from unsigned bytes to other type
 

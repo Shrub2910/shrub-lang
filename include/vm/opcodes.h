@@ -10,8 +10,8 @@
 #define DIV 0x06
 #define STORE_VAR 0x07
 #define LOAD_VAR 0x08
-#define PUSH_SCOPE 0x09
-#define POP_SCOPE 0x0A
+#define CALL 0x09
+#define RETURN 0x0A
 #define JUMP 0x0B
 #define JUMP_IF_TRUE 0x0C
 #define JUMP_IF_FALSE 0x0D
@@ -21,4 +21,5 @@
 #define LESS 0x11
 #define GREATER_EQUAL 0x12
 #define LESS_EQUAL 0x13
+#define LOAD_ARG 0x14
 #endif 

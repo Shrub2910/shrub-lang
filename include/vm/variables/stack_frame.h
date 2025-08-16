@@ -1,10 +1,10 @@
+#ifndef STACK_FRAME_H
+#define STACK_FRAME_H
+
 #include <stddef.h>
 #include <stdint.h>
 
 #include "vm/values.h"
-
-#ifndef STACK_FRAME_H
-#define STACK_FRAME_H
 
 struct StackFrame {
   struct StackFrame *previous_stack_frame;
