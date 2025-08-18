@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include "vm/stack.h"
 #include "vm/values.h"
 #include "error/error.h"
@@ -8,7 +7,7 @@
 #include "objects/function.h"
 
 // Initialises stack and sets its size to be what is specified in the header file 
-struct Stack *vm_init_stack() {
+struct Stack *vm_init_stack(void) {
   struct Stack *stack = (struct Stack *) malloc(sizeof(struct Stack));
 
   if (!stack) {
@@ -49,7 +48,7 @@ struct Value vm_pop_stack(struct Stack *stack) {
     error_throw(STACK_ERROR, "Stack underflow");
   }
 
-  struct Value value = stack->stack_pointer[--stack->used];
+  const struct Value value = stack->stack_pointer[--stack->used];
   
   if (value.type == TYPE_STRING) {
     string_release(value.string);

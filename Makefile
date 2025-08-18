@@ -1,6 +1,6 @@
 # Compiler and flags
 CC := gcc
-CFLAGS := -Wall -Wextra -Iinclude -g -O0
+CFLAGS := -Wall -Wextra -Iinclude -g -O0 -Werror=missing-declarations -Werror=old-style-definition
 
 # Directories
 SRC_DIR := src

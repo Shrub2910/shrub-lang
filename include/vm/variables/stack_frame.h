@@ -20,11 +20,11 @@ struct StackFrame *vm_init_stack_frame(
   struct Value return_address
 );
 
-struct Value vm_get_local(struct StackFrame *stack_frame, size_t offset);
+struct Value vm_get_local(const struct StackFrame *stack_frame, size_t offset);
 
 void vm_set_local(struct StackFrame *stack_frame, size_t offset, struct Value value);
 
-struct Value vm_get_arg(struct StackFrame *stack_frame, size_t offset);
+struct Value vm_get_arg(const struct StackFrame *stack_frame, size_t offset);
 
 void vm_set_arg(struct StackFrame *stack_frame, size_t offset, struct Value value);
 

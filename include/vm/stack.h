@@ -1,7 +1,6 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stddef.h>
 #include "vm/values.h"
 
 struct Stack{

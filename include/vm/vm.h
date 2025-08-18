@@ -25,7 +25,7 @@ struct VM *vm_init();
 void vm_exec(struct VM *vm);
 void vm_free(struct VM *vm);
 
-void vm_add_const(struct VM *vm, const struct Value value);
+void vm_add_const(struct VM *vm, struct Value value);
 void vm_free_consts(struct VM *vm);
 
 // VM Setup

@@ -1,8 +1,8 @@
-#include "error/error_types.h"
-
 #ifndef ERROR_H
 #define ERROR_H
+#include <stdnoreturn.h>
+#include "error/error_types.h"
 
-void error_throw(enum ErrorType error, char *error_message);
+noreturn void error_throw(enum ErrorType error, const char *error_message);
 
 #endif

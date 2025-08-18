@@ -1,17 +1,16 @@
 #include <stdio.h>
-#include <stddef.h>
 #include "vm/vm.h"
 #include "vm/instruction_buffer.h"
 #include "vm/values.h"
 #include "vm/opcodes.h"
 #include "utils/operand_conversion.h"
-int main() {
+int main(void) {
   struct VM *vm = vm_init();
   
-  size_t num_args = 1; // n value (factorial (n)) 
-  size_t num_locals = 0; // No new variables defined in the function
+  const size_t num_args = 1; // n value (factorial (n))
+  const size_t num_locals = 0; // No new variables defined in the function
 
-  struct Value function_value = FUNCTION(num_args, num_locals);
+  const struct Value function_value = FUNCTION(num_args, num_locals);
 
   // Inserts constant values to be used by the whole program
   INSERT_CONST_VALUES(

@@ -11,10 +11,10 @@
 // arguments come first, then locals 
 struct StackFrame *vm_init_stack_frame
 (
-  size_t num_args,
-  size_t num_locals,
+  const size_t num_args,
+  const size_t num_locals,
   struct StackFrame *previous_stack_frame,
-  struct Value return_address
+  const struct Value return_address
 ) 
 {
   struct StackFrame *stack_frame = 
@@ -31,12 +31,12 @@ struct StackFrame *vm_init_stack_frame
 }
 
 // Retrieve the value of a local variable from the stack frame 
-struct Value vm_get_local(struct StackFrame *stack_frame, size_t offset) {
+struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t offset) {
   return stack_frame->data[stack_frame->num_args + offset];
 }
 
 // Set the value of a local variable on the stack frame
-void vm_set_local(struct StackFrame *stack_frame, size_t offset, struct Value value) {
+void vm_set_local(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
   // Ensure heap allocated objects continue to live
   if (value.type == TYPE_STRING) {
     string_retain(value.string);
@@ -48,12 +48,12 @@ void vm_set_local(struct StackFrame *stack_frame, size_t offset, struct Value va
 }
 
 // Retrieve the value of an argument from the stack frame 
-struct Value vm_get_arg(struct StackFrame *stack_frame, size_t offset) {
+struct Value vm_get_arg(const struct StackFrame *stack_frame, const size_t offset) {
   return stack_frame->data[offset];
 }
 
 // Set the value of an argument on the stack frame 
-void vm_set_arg(struct StackFrame *stack_frame, size_t offset, struct Value value) {
+void vm_set_arg(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
   // Ensure heap allocated objects continue to live
   if (value.type == TYPE_STRING) {
     string_retain(value.string);
@@ -69,9 +69,9 @@ void vm_set_arg(struct StackFrame *stack_frame, size_t offset, struct Value valu
 void vm_push_frame
 (
   struct StackFrame **current_stack_frame,
-  size_t num_args,
-  size_t num_locals,
-  struct Value return_address
+  const size_t num_args,
+  const size_t num_locals,
+  const struct Value return_address
 ) 
 {
   struct StackFrame *new_stack_frame = 
@@ -99,7 +99,7 @@ void vm_pop_frame(
 void vm_free_frame(struct StackFrame *stack_frame) {
   // Ensure heap allocated objects are released if necessary
   for (size_t i = 1; i < (stack_frame->num_locals + stack_frame->num_args); ++i) {
-    struct Value value = stack_frame->data[i];
+    const struct Value value = stack_frame->data[i];
     if (value.type == TYPE_STRING) {
       string_release(value.string);
     } else if (value.type == TYPE_FUNCTION) {

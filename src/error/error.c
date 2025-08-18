@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdnoreturn.h>
+#include "error/error.h"
 #include "error/error_types.h"
 
 // Associates the error enum with an error message 
 // Joins it with an additional message that could be passed in by any part of the program
 // Example: Stack Error: Stack Overflow
-void error_throw(enum ErrorType error, char *error_message) {
+noreturn void error_throw(const enum ErrorType error, const char *error_message) {
   char buffer[100] = "";
   switch (error) {
     case TYPE_ERROR:
@@ -20,6 +22,12 @@ void error_throw(enum ErrorType error, char *error_message) {
       break;
     case INDEX_ERROR:
       strcat(buffer, "Index Error: ");
+      break;
+    case INSTRUCTION_ERROR:
+      strcat(buffer, "Instruction Error: ");
+      break;
+    default:
+      strcat(buffer, "Unknown Error: ");
       break;
   }
 

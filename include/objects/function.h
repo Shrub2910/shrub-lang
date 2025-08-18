@@ -16,7 +16,7 @@ struct Function {
 };
 
 struct Function *function_init(size_t num_args, size_t num_locals);
-void function_call(struct Function *function, struct VM *vm);
+void function_call(const struct Function *function, struct VM *vm);
 void function_return(struct VM *vm);
 void function_retain(struct Function *function);
 void function_release(struct Function *function);

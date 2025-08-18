@@ -5,7 +5,8 @@ enum ErrorType {
   TYPE_ERROR,
   STACK_ERROR,
   MALLOC_ERROR,
-  INDEX_ERROR
+  INDEX_ERROR,
+  INSTRUCTION_ERROR
 };
 
 #endif

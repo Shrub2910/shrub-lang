@@ -8,7 +8,7 @@
 #include "vm/variables/stack_frame.h"
 
 // Initialise the function object and make it the right size
-struct Function *function_init(size_t num_args, size_t num_locals) {
+struct Function *function_init(const size_t num_args, const size_t num_locals) {
   struct Function *function = malloc(sizeof(struct Function));
   function->instruction_buffer = vm_init_instruction_buffer();
   function->num_args = num_args;
@@ -19,7 +19,7 @@ struct Function *function_init(size_t num_args, size_t num_locals) {
 }
 
 // Used by the call instruction to push a new stack frame, update program counter, and load arguments
-void function_call(struct Function *function, struct VM *vm) {
+void function_call(const struct Function *function, struct VM *vm) {
   vm_push_frame(
     &vm->stack_frame,
     function->num_args,
@@ -27,7 +27,7 @@ void function_call(struct Function *function, struct VM *vm) {
     RETURN_ADDRESS(vm->program_counter) // Return address is instruction after call
   ); 
 
-  // Program counter points to called function's instructions
+  // Program-counter points to called function's instructions
   vm->program_counter = function->instruction_buffer->buffer;
   
   // Loads the arguments in reverse order to simplify bytecode

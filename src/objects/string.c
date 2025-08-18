@@ -5,8 +5,8 @@
 #include "error/error_types.h"
 
 // Initialises string object copying the contents of the buffer provided into the string object 
-// Adds a null byte to the string so it is known where it termintates
-struct String *string_init(const char *buffer, size_t length) {
+// Adds a null byte to the string so it is known where it terminates
+struct String *string_init(const char *buffer, const size_t length) {
   struct String *string = malloc(sizeof(struct String));
 
   if (!string) {

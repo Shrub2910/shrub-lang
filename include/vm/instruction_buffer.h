@@ -2,7 +2,6 @@
 #define INSTRUCTION_BUFFER_H
 
 #include <stdint.h>
-#include <stddef.h>
 
 struct InstructionBuffer {
   uint8_t *buffer;

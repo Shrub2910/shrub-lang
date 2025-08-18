@@ -16,13 +16,13 @@
 #include "vm/variables/stack_frame.h"
 
 // To be called for all comparison operations 
-bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
+static bool compare(const struct Value operand_1, const struct Value operand_2, const uint8_t opcode) {
   if (operand_1.type != operand_2.type) {
     // NOT_EQUAL is the only instruction that can return true
     return opcode == NOT_EQUAL;
   }
 
-  bool result;
+  bool result = false;
 
   if (operand_1.type == TYPE_NUMBER) {
     switch (opcode) {
@@ -32,6 +32,7 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
       case LESS: result = operand_1.number < operand_2.number; break;
       case GREATER_EQUAL: result = operand_1.number >= operand_2.number; break;
       case LESS_EQUAL: result = operand_1.number <= operand_2.number; break;
+      default: result = false;
     }
   }
 
@@ -43,10 +44,11 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
       case LESS: result = operand_1.boolean < operand_2.boolean; break;
       case GREATER_EQUAL: result = operand_1.boolean >= operand_2.boolean; break;
       case LESS_EQUAL: result = operand_1.boolean <= operand_2.boolean; break;
+      default: result = false;
     }
   }
   
-  // Uses strcmp to evalutate equality, inequality and lexicographical ordering 
+  // Uses strcmp to evaluate equality, inequality and lexicographical ordering
   if (operand_1.type == TYPE_STRING) {
     switch (opcode) {
       case EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) == 0;
@@ -61,6 +63,7 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
 				break;
       case LESS_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) <= 0;
 				break;
+      default: result = false;
     }
   }
 
@@ -68,7 +71,7 @@ bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode) {
 }
 
 // Returns a preconfigured vm struct to be used in the main function 
-struct VM *vm_init() {
+struct VM *vm_init(void) {
    
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
 
@@ -98,7 +101,7 @@ struct VM *vm_init() {
     error_throw(MALLOC_ERROR, "Failed to allocate stack");
   }
   
-  // For testing purposes the top level stack frame is initalised with a lot of space
+  // For testing purposes the top level stack frame is initialised with a lot of space
   // No return address or previous stack frame; they are both NULL 
   vm->stack_frame = vm_init_stack_frame(255, 256, NULL, RETURN_ADDRESS(NULL));
 
@@ -115,7 +118,7 @@ void vm_exec(struct VM *vm) {
       case HALT:
         return;
       // Useful for debugging the vm 
-      case PRINT:
+      case PRINT: {
         struct Value value_to_print = vm_pop_stack(vm->stack);
         switch (value_to_print.type) {
           case TYPE_NUMBER:
@@ -131,6 +134,7 @@ void vm_exec(struct VM *vm) {
             error_throw(TYPE_ERROR, "Object not printable");
         }
         break;
+      }
       // Push constants onto the stack 
       case LOAD_CONST: {
         uint8_t const_index = *(vm->program_counter++);
@@ -294,7 +298,8 @@ void vm_exec(struct VM *vm) {
         
         vm_push_stack(vm->stack, BOOLEAN(compare(operand_1, operand_2, current_instruction)));
         break;
-      } 
+      }
+      default: error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");
     }
   } 
 }
