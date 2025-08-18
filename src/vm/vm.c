@@ -15,6 +15,8 @@
 #include "utils/operand_conversion.h"
 #include "vm/variables/stack_frame.h"
 
+#define READ_BYTE() (*(vm->program_counter++))
+
 // To be called for all comparison operations 
 static bool compare(const struct Value operand_1, const struct Value operand_2, const uint8_t opcode) {
   if (operand_1.type != operand_2.type) {
@@ -112,7 +114,7 @@ void vm_exec(struct VM *vm) {
   vm->program_counter = vm->instruction_buffer->buffer;
   // Program only finishes execution when it should
   for (;;) {
-    uint8_t current_instruction = *(vm->program_counter++);
+    uint8_t current_instruction = READ_BYTE();
     switch (current_instruction) {
       // Must be used to terminate the program
       case HALT:
@@ -137,7 +139,7 @@ void vm_exec(struct VM *vm) {
       }
       // Push constants onto the stack 
       case LOAD_CONST: {
-        uint8_t const_index = *(vm->program_counter++);
+        uint8_t const_index = READ_BYTE();
         struct Value value = vm->constants[const_index];
 
         vm_push_stack(vm->stack, value);
@@ -205,14 +207,14 @@ void vm_exec(struct VM *vm) {
       // Will store a variable at an offset to the frame pointer
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
-        size_t offset = *(vm->program_counter++);
+        size_t offset = READ_BYTE();
         
         vm_set_local(vm->stack_frame, offset, value); 
         break;
       }
       // Will load a variable at an offset to the frame pointer  
       case LOAD_VAR: {
-        size_t offset = *(vm->program_counter++);
+        size_t offset = READ_BYTE();
         struct Value value = vm_get_local(vm->stack_frame, offset);
 
         vm_push_stack(vm->stack, value);
@@ -220,7 +222,7 @@ void vm_exec(struct VM *vm) {
       }
       // Will load an argument at an offset to the frame pointer 
       case LOAD_ARG: {
-        size_t offset = *(vm->program_counter++);
+        size_t offset = READ_BYTE();
         struct Value value = vm_get_arg(vm->stack_frame, offset);
 
         vm_push_stack(vm->stack, value);
@@ -242,8 +244,8 @@ void vm_exec(struct VM *vm) {
       }
       // Useful for infinite loops or goto statements
       case JUMP: {
-        uint8_t lo = *(vm->program_counter++);
-        uint8_t hi = *(vm->program_counter++);
+        uint8_t lo = READ_BYTE();
+        uint8_t hi = READ_BYTE();
 
         int16_t offset = TO_SIGNED_WORD(lo, hi);
 
@@ -252,8 +254,8 @@ void vm_exec(struct VM *vm) {
       }
       // Performs a jump depending on the boolean at the top of the stack
       case JUMP_IF_TRUE: {
-        uint8_t lo = *(vm->program_counter++);
-        uint8_t hi = *(vm->program_counter++);
+        uint8_t lo = READ_BYTE();
+        uint8_t hi = READ_BYTE();
         
         int16_t offset = TO_SIGNED_WORD(lo, hi);
 
@@ -269,8 +271,8 @@ void vm_exec(struct VM *vm) {
         break;
       }
       case JUMP_IF_FALSE: {
-        uint8_t lo = *(vm->program_counter++);
-        uint8_t hi = *(vm->program_counter++);
+        uint8_t lo = READ_BYTE();
+        uint8_t hi = READ_BYTE();
 
         int16_t offset = TO_SIGNED_WORD(lo, hi);
 
