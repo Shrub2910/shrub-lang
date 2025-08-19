@@ -30,6 +30,11 @@ struct StackFrame *vm_init_stack_frame
   return stack_frame;
 }
 
+/*
+  Since arguments come first locals are stored at an offset to the last argument
+  This way only one array is required
+*/
+
 // Retrieve the value of a local variable from the stack frame 
 struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t offset) {
   return stack_frame->data[stack_frame->num_args + offset];
@@ -107,6 +112,8 @@ void vm_free_frame(struct StackFrame *stack_frame) {
     } 
   }
 
+  // Setting these values to null probably isn't necessary
+  // Just makes sure they are definitely not used after being free
   stack_frame->previous_stack_frame = NULL;
   stack_frame->num_args = 0;
   stack_frame->num_locals = 0;

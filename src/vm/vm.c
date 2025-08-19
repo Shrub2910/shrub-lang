@@ -17,7 +17,13 @@
 
 #define READ_BYTE() (*(vm->program_counter++))
 
-// To be called for all comparison operations 
+/*
+  This function essentially acts as a massive if statement to compare two values
+  It will simply return false if the values are not supported for comparisons
+  For strings, strcmp is used which can determine if a string comes before another in the alphabet
+  If they are identical however it returns 0
+  This function is to be used by all comparison instructions
+*/
 static bool compare(const struct Value operand_1, const struct Value operand_2, const uint8_t opcode) {
   if (operand_1.type != operand_2.type) {
     // NOT_EQUAL is the only instruction that can return true
@@ -25,6 +31,7 @@ static bool compare(const struct Value operand_1, const struct Value operand_2, 
   }
 
   bool result = false;
+
 
   if (operand_1.type == TYPE_NUMBER) {
     switch (opcode) {
@@ -38,6 +45,7 @@ static bool compare(const struct Value operand_1, const struct Value operand_2, 
     }
   }
 
+  // All comparisons made on the boolean since it's technically a number
   if (operand_1.type == TYPE_BOOLEAN) {
     switch (opcode) {
       case EQUAL: result = operand_1.boolean == operand_2.boolean; break;
@@ -111,8 +119,11 @@ struct VM *vm_init(void) {
 }
 
 void vm_exec(struct VM *vm) {
+  // Program counter is set to the start of the instruction buffer
+  // This allows a program to be run multiple times without clean up of the VM
   vm->program_counter = vm->instruction_buffer->buffer;
-  // Program only finishes execution when it should
+  // Infinite loop to mimic a real cpu
+  // Only stops executing when it is told to
   for (;;) {
     uint8_t current_instruction = READ_BYTE();
     switch (current_instruction) {
@@ -122,6 +133,8 @@ void vm_exec(struct VM *vm) {
       // Useful for debugging the vm 
       case PRINT: {
         struct Value value_to_print = vm_pop_stack(vm->stack);
+        // Makes an attempt to print the object at the top of the stack
+        // Throws an error if it fails to do so, so the user is aware
         switch (value_to_print.type) {
           case TYPE_NUMBER:
             printf("%f\n", value_to_print.number);
@@ -146,8 +159,12 @@ void vm_exec(struct VM *vm) {
 
         break;
       }
-      // These 4 instructions will pop 2 values of the top of the stack and push the result
-      // of the calculation
+      /*
+        These 4 instructions pop 2 values and push the result of a calculation
+        They pop values in reverse order so writing bytecode is easier
+        For example, if you wanted to do 4-9
+        You would push 4 first and then 9 as the first value it pops is the 2nd operand
+      */
       case ADD: {
         struct Value operand_2 = vm_pop_stack(vm->stack);
         struct Value operand_1 = vm_pop_stack(vm->stack);
@@ -204,6 +221,7 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
+      // The frame pointer is a pointer to the current stack frame
       // Will store a variable at an offset to the frame pointer
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
@@ -270,6 +288,7 @@ void vm_exec(struct VM *vm) {
         }
         break;
       }
+      // This jump instruction is more useful as it mimics an if statment
       case JUMP_IF_FALSE: {
         uint8_t lo = READ_BYTE();
         uint8_t hi = READ_BYTE();
