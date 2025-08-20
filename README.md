@@ -45,7 +45,7 @@ LESS_EQUAL (0x13)
 LOAD_ARG (0x14) <offset>
 ```
 
-Example usage see (src/main.c):
+Example usage see (src/main.c) on the vm_example branch:
 ```c 
   INSERT_CONST_VALUES(
     vm,
