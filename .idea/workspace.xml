@@ -27,18 +27,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/parser/token_vector.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/utils/print_token.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/parser/token_vector.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/print_token.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/error/error_types.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/error/error_types.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/lexer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/lexer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/error/error.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/error/error.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +112,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/lexer",
+    "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
