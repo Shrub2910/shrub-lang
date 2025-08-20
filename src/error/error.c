@@ -26,6 +26,8 @@ noreturn void error_throw(const enum ErrorType error, const char *error_message)
     case INSTRUCTION_ERROR:
       strcat(buffer, "Instruction Error: ");
       break;
+    case LEXICAL_ERROR:
+      strcat(buffer, "Lexical Error: ");
     default:
       strcat(buffer, "Unknown Error: ");
       break;

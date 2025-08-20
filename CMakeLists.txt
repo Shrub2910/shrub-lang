@@ -23,6 +23,11 @@ set(SOURCES
         src/vm/stack.c
         src/vm/vm.c
         src/vm/variables/stack_frame.c
+        include/parser/token.h
+        include/parser/token_vector.h
+        src/parser/token_vector.c
+        src/utils/print_token.c
+        include/utils/print_token.h
 )
 
 # Create executable
