@@ -38,6 +38,10 @@ static void print_token(const struct Token token) {
             printf("PRINT\n");
             break;
         }
+        case SEMI_COLON: {
+            printf("SEMI_COLON\n");
+            break;
+        }
         default:
             printf("UNKNOWN TOKEN");
     }

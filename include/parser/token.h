@@ -9,6 +9,7 @@ enum TokenType {
     DIVIDE,
     L_BRACKET,
     R_BRACKET,
+    SEMI_COLON,
     PRINT,
 };
 

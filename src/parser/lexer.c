@@ -111,6 +111,12 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case ')': {
             return (struct Token){.type=R_BRACKET};
         }
+        case ';': {
+            return (struct Token){.type=SEMI_COLON};
+        }
+        case '?': {
+            return (struct Token){.type=PRINT};
+        }
         default: {
             if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT) {
                 struct CharVector *char_vector = char_vector_init();
