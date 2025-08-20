@@ -14,7 +14,9 @@ The project implements a virtual machine (VM) that runs shrub lang bytecode.
 ## Getting Started
 ### Build
 ```bash
-make
+mkdir -p build
+cd build
+cmake ..
 ```
 ### Running a program 
 For list of instructions see include/vm/opcodes.h

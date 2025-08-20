@@ -3,20 +3,5 @@
   <component name="CMakePythonSetting">
     <option name="pythonIntegrationState" value="YES" />
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="MakefileSettings">
-    <option name="linkedExternalProjectsSettings">
-      <MakefileProjectSettings>
-        <option name="buildDirectory" value="build/output" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-          </set>
-        </option>
-        <option name="version" value="2" />
-      </MakefileProjectSettings>
-    </option>
-  </component>
-  <component name="MakefileWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
 </project>
