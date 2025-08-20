@@ -28,6 +28,12 @@ set(SOURCES
         src/parser/token_vector.c
         src/utils/print_token.c
         include/utils/print_token.h
+        include/parser/parser.h
+        include/parser/expressions.h
+        include/parser/statements.h
+        include/parser/statement_vector.h
+        src/parser/statement_vector.c
+        src/parser/parser.c
 )
 
 # Create executable

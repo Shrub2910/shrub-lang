@@ -2,15 +2,15 @@
 #define TOKEN_H
 
 enum TokenType {
-    NUMBER,
-    PLUS,
-    MINUS,
-    TIMES,
-    DIVIDE,
-    L_BRACKET,
-    R_BRACKET,
-    SEMI_COLON,
-    PRINT,
+    NUMBER_TOKEN,
+    PLUS_TOKEN,
+    MINUS_TOKEN,
+    TIMES_TOKEN,
+    DIVIDE_TOKEN,
+    L_BRACKET_TOKEN,
+    R_BRACKET_TOKEN,
+    SEMI_COLON_TOKEN,
+    PRINT_TOKEN,
 };
 
 struct Token {

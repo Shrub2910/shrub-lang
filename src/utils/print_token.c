@@ -5,40 +5,40 @@
 
 static void print_token(const struct Token token) {
     switch (token.type) {
-        case NUMBER: {
+        case NUMBER_TOKEN: {
             const double number = token.number;
             printf("NUMBER: %lf\n", number);
             break;
         }
-        case PLUS: {
+        case PLUS_TOKEN: {
             printf("PLUS\n");
             break;
         }
-        case MINUS: {
+        case MINUS_TOKEN: {
             printf("MINUS\n");
             break;
         }
-        case TIMES: {
+        case TIMES_TOKEN: {
             printf("TIMES\n");
             break;
         }
-        case DIVIDE: {
+        case DIVIDE_TOKEN: {
             printf("DIVIDE\n");
             break;
         }
-        case L_BRACKET: {
+        case L_BRACKET_TOKEN: {
             printf("L_BRACKET\n");
             break;
         }
-        case R_BRACKET: {
+        case R_BRACKET_TOKEN: {
             printf("R_BRACKET\n");
             break;
         }
-        case PRINT: {
+        case PRINT_TOKEN: {
             printf("PRINT\n");
             break;
         }
-        case SEMI_COLON: {
+        case SEMI_COLON_TOKEN: {
             printf("SEMI_COLON\n");
             break;
         }

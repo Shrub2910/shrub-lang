@@ -94,28 +94,28 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
     const char previous_char = *(lexer->current++);
     switch (previous_char) {
         case '+': {
-            return (struct Token){.type = PLUS};
+            return (struct Token){.type = PLUS_TOKEN};
         }
         case '*': {
-            return (struct Token){.type=TIMES};
+            return (struct Token){.type=TIMES_TOKEN};
         }
         case '-': {
-            return (struct Token){.type=MINUS};
+            return (struct Token){.type=MINUS_TOKEN};
         }
         case '/': {
-            return (struct Token){.type=DIVIDE};
+            return (struct Token){.type=DIVIDE_TOKEN};
         }
         case '(': {
-            return (struct Token){.type=L_BRACKET};
+            return (struct Token){.type=L_BRACKET_TOKEN};
         }
         case ')': {
-            return (struct Token){.type=R_BRACKET};
+            return (struct Token){.type=R_BRACKET_TOKEN};
         }
         case ';': {
-            return (struct Token){.type=SEMI_COLON};
+            return (struct Token){.type=SEMI_COLON_TOKEN};
         }
         case '?': {
-            return (struct Token){.type=PRINT};
+            return (struct Token){.type=PRINT_TOKEN};
         }
         default: {
             if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT) {
@@ -140,7 +140,7 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
                 const double number = strtod(char_vector->string, NULL);
                 char_vector_free(char_vector);
 
-                return (struct Token){.type = NUMBER, .number=number};
+                return (struct Token){.type = NUMBER_TOKEN, .number=number};
             }
 
             char buffer[100];
