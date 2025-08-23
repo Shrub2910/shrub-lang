@@ -5,6 +5,7 @@
 
 enum StatementType {
     PRINT_STATEMENT,
+    EXPRESSION_STATEMENT,
 };
 
 struct Statement {
@@ -12,6 +13,11 @@ struct Statement {
 };
 
 struct PrintStatement {
+    struct Statement statement;
+    struct Expression *expression;
+};
+
+struct ExpressionStatement {
     struct Statement statement;
     struct Expression *expression;
 };

@@ -8,6 +8,7 @@ enum ErrorType {
   INDEX_ERROR,
   INSTRUCTION_ERROR,
   LEXICAL_ERROR,
+  SYNTAX_ERROR,
 };
 
 #endif

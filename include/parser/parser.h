@@ -8,11 +8,13 @@
 struct Parser {
     struct TokenVector *token_vector;
     struct Token *current_token;
-    struct Token *next_token;
+    size_t index;
 
     struct StatementVector *statement_vector;
 };
 
 struct Parser *parser_init(struct TokenVector *token_vector);
+void parser_parse(struct Parser *parser);
+void parser_free(struct Parser *parser);
 
 #endif

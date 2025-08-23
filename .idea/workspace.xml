@@ -27,17 +27,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/include/parser/expressions.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/parser/parser.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/parser/statement_vector.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/parser/statement_vector.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/utils/print_statements.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/print_statements.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/error/error_types.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/error/error_types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/expressions.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/expressions.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/parser.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/parser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/print_token.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/print_token.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/error/error.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/error/error.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +53,27 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -123,6 +145,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "feature/parser",
+    "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -153,7 +176,9 @@
       <updated>1755647587882</updated>
       <workItem from="1755647590635" duration="1197000" />
       <workItem from="1755694014948" duration="14695000" />
-      <workItem from="1755725538368" duration="5334000" />
+      <workItem from="1755725538368" duration="5613000" />
+      <workItem from="1755815535667" duration="9000" />
+      <workItem from="1755898396465" duration="10173000" />
     </task>
     <servers />
   </component>

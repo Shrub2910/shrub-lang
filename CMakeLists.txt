@@ -34,6 +34,8 @@ set(SOURCES
         include/parser/statement_vector.h
         src/parser/statement_vector.c
         src/parser/parser.c
+        include/utils/print_statements.h
+        src/utils/print_statements.c
 )
 
 # Create executable

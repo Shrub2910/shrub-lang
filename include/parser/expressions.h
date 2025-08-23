@@ -8,13 +8,6 @@ enum ExpressionType {
     BINARY_EXPRESSION
 };
 
-enum OperatorType {
-    PLUS_OPERATOR,
-    MINUS_OPERATOR,
-    TIMES_OPERATOR,
-    DIVIDE_OPERATOR
-};
-
 struct Expression {
     enum ExpressionType type;
 };
@@ -28,7 +21,7 @@ struct BinaryExpression {
     struct Expression expression;
     struct Expression *left;
     struct Expression *right;
-    enum OperatorType operator;
+    enum TokenType operator;
 };
 
 #endif

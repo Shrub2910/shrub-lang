@@ -11,6 +11,7 @@ enum TokenType {
     R_BRACKET_TOKEN,
     SEMI_COLON_TOKEN,
     PRINT_TOKEN,
+    NOTHING_TOKEN,
 };
 
 struct Token {
