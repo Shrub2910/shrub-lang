@@ -9,6 +9,7 @@ enum ErrorType {
   INSTRUCTION_ERROR,
   LEXICAL_ERROR,
   SYNTAX_ERROR,
+  HASH_TABLE_ERROR,
 };
 
 #endif

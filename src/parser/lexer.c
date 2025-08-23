@@ -7,8 +7,11 @@
 #include "error/error.h"
 #include "parser/token_vector.h"
 
+#include "parser/hash_tables/keywords.h"
+
 #define CHAR_ALPHA 1
 #define CHAR_DIGIT 2
+#define CHAR_ALPHA_NUMERIC 4
 
 #define CHAR_VECTOR_INITIAL_SIZE 16
 
@@ -75,17 +78,20 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     }
 
     for (int i = 'A'; i <= 'Z'; ++i) {
-        lexer->char_table[i] |= CHAR_ALPHA;
+        lexer->char_table[i] |= CHAR_ALPHA | CHAR_ALPHA_NUMERIC;
     }
 
     for (int i = 'a'; i <= 'z'; ++i) {
-        lexer->char_table[i] |= CHAR_ALPHA;
+        lexer->char_table[i] |= CHAR_ALPHA | CHAR_ALPHA_NUMERIC;
     }
 
     for (int i = '0'; i <= '9'; ++i) {
-        lexer->char_table[i] |= CHAR_DIGIT;
+        lexer->char_table[i] |= CHAR_DIGIT | CHAR_ALPHA_NUMERIC;
     }
 
+    keywords_init(&lexer->keywords);
+
+    keywords_insert(&lexer->keywords, "print", PRINT_TOKEN);
 
     return lexer;
 }
@@ -114,9 +120,6 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case ';': {
             return (struct Token){.type=SEMI_COLON_TOKEN};
         }
-        case '?': {
-            return (struct Token){.type=PRINT_TOKEN};
-        }
         default: {
             if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT) {
                 struct CharVector *char_vector = char_vector_init();
@@ -141,6 +144,24 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
                 char_vector_free(char_vector);
 
                 return (struct Token){.type = NUMBER_TOKEN, .number=number};
+            }
+
+            // Keywords and identifiers must start with a letter
+            // They may contain numbers afterward
+            if ((lexer->char_table[previous_char] & CHAR_ALPHA) == CHAR_ALPHA) {
+                struct CharVector *char_vector = char_vector_init();
+                char_vector_insert(char_vector, previous_char);
+
+                while ((lexer->char_table[*(lexer->current)] & CHAR_ALPHA_NUMERIC) == CHAR_ALPHA_NUMERIC
+                    && lexer->current - lexer->input < lexer->size) {
+                    char_vector_insert(char_vector, *(lexer->current++));
+                }
+
+                char_vector_insert(char_vector, '\0');
+                const enum TokenType token_type = keywords_index(&lexer->keywords, char_vector->string);
+                char_vector_free(char_vector);
+
+                return (struct Token) {.type = token_type};
             }
 
             char buffer[100];

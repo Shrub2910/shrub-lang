@@ -30,6 +30,8 @@ noreturn void error_throw(const enum ErrorType error, const char *error_message)
       strcat(buffer, "Lexical Error: ");
     case SYNTAX_ERROR:
       strcat(buffer, "Syntax Error: ");
+    case HASH_TABLE_ERROR:
+      strcat(buffer, "Hash Table Error: ");
     default:
       strcat(buffer, "Unknown Error: ");
       break;

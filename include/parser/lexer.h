@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include "token_vector.h"
+#include "parser/hash_tables/keywords.h"
 
 struct Lexer {
     char *input;
@@ -12,6 +13,7 @@ struct Lexer {
     struct TokenVector *token_vector;
 
     unsigned char char_table[256];
+    struct KeywordsTable keywords;
 };
 
 struct Lexer *lexer_init(char *input, size_t size);

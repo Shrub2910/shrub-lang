@@ -6,7 +6,7 @@
 #include "utils/print_statements.h"
 
 int main(void) {
-  char input[] = "? (1 + 2) * (3 - 4 / (5 + 6)) + 7;";
+  char input[] = "print (1 + 2) * (3 - 4 / (5 + 6)) + 7; print 3 + 8;";
   struct Lexer *lexer = lexer_init(input, sizeof(input) - 1);
   lexer_tokenize(lexer);
 
