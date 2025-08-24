@@ -2,24 +2,31 @@
 
 #include "parser/lexer.h"
 #include "parser/parser.h"
-#include "utils/print_token.h"
+#include "vm/vm.h"
+#include "compiler/compiler.h"
 #include "utils/print_statements.h"
 
 int main(void) {
-  char input[] = "print (1 + 2) * (3 - 4 / (5 + 6)) + 7; print 3 + 8;";
+  char input[] = "print (2 + 3) * (4 - 1) + 5 * (6 / 2) - 7;";
+
   struct Lexer *lexer = lexer_init(input, sizeof(input) - 1);
   lexer_tokenize(lexer);
 
   struct Parser *parser = parser_init(lexer->token_vector);
   parser_parse(parser);
 
-  printf("TOKENS:\n\n");
-  print_tokens(lexer->token_vector);
-  printf("\nAST:\n\n");
   print_statements(parser->statement_vector);
+
+  struct VM *vm = vm_init();
+  struct Compiler compiler = compiler_init(parser->statement_vector, vm);
+
+  compiler_compile_statements(&compiler);
+
+  vm_exec(vm);
 
   lexer_free(lexer);
   parser_free(parser);
+  vm_free(vm);
 
   return 0;
 }

@@ -22,4 +22,5 @@
 #define GREATER_EQUAL 0x12
 #define LESS_EQUAL 0x13
 #define LOAD_ARG 0x14
+#define POP_TOP 0x15
 #endif 

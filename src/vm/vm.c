@@ -301,6 +301,10 @@ void vm_exec(struct VM *vm) {
         vm_push_stack(vm->stack, BOOLEAN(compare(operand_1, operand_2, current_instruction)));
         break;
       }
+      case POP_TOP: {
+        vm_pop_stack(vm->stack);
+        break;
+      }
       default: error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");
     }
   } 

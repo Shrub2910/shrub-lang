@@ -38,6 +38,8 @@ set(SOURCES
         src/utils/print_statements.c
         include/parser/hash_tables/keywords.h
         src/parser/hash_tables/keywords.c
+        include/compiler/compiler.h
+        src/compiler/compiler.c
 )
 
 # Create executable
