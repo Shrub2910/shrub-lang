@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "vm/variables/stack_frame.h"
 #include "vm/values.h"
@@ -17,14 +18,17 @@ struct StackFrame *vm_init_stack_frame
   const struct Value return_address
 ) 
 {
+  const size_t data_size = num_args + num_locals + 1;
+
   struct StackFrame *stack_frame = 
-    malloc(sizeof(struct StackFrame) + sizeof(struct Value) * (num_args + num_locals + 1));
+    malloc(sizeof(struct StackFrame) + sizeof(struct Value) * data_size);
 
   stack_frame->previous_stack_frame = previous_stack_frame;
   
   stack_frame->num_args = num_args + 1; // Return address is an argument
   stack_frame->num_locals = num_locals;
-  
+
+  memset(stack_frame->data, 0, data_size * sizeof(struct Value));
   stack_frame->data[0] = return_address;
 
   return stack_frame;
@@ -37,6 +41,13 @@ struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t off
 
 // Set the value of a local variable on the stack frame
 void vm_set_local(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
+  // If heap allocated object already defined release it
+  if (stack_frame->data[offset].string != NULL) {
+    string_release(stack_frame->data[offset].string);
+  } else if (stack_frame->data[offset].function != NULL) {
+    function_release(stack_frame->data[offset].function);
+  }
+
   // Ensure heap allocated objects continue to live
   if (value.type == TYPE_STRING) {
     string_retain(value.string);

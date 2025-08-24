@@ -1,9 +1,14 @@
 #include "parser/statement_vector.h"
+#include "parser/statements.h"
+#include "parser/expressions.h"
 
 #include <stdlib.h>
 
 #include "error/error.h"
 #include "error/error_types.h"
+
+static void parser_statement_free(struct Statement *statement);
+static void parser_expression_free(struct Expression *expression);
 
 struct StatementVector *parser_statement_vector_init() {
     struct StatementVector *statement_vector = malloc(sizeof(struct StatementVector));
@@ -42,7 +47,7 @@ void parser_statement_vector_insert(struct StatementVector *statement_vector, st
 
 void parser_statement_vector_free(struct StatementVector *statement_vector) {
     for (size_t i = 0; i < statement_vector->used; i++) {
-        free(statement_vector->statements[i]);
+        parser_statement_free(statement_vector->statements[i]);
     }
     free(statement_vector->statements);
     statement_vector->statements = NULL;
@@ -50,4 +55,38 @@ void parser_statement_vector_free(struct StatementVector *statement_vector) {
     statement_vector->used = statement_vector->size = 0;
 
     free(statement_vector);
+}
+
+static void parser_statement_free(struct Statement *statement) {
+    switch (statement->type) {
+        case PRINT_STATEMENT: {
+            struct PrintStatement *print_statement = (struct PrintStatement *)statement;
+            parser_expression_free(print_statement->expression);
+            free(print_statement);
+            break;
+        }
+        case EXPRESSION_STATEMENT: {
+            struct ExpressionStatement *expression_statement = (struct ExpressionStatement *)statement;
+            parser_expression_free(expression_statement->expression);
+            free(expression_statement);
+            break;
+        }
+    }
+}
+
+static void parser_expression_free(struct Expression *expression) {
+    switch (expression->type) {
+        case BINARY_EXPRESSION: {
+            struct BinaryExpression *binary_expression = (struct BinaryExpression *)expression;
+            parser_expression_free(binary_expression->left);
+            parser_expression_free(binary_expression->right);
+            free(binary_expression);
+            break;
+        }
+        case LITERAL_EXPRESSION: {
+            struct LiteralExpression *literal_expression = (struct LiteralExpression *)expression;
+            free(literal_expression);
+            break;
+        }
+    }
 }
