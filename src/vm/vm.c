@@ -305,7 +305,10 @@ void vm_exec(struct VM *vm) {
         vm_pop_stack(vm->stack);
         break;
       }
-      default: error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");
+      default: {
+        printf("Instruction opcode: %d", current_instruction);
+        error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");
+      }
     }
   } 
 }

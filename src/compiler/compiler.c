@@ -26,6 +26,7 @@ void compiler_compile_statements(struct Compiler *compiler) {
     for (size_t i = 0; i < compiler->statement_vector->used; ++i) {
         compiler_compile_statement(compiler, compiler->statement_vector->statements[i]);
     }
+    INSERT_INSTRUCTIONS(compiler->vm->instruction_buffer, HALT);
 }
 
 static void compiler_compile_statement(struct Compiler *compiler, const struct Statement *statement) {

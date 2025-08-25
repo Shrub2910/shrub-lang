@@ -1,15 +1,22 @@
-#include <stdio.h>
+#include <stdlib.h>
 
 #include "parser/lexer.h"
 #include "parser/parser.h"
 #include "vm/vm.h"
 #include "compiler/compiler.h"
 #include "utils/print_statements.h"
+#include "error/error.h"
+#include "error/error_types.h"
+#include "file/file_read.h"
 
-int main(void) {
-  char input[] = "print (2 + 3) * (4 - 1) + 5 * (6 / 2) - 7;";
+int main(const int argc, char **argv) {
+  if (argc != 2) {
+    error_throw(ARGUMENT_ERROR, "Expects one 1 argument (File Path)");
+  }
 
-  struct Lexer *lexer = lexer_init(input, sizeof(input) - 1);
+  const struct ShrubFile shrub_file = file_read(argv[1]);
+
+  struct Lexer *lexer = lexer_init(shrub_file.contents, shrub_file.size);
   lexer_tokenize(lexer);
 
   struct Parser *parser = parser_init(lexer->token_vector);
@@ -27,6 +34,7 @@ int main(void) {
   lexer_free(lexer);
   parser_free(parser);
   vm_free(vm);
+  free(shrub_file.contents);
 
   return 0;
 }

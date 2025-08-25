@@ -10,6 +10,7 @@ enum ErrorType {
   LEXICAL_ERROR,
   SYNTAX_ERROR,
   HASH_TABLE_ERROR,
+  ARGUMENT_ERROR,
 };
 
 #endif

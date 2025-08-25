@@ -40,6 +40,8 @@ set(SOURCES
         src/parser/hash_tables/keywords.c
         include/compiler/compiler.h
         src/compiler/compiler.c
+        include/file/file_read.h
+        src/file/file_read.c
 )
 
 # Create executable
