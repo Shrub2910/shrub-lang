@@ -27,18 +27,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/examples/block_example/main.shrub" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/test/main.shrub" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/utils/print_statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/utils/print_statements.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/statement_vector.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/statement_vector.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/print_statements.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/print_statements.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +82,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/code-blocks",
+    "git-widget-placeholder": "feature/refactoring",
     "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -103,11 +94,6 @@
   }
 }]]></component>
   <component name="RunManager" selected="CMake Application.block example">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="block example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/block_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -141,6 +127,7 @@
       <workItem from="1756056010749" duration="1479000" />
       <workItem from="1756159242431" duration="3747000" />
       <workItem from="1756163153553" duration="4457000" />
+      <workItem from="1756227649997" duration="1286000" />
     </task>
     <servers />
   </component>

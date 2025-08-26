@@ -15,6 +15,9 @@
 
 #define CHAR_VECTOR_INITIAL_SIZE 16
 
+static struct Token create_number(struct Lexer *lexer, char previous_char);
+static struct Token create_keyword(struct Lexer *lexer, char previous_char);
+
 struct CharVector {
     char *string;
     size_t used;
@@ -124,46 +127,11 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         }
         default: {
             if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT) {
-                struct CharVector *char_vector = char_vector_init();
-                char_vector_insert(char_vector, previous_char);
-
-                while ((lexer->char_table[*(lexer->current)] & CHAR_DIGIT) == CHAR_DIGIT
-                    && lexer->current - lexer->input < lexer->size) {
-                    char_vector_insert(char_vector, *(lexer->current++));
-                }
-
-                if (*(lexer->current) == '.') {
-                    char_vector_insert(char_vector, '.');
-                    lexer->current++;
-                    while ((lexer->char_table[*(lexer->current)] & CHAR_DIGIT) == CHAR_DIGIT
-                        && lexer->current - lexer->input < lexer->size) {
-                        char_vector_insert(char_vector, *(lexer->current++));
-                    }
-                }
-
-                char_vector_insert(char_vector, '\0');
-                const double number = strtod(char_vector->string, NULL);
-                char_vector_free(char_vector);
-
-                return (struct Token){.type = NUMBER_TOKEN, .number=number};
+                return create_number(lexer, previous_char);
             }
 
-            // Keywords and identifiers must start with a letter
-            // They may contain numbers afterward
             if ((lexer->char_table[previous_char] & CHAR_ALPHA) == CHAR_ALPHA) {
-                struct CharVector *char_vector = char_vector_init();
-                char_vector_insert(char_vector, previous_char);
-
-                while ((lexer->char_table[*(lexer->current)] & CHAR_ALPHA_NUMERIC) == CHAR_ALPHA_NUMERIC
-                    && lexer->current - lexer->input < lexer->size) {
-                    char_vector_insert(char_vector, *(lexer->current++));
-                }
-
-                char_vector_insert(char_vector, '\0');
-                const enum TokenType token_type = keywords_index(&lexer->keywords, char_vector->string);
-                char_vector_free(char_vector);
-
-                return (struct Token) {.type = token_type};
+                return create_keyword(lexer, previous_char);
             }
 
             char buffer[100];
@@ -171,6 +139,47 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
             error_throw(LEXICAL_ERROR, buffer);
         }
     }
+}
+
+static struct Token create_number(struct Lexer *lexer, const char previous_char) {
+    struct CharVector *char_vector = char_vector_init();
+    char_vector_insert(char_vector, previous_char);
+
+    while ((lexer->char_table[*(lexer->current)] & CHAR_DIGIT) == CHAR_DIGIT
+        && lexer->current - lexer->input < lexer->size) {
+        char_vector_insert(char_vector, *(lexer->current++));
+    }
+
+    if (*(lexer->current) == '.') {
+        char_vector_insert(char_vector, '.');
+        lexer->current++;
+        while ((lexer->char_table[*(lexer->current)] & CHAR_DIGIT) == CHAR_DIGIT
+            && lexer->current - lexer->input < lexer->size) {
+            char_vector_insert(char_vector, *(lexer->current++));
+        }
+    }
+
+    char_vector_insert(char_vector, '\0');
+    const double number = strtod(char_vector->string, NULL);
+    char_vector_free(char_vector);
+
+    return (struct Token){.type = NUMBER_TOKEN, .number=number};
+}
+
+static struct Token create_keyword(struct Lexer *lexer, const char previous_char) {
+    struct CharVector *char_vector = char_vector_init();
+    char_vector_insert(char_vector, previous_char);
+
+    while ((lexer->char_table[*(lexer->current)] & CHAR_ALPHA_NUMERIC) == CHAR_ALPHA_NUMERIC
+        && lexer->current - lexer->input < lexer->size) {
+        char_vector_insert(char_vector, *(lexer->current++));
+        }
+
+    char_vector_insert(char_vector, '\0');
+    const enum TokenType token_type = keywords_index(&lexer->keywords, char_vector->string);
+    char_vector_free(char_vector);
+
+    return (struct Token) {.type = token_type};
 }
 
 void lexer_tokenize(struct Lexer *lexer) {

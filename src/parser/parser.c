@@ -10,6 +10,9 @@
 #include "parser/token.h"
 
 static struct Statement *parser_statement(struct Parser *parser);
+static struct ExpressionStatement *parser_expression_statement(struct Parser *parser);
+static struct PrintStatement *parser_print_statement(struct Parser *parser);
+static struct BlockStatement *parser_block_statement(struct Parser *parser);
 static struct Token parser_previous(const struct Parser *parser);
 static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
 static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
@@ -49,42 +52,17 @@ void parser_parse(struct Parser *parser) {
 
 static struct Statement *parser_statement(struct Parser *parser) {
     if (parser_match(parser, (enum TokenType[]) {PRINT_TOKEN}, 1)) {
-        struct Expression *expression = parser_expression(parser);
-
-        parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
-
-        struct PrintStatement *print_statement = malloc(sizeof(struct PrintStatement));
-
-        if (!print_statement) {
-            error_throw(MALLOC_ERROR, "Failed to allocate memory for print_statement");
-        }
-
-        print_statement->statement.type = PRINT_STATEMENT;
-        print_statement->expression = expression;
-
-        return (struct Statement *)print_statement;
+        return (struct Statement *)parser_print_statement(parser);
     }
 
     if (parser_match(parser, (enum TokenType[]) {DO_TOKEN}, 1)) {
-        struct StatementVector *statement_vector = parser_statement_vector_init();
-        while (parser->index < parser->token_vector->used
-            && parser_peek(parser).type != END_TOKEN) {
-            parser_statement_vector_insert(statement_vector, parser_statement(parser));
-        }
-        parser_consume(parser, END_TOKEN, "Expected end");
-
-        struct BlockStatement *block_statement = malloc(sizeof(struct BlockStatement));
-
-        if (!block_statement) {
-            error_throw(MALLOC_ERROR, "Failed to allocate memory for block_statement");
-        }
-
-        block_statement->statement.type = BLOCK_STATEMENT;
-        block_statement->statement_vector = statement_vector;
-
-        return (struct Statement *)block_statement;
+        return (struct Statement *)parser_block_statement(parser);
     }
 
+    return (struct Statement *)parser_expression_statement(parser);
+}
+
+static struct ExpressionStatement *parser_expression_statement(struct Parser *parser) {
     struct Expression *expression = parser_expression(parser);
     parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
 
@@ -96,7 +74,44 @@ static struct Statement *parser_statement(struct Parser *parser) {
 
     expression_statement->statement.type = EXPRESSION_STATEMENT;
     expression_statement->expression = expression;
-    return (struct Statement *)expression_statement;
+    return expression_statement;
+}
+
+static struct PrintStatement *parser_print_statement(struct Parser *parser) {
+    struct Expression *expression = parser_expression(parser);
+
+    parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
+
+    struct PrintStatement *print_statement = malloc(sizeof(struct PrintStatement));
+
+    if (!print_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for print_statement");
+    }
+
+    print_statement->statement.type = PRINT_STATEMENT;
+    print_statement->expression = expression;
+
+    return print_statement;
+}
+
+static struct BlockStatement *parser_block_statement(struct Parser *parser) {
+    struct StatementVector *statement_vector = parser_statement_vector_init();
+    while (parser->index < parser->token_vector->used
+        && parser_peek(parser).type != END_TOKEN) {
+        parser_statement_vector_insert(statement_vector, parser_statement(parser));
+    }
+    parser_consume(parser, END_TOKEN, "Expected end");
+
+    struct BlockStatement *block_statement = malloc(sizeof(struct BlockStatement));
+
+    if (!block_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for block_statement");
+    }
+
+    block_statement->statement.type = BLOCK_STATEMENT;
+    block_statement->statement_vector = statement_vector;
+
+    return block_statement;
 }
 
 static struct Expression *parser_expression(struct Parser *parser) {
