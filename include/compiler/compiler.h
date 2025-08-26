@@ -3,13 +3,16 @@
 
 #include "vm/vm.h"
 #include "parser/statement_vector.h"
+#include "vm/instruction_buffer.h"
 
-struct Compiler {
-    struct StatementVector *statement_vector;
+struct CompilerContext {
     struct VM *vm;
+    struct InstructionBuffer *instruction_buffer;
 };
 
-struct Compiler compiler_init(struct StatementVector *statement_vector, struct VM *vm);
-void compiler_compile_statements(struct Compiler *compiler, struct InstructionBuffer *instruction_buffer);
+void compiler_compile_statements(
+    struct CompilerContext *compiler_context,
+    const struct StatementVector *statement_vector)
+;
 
 #endif

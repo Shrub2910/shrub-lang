@@ -25,9 +25,9 @@ int main(const int argc, char **argv) {
   print_statements(parser->statement_vector, 0);
 
   struct VM *vm = vm_init();
-  struct Compiler compiler = compiler_init(parser->statement_vector, vm);
 
-  compiler_compile_statements(&compiler, vm->instruction_buffer);
+  struct CompilerContext compiler_context = {.vm = vm, .instruction_buffer = vm->instruction_buffer};
+  compiler_compile_statements(&compiler_context, parser->statement_vector);
 
   vm_exec(vm);
 
