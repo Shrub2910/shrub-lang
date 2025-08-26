@@ -24,7 +24,7 @@ static char *make_indent(const size_t count) {
     return s;
 }
 
-static void print_expression(struct Expression *expression, size_t indent_count) {
+static void print_expression(struct Expression *expression, const size_t indent_count) {
     if (expression->type == BINARY_EXPRESSION){
         char *indent = make_indent(indent_count);
         const struct BinaryExpression *binary_expression = (struct BinaryExpression *)expression;
@@ -49,23 +49,35 @@ static void print_expression(struct Expression *expression, size_t indent_count)
     free(indent);
 }
 
-static void print_statement(struct Statement *statement) {
+static void print_statement(struct Statement *statement, const size_t indent_count) {
     if (statement->type == PRINT_STATEMENT) {
+        char *indent = make_indent(indent_count);
         const struct PrintStatement *print_statement = (struct PrintStatement *)statement;
-        printf("Print\n");
+        printf("%sPrint\n", indent);
 
-        print_expression(print_statement->expression, 1);
+        print_expression(print_statement->expression, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (statement->type == BLOCK_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+        printf("%sBlock\n", indent);
+
+        print_statements(block_statement->statement_vector, indent_count + 1);
+        free(indent);
         return;
     }
 
     const struct ExpressionStatement *expression_statement = (struct ExpressionStatement *)statement;
     printf("Statement\n");
 
-    print_expression(expression_statement->expression, 1);
+    print_expression(expression_statement->expression, indent_count + 1);
 }
 
-void print_statements(const struct StatementVector *statement_vector) {
+void print_statements(const struct StatementVector *statement_vector, const size_t indent_count) {
     for (size_t i = 0; i < statement_vector->used; i++) {
-        print_statement(statement_vector->statements[i]);
+        print_statement(statement_vector->statements[i], indent_count);
     }
 }

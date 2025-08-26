@@ -32,10 +32,18 @@ void compiler_compile_statements(struct Compiler *compiler) {
 static void compiler_compile_statement(struct Compiler *compiler, const struct Statement *statement) {
     switch (statement->type) {
         case PRINT_STATEMENT: compiler_compile_print_statement(compiler, (struct PrintStatement *)statement); break;
+        case BLOCK_STATEMENT: {
+            const struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+            for (size_t i = 0; i < block_statement->statement_vector->used; ++i) {
+                compiler_compile_statement(compiler, block_statement->statement_vector->statements[i]);
+            }
+            break;
+        }
         case EXPRESSION_STATEMENT: {
             const struct ExpressionStatement *expression_statement = (const struct ExpressionStatement *)statement;
             compiler_compile_expression(compiler, expression_statement->expression);
             INSERT_INSTRUCTIONS(compiler->vm->instruction_buffer, POP_TOP);
+            break;
         }
     }
 }

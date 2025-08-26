@@ -27,15 +27,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/examples/block_example/main.shrub" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/error/error_types.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/error/error_types.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/file/file_read.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/file/file_read.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test/main.shrub" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/utils/print_statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/utils/print_statements.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/error/error.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/error/error.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/file/file_read.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/file/file_read.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/statement_vector.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/statement_vector.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/print_statements.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/print_statements.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +77,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "CMake Application.block example.executor": "Run",
     "CMake Application.shrub_lang.executor": "Run",
     "CMake Application.test program.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -87,7 +91,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/file-reading",
+    "git-widget-placeholder": "feature/code-blocks",
     "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -98,10 +102,15 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="CMake Application.test program">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+  <component name="RunManager" selected="CMake Application.block example">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="block example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/block_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="shrub_lang" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
@@ -109,14 +118,9 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test program" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/test/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="CMake Application.shrub_lang" />
-      <item itemvalue="CMake Application.test program" />
+      <item itemvalue="CMake Application.block example" />
     </list>
   </component>
   <component name="TaskManager">
@@ -136,6 +140,7 @@
       <workItem from="1755992561508" duration="4917000" />
       <workItem from="1756056010749" duration="1479000" />
       <workItem from="1756159242431" duration="3747000" />
+      <workItem from="1756163153553" duration="4457000" />
     </task>
     <servers />
   </component>

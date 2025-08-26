@@ -11,6 +11,8 @@ enum TokenType {
     R_BRACKET_TOKEN,
     SEMI_COLON_TOKEN,
     PRINT_TOKEN,
+    DO_TOKEN,
+    END_TOKEN,
     NOTHING_TOKEN,
 };
 

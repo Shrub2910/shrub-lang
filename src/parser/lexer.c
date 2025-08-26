@@ -92,6 +92,8 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_init(&lexer->keywords);
 
     keywords_insert(&lexer->keywords, "print", PRINT_TOKEN);
+    keywords_insert(&lexer->keywords, "do", DO_TOKEN);
+    keywords_insert(&lexer->keywords, "end", END_TOKEN);
 
     return lexer;
 }

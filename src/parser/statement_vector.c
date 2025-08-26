@@ -65,6 +65,12 @@ static void parser_statement_free(struct Statement *statement) {
             free(print_statement);
             break;
         }
+        case BLOCK_STATEMENT: {
+            struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+            parser_statement_vector_free(block_statement->statement_vector);
+            free(block_statement);
+            break;
+        }
         case EXPRESSION_STATEMENT: {
             struct ExpressionStatement *expression_statement = (struct ExpressionStatement *)statement;
             parser_expression_free(expression_statement->expression);

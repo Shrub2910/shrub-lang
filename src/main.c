@@ -22,7 +22,7 @@ int main(const int argc, char **argv) {
   struct Parser *parser = parser_init(lexer->token_vector);
   parser_parse(parser);
 
-  print_statements(parser->statement_vector);
+  print_statements(parser->statement_vector, 0);
 
   struct VM *vm = vm_init();
   struct Compiler compiler = compiler_init(parser->statement_vector, vm);
