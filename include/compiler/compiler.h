@@ -10,6 +10,6 @@ struct Compiler {
 };
 
 struct Compiler compiler_init(struct StatementVector *statement_vector, struct VM *vm);
-void compiler_compile_statements(struct Compiler *compiler);
+void compiler_compile_statements(struct Compiler *compiler, struct InstructionBuffer *instruction_buffer);
 
 #endif

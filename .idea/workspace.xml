@@ -28,8 +28,10 @@
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/compiler/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/compiler.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +84,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/refactoring",
+    "git-widget-placeholder": "master",
     "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -128,6 +130,7 @@
       <workItem from="1756159242431" duration="3747000" />
       <workItem from="1756163153553" duration="4457000" />
       <workItem from="1756227649997" duration="1286000" />
+      <workItem from="1756244976518" duration="1469000" />
     </task>
     <servers />
   </component>

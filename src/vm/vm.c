@@ -325,7 +325,7 @@ void vm_add_const(struct VM *vm, const struct Value value) {
 // Handles clean up of constants 
 void vm_free_consts(struct VM *vm) {
   for (size_t i = 0; i < vm->constant_count; ++i) {
-    struct Value value = vm->constants[i];
+    const struct Value value = vm->constants[i];
 
     if (value.type == TYPE_STRING) {
       string_free(value.string);

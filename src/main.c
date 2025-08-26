@@ -27,7 +27,7 @@ int main(const int argc, char **argv) {
   struct VM *vm = vm_init();
   struct Compiler compiler = compiler_init(parser->statement_vector, vm);
 
-  compiler_compile_statements(&compiler);
+  compiler_compile_statements(&compiler, vm->instruction_buffer);
 
   vm_exec(vm);
 
