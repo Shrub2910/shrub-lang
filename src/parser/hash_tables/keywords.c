@@ -49,5 +49,5 @@ enum TokenType keywords_index(const struct KeywordsTable *keywords, const char *
         }
     }
 
-    return NOTHING_TOKEN;
+    return IDENTIFIER_TOKEN;
 }

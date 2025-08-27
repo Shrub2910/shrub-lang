@@ -1,0 +1,7 @@
+let skibidi = 5;
+skibidi = 6;
+do
+    let skibidi = 5;
+    print skibidi;
+end
+print skibidi;

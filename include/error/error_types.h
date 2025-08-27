@@ -11,6 +11,7 @@ enum ErrorType {
   SYNTAX_ERROR,
   HASH_TABLE_ERROR,
   ARGUMENT_ERROR,
+  NAME_ERROR,
 };
 
 #endif

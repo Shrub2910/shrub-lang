@@ -2,6 +2,10 @@
 
 #include "vm/vm.h"
 #include "compiler/compiler.h"
+
+#include "compiler/environment.h"
+#include "compiler/scope.h"
+#include "error/error.h"
 #include "parser/statement_vector.h"
 #include "parser/statements.h"
 #include "parser/expressions.h"
@@ -21,6 +25,10 @@ static void compiler_compile_binary_expression(
 static void compiler_compile_literal_expression(
     const struct CompilerContext *compiler_context,
     const struct LiteralExpression *expression
+);
+static void compiler_compile_assignment_expression(
+    struct CompilerContext *compiler_context,
+    const struct AssignmentExpression *assignment_expression
 );
 static void compiler_compile_statement(
     struct CompilerContext *compiler_context,
@@ -54,12 +62,33 @@ static void compiler_compile_statement(
             break;
         case BLOCK_STATEMENT: {
             const struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+            compiler_push_scope(compiler_context->environment);
             for (size_t i = 0; i < block_statement->statement_vector->used; ++i) {
                 compiler_compile_statement(
                     compiler_context,
                     block_statement->statement_vector->statements[i]
                 );
             }
+            compiler_pop_scope(compiler_context->environment);
+            break;
+        }
+        case LET_STATEMENT: {
+            const struct LetStatement *let_statement = (struct LetStatement *)statement;
+
+            if (compiler_search_scope(
+                compiler_get_top_scope(compiler_context->environment),
+                let_statement->identifier_name
+            )) {
+                error_throw(NAME_ERROR, "Can only define variable once per scope");
+            }
+
+            compiler_compile_expression(compiler_context, let_statement->expression);
+            compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                STORE_VAR,
+                compiler_context->environment->variable_count++
+            );
             break;
         }
         case EXPRESSION_STATEMENT: {
@@ -84,6 +113,12 @@ static void compiler_compile_expression(
     const struct Expression *expression
 ) {
     switch (expression->type) {
+        case ASSIGNMENT_EXPRESSION: {
+            compiler_compile_assignment_expression(
+                compiler_context,
+                (struct AssignmentExpression *)expression
+            );
+        }
         case BINARY_EXPRESSION:
             compiler_compile_binary_expression(
                 compiler_context,
@@ -98,6 +133,24 @@ static void compiler_compile_expression(
             break;
         default: break;
     }
+}
+
+static void compiler_compile_assignment_expression(
+    struct CompilerContext *compiler_context,
+    const struct AssignmentExpression *assignment_expression
+) {
+    struct ScopeVariable *variable = compiler_search_environment(
+        compiler_context->environment,
+        assignment_expression->identifier_name
+    );
+
+    if (!variable) {
+        error_throw(NAME_ERROR, "Variable undefined");
+    }
+
+    compiler_compile_expression(compiler_context, assignment_expression->right);
+    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, STORE_VAR, variable->offset);
+    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, variable->offset);
 }
 
 static void compiler_compile_binary_expression(
@@ -133,6 +186,27 @@ static void compiler_compile_literal_expression
     const struct CompilerContext *compiler_context,
     const struct LiteralExpression *expression
 ) {
-    vm_add_const(compiler_context->vm, (struct Value) {.type = TYPE_NUMBER, .number = expression->value});
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_CONST, compiler_context->vm->constant_count - 1);
+    switch (expression->literal_type) {
+        case NUMBER_LITERAL: {
+            vm_add_const(compiler_context->vm, (struct Value) {.type = TYPE_NUMBER, .number = expression->number});
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                LOAD_CONST,
+                compiler_context->vm->constant_count - 1)
+            ;
+            break;
+        }
+        case IDENTIFIER_LITERAL: {
+            struct ScopeVariable *scope_variable =
+                compiler_search_environment(compiler_context->environment, expression->identifier);
+
+            if (!scope_variable) {
+                error_throw(NAME_ERROR, "Variable not defined");
+            }
+
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, scope_variable->offset);
+            break;
+        }
+    }
+
 }

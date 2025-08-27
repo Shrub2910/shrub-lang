@@ -38,6 +38,13 @@ void parser_token_vector_insert(struct TokenVector *token_vector, const struct T
 }
 
 void parser_token_vector_free(struct TokenVector *token_vector) {
+    for (size_t i = 0; i < token_vector->used; i++) {
+        const struct Token *token = token_vector->tokens + i;
+        if (token->type == IDENTIFIER_TOKEN) {
+            free(token->string);
+        }
+    }
+
     free(token_vector->tokens);
     token_vector->tokens = NULL;
     token_vector->used = token_vector->size = 0;

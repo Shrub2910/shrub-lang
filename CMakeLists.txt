@@ -42,6 +42,10 @@ set(SOURCES
         src/compiler/compiler.c
         include/file/file_read.h
         src/file/file_read.c
+        include/compiler/scope.h
+        src/compiler/scope.c
+        include/compiler/environment.h
+        src/compiler/envrionment.c
 )
 
 # Create executable

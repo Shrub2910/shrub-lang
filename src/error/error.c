@@ -38,6 +38,9 @@ noreturn void error_throw(const enum ErrorType error, const char *error_message)
     case ARGUMENT_ERROR:
       strcat(buffer, "Argument Error: ");
       break;
+    case NAME_ERROR:
+      strcat(buffer, "Name Error: ");
+      break;
     default:
       strcat(buffer, "Unknown Error: ");
       break;

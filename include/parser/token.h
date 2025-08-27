@@ -13,6 +13,9 @@ enum TokenType {
     PRINT_TOKEN,
     DO_TOKEN,
     END_TOKEN,
+    IDENTIFIER_TOKEN,
+    LET_TOKEN,
+    EQUAL_TOKEN,
     NOTHING_TOKEN,
 };
 
@@ -20,6 +23,7 @@ struct Token {
     enum TokenType type;
     union {
         double number;
+        char *string;
     };
 };
 

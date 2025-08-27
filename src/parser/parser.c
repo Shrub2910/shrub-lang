@@ -13,11 +13,13 @@ static struct Statement *parser_statement(struct Parser *parser);
 static struct ExpressionStatement *parser_expression_statement(struct Parser *parser);
 static struct PrintStatement *parser_print_statement(struct Parser *parser);
 static struct BlockStatement *parser_block_statement(struct Parser *parser);
+static struct LetStatement *parser_let_statement(struct Parser *parser);
 static struct Token parser_previous(const struct Parser *parser);
 static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
 static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
 static struct Token parser_peek(const struct Parser *parser);
 static struct Expression *parser_expression(struct Parser *parser);
+static struct Expression *parser_assignment(struct Parser *parser);
 static struct Expression *parser_add(struct Parser *parser);
 static struct Expression *parser_multiply(struct Parser *parser);
 static struct Expression *parser_literal(struct Parser *parser);
@@ -57,6 +59,10 @@ static struct Statement *parser_statement(struct Parser *parser) {
 
     if (parser_match(parser, (enum TokenType[]) {DO_TOKEN}, 1)) {
         return (struct Statement *)parser_block_statement(parser);
+    }
+
+    if (parser_match(parser, (enum TokenType[]) {LET_TOKEN}, 1)) {
+        return (struct Statement *)parser_let_statement(parser);
     }
 
     return (struct Statement *)parser_expression_statement(parser);
@@ -114,7 +120,54 @@ static struct BlockStatement *parser_block_statement(struct Parser *parser) {
     return block_statement;
 }
 
+static struct LetStatement *parser_let_statement(struct Parser *parser) {
+    parser_consume(parser, IDENTIFIER_TOKEN, "Expected identifier");
+    char *identifier_name = parser_previous(parser).string;
+
+    parser_consume(parser, EQUAL_TOKEN, "Expected =");
+
+    struct Expression *expression = parser_expression(parser);
+    parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
+
+    struct LetStatement *let_statement = malloc(sizeof(struct LetStatement));
+
+    if (!let_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for let_statement");
+    }
+
+    let_statement->statement.type = LET_STATEMENT;
+    let_statement->expression = expression;
+    let_statement->identifier_name = identifier_name;
+
+    return let_statement;
+}
+
 static struct Expression *parser_expression(struct Parser *parser) {
+    return parser_assignment(parser);
+}
+
+static struct Expression *parser_assignment(struct Parser *parser) {
+    if (parser_match(parser, (enum TokenType[]){IDENTIFIER_TOKEN}, 1)) {
+        char *identifier_name = parser_previous(parser).string;
+        if (parser_match(parser, (enum TokenType[]){EQUAL_TOKEN}, 1)) {
+            struct AssignmentExpression *assignment_expression =
+                malloc(sizeof(struct AssignmentExpression));
+
+            if (!assignment_expression) {
+                error_throw(MALLOC_ERROR, "Failed to allocate memory for assignment_expression");
+            }
+
+            assignment_expression->expression.type = ASSIGNMENT_EXPRESSION;
+            assignment_expression->identifier_name = identifier_name;
+            assignment_expression->right = parser_assignment(parser);
+
+            return (struct Expression *)assignment_expression;
+        }
+
+        parser->current_token--;
+        parser->index--;
+    }
+
     return parser_add(parser);
 }
 
@@ -174,7 +227,23 @@ static struct Expression *parser_literal(struct Parser *parser) {
 
         const double value = parser_previous(parser).number;
         expression->expression.type = LITERAL_EXPRESSION;
-        expression->value = value;
+        expression->literal_type = NUMBER_LITERAL;
+        expression->number = value;
+
+        return (struct Expression *)expression;
+    }
+
+    if (parser_match(parser, (enum TokenType[]){IDENTIFIER_TOKEN}, 1)) {
+        struct LiteralExpression *expression = malloc(sizeof(struct LiteralExpression));
+
+        if (!expression) {
+            error_throw(MALLOC_ERROR, "Failed to allocate new expression");
+        }
+
+        char *value = parser_previous(parser).string;
+        expression->expression.type = LITERAL_EXPRESSION;
+        expression->literal_type = IDENTIFIER_LITERAL;
+        expression->identifier = value;
 
         return (struct Expression *)expression;
     }

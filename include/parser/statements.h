@@ -8,6 +8,7 @@ enum StatementType {
     PRINT_STATEMENT,
     BLOCK_STATEMENT,
     EXPRESSION_STATEMENT,
+    LET_STATEMENT,
 };
 
 struct Statement {
@@ -22,6 +23,12 @@ struct PrintStatement {
 struct BlockStatement {
     struct Statement statement;
     struct StatementVector *statement_vector;
+};
+
+struct LetStatement {
+    struct Statement statement;
+    char *identifier_name;
+    struct Expression *expression;
 };
 
 struct ExpressionStatement {

@@ -43,9 +43,20 @@ static void print_expression(struct Expression *expression, const size_t indent_
         return;
     }
 
+    if (expression->type == ASSIGNMENT_EXPRESSION) {
+        char *indent = make_indent(indent_count);
+        const struct AssignmentExpression *assignment_expression = (struct AssignmentExpression *)expression;
+
+        printf("%sAssignment(%s)\n", indent, assignment_expression->identifier_name);
+        print_expression(assignment_expression->right, indent_count + 1);
+    }
+
     char *indent = make_indent(indent_count);
     const struct LiteralExpression *literal_expression = (struct LiteralExpression *)expression;
-    printf("%sNumber(%lf)\n", indent, literal_expression->value);
+    switch (literal_expression->literal_type) {
+        case NUMBER_LITERAL: printf("%sNumber(%lf)\n", indent, literal_expression->number); break;
+        case IDENTIFIER_LITERAL: printf("%sIdentifier(%s)\n", indent, literal_expression->identifier); break;
+    }
     free(indent);
 }
 
@@ -66,6 +77,15 @@ static void print_statement(struct Statement *statement, const size_t indent_cou
         printf("%sBlock\n", indent);
 
         print_statements(block_statement->statement_vector, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (statement->type == LET_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct LetStatement *let_statement = (struct LetStatement *)statement;
+        printf("%sLet(%s)\n", indent, let_statement->identifier_name);
+        print_expression(let_statement->expression, indent_count + 1);
         free(indent);
         return;
     }
