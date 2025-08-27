@@ -1,5 +1,5 @@
 let skibidi = "HI";
-skibidi = "GOODBYE";
+skibidi = true;
 do
     let skibidi = 6;
     print skibidi;
