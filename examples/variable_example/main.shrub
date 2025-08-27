@@ -1,7 +1,7 @@
-let skibidi = 5;
-skibidi = 6;
+let skibidi = "HI";
+skibidi = "GOODBYE";
 do
-    let skibidi = 5;
+    let skibidi = 6;
     print skibidi;
 end
 print skibidi;
