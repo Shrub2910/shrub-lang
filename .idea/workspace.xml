@@ -27,26 +27,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/examples/variable_example/main.shrub" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/compiler/environment.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/compiler/scope.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/compiler/envrionment.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/compiler/scope.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/compiler/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/compiler.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/error/error_types.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/error/error_types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/variable_example/main.shrub" beforeDir="false" afterPath="$PROJECT_DIR$/examples/variable_example/main.shrub" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/parser/expressions.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/expressions.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/vm/opcodes.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/opcodes.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/vm/values.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/values.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/error/error.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/error/error.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/hash_tables/keywords.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/hash_tables/keywords.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/token_vector.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/token_vector.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/print_statements.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/print_statements.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1156,7 +1149,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/variables",
+    "git-widget-placeholder": "feature/more-types",
     "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -1168,9 +1161,9 @@
   }
 }]]></component>
   <component name="RunManager" selected="CMake Application.variable example">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="block example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/block_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
@@ -1216,6 +1209,7 @@
       <workItem from="1756244976518" duration="1469000" />
       <workItem from="1756246729644" duration="2460000" />
       <workItem from="1756286526901" duration="19990000" />
+      <workItem from="1756324529325" duration="5495000" />
     </task>
     <servers />
   </component>

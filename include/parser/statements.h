@@ -1,6 +1,8 @@
 #ifndef STATEMENTS_H
 #define STATEMENTS_H
 
+#include <stdbool.h>
+
 #include "expressions.h"
 #include "statement_vector.h"
 
@@ -29,6 +31,8 @@ struct LetStatement {
     struct Statement statement;
     char *identifier_name;
     struct Expression *expression;
+
+    bool is_nil;
 };
 
 struct ExpressionStatement {

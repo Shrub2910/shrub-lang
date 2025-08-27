@@ -1,6 +1,8 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <stdbool.h>
+
 enum TokenType {
     NUMBER_TOKEN,
     PLUS_TOKEN,
@@ -16,14 +18,18 @@ enum TokenType {
     IDENTIFIER_TOKEN,
     LET_TOKEN,
     EQUAL_TOKEN,
+    STRING_TOKEN,
+    BOOLEAN_TOKEN,
+    NIL_TOKEN,
     NOTHING_TOKEN,
 };
 
 struct Token {
     enum TokenType type;
     union {
-        double number;
         char *string;
+        bool boolean;
+        double number;
     };
 };
 

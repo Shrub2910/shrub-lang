@@ -1,7 +1,10 @@
-let skibidi = "HI";
-skibidi = true;
+let x;
+print x;
+
 do
-    let skibidi = 6;
-    print skibidi;
+    x = "sigma";
+    let x = "skibidi";
+    print x;
 end
-print skibidi;
+
+print x;

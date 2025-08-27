@@ -56,6 +56,9 @@ static void print_expression(struct Expression *expression, const size_t indent_
     switch (literal_expression->literal_type) {
         case NUMBER_LITERAL: printf("%sNumber(%lf)\n", indent, literal_expression->number); break;
         case IDENTIFIER_LITERAL: printf("%sIdentifier(%s)\n", indent, literal_expression->identifier); break;
+        case STRING_LITERAL: printf("%sString(%s)\n", indent, literal_expression->string); break;
+        case BOOLEAN_LITERAL: printf("%sBoolean(%d)\n", indent, literal_expression->boolean); break;
+        case NIL_LITERAL: printf("%sNull\n", indent); break;
     }
     free(indent);
 }
@@ -85,7 +88,11 @@ static void print_statement(struct Statement *statement, const size_t indent_cou
         char *indent = make_indent(indent_count);
         const struct LetStatement *let_statement = (struct LetStatement *)statement;
         printf("%sLet(%s)\n", indent, let_statement->identifier_name);
-        print_expression(let_statement->expression, indent_count + 1);
+        if (let_statement->is_nil) {
+            printf("\t%sNull\n", indent);
+        } else {
+            print_expression(let_statement->expression, indent_count + 1);
+        }
         free(indent);
         return;
     }

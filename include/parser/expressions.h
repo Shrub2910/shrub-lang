@@ -1,6 +1,7 @@
 #ifndef EXPRESSIONS_H
 #define EXPRESSIONS_H
 
+#include <stdbool.h>
 #include "token.h"
 
 enum ExpressionType {
@@ -12,6 +13,9 @@ enum ExpressionType {
 enum LiteralType {
     NUMBER_LITERAL,
     IDENTIFIER_LITERAL,
+    STRING_LITERAL,
+    BOOLEAN_LITERAL,
+    NIL_LITERAL,
 };
 
 struct Expression {
@@ -24,6 +28,8 @@ struct LiteralExpression {
     union {
         double number;
         char *identifier;
+        char *string;
+        bool boolean;
     };
 };
 

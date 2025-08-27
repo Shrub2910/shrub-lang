@@ -40,7 +40,7 @@ void parser_token_vector_insert(struct TokenVector *token_vector, const struct T
 void parser_token_vector_free(struct TokenVector *token_vector) {
     for (size_t i = 0; i < token_vector->used; i++) {
         const struct Token *token = token_vector->tokens + i;
-        if (token->type == IDENTIFIER_TOKEN) {
+        if (token->type == IDENTIFIER_TOKEN || token->type == STRING_TOKEN) {
             free(token->string);
         }
     }

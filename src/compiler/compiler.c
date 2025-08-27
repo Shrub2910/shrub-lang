@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "vm/vm.h"
 #include "compiler/compiler.h"
@@ -82,7 +83,15 @@ static void compiler_compile_statement(
                 error_throw(NAME_ERROR, "Can only define variable once per scope");
             }
 
-            compiler_compile_expression(compiler_context, let_statement->expression);
+            if (let_statement->is_nil) {
+                INSERT_INSTRUCTIONS(
+                    compiler_context->instruction_buffer,
+                    PUSH_NIL
+                );
+            } else {
+                compiler_compile_expression(compiler_context, let_statement->expression);
+            }
+
             compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
@@ -188,7 +197,7 @@ static void compiler_compile_literal_expression
 ) {
     switch (expression->literal_type) {
         case NUMBER_LITERAL: {
-            vm_add_const(compiler_context->vm, (struct Value) {.type = TYPE_NUMBER, .number = expression->number});
+            vm_add_const(compiler_context->vm, NUMBER(expression->number));
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 LOAD_CONST,
@@ -205,6 +214,33 @@ static void compiler_compile_literal_expression
             }
 
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, scope_variable->offset);
+            break;
+        }
+        case STRING_LITERAL: {
+            vm_add_const(compiler_context->vm, STRING(expression->string, strlen(expression->string)));
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                LOAD_CONST,
+                compiler_context->vm->constant_count - 1
+            );
+            break;
+        }
+        case BOOLEAN_LITERAL: {
+            vm_add_const(compiler_context->vm, BOOLEAN(expression->boolean));
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                LOAD_CONST,
+                compiler_context->vm->constant_count - 1
+            );
+            break;
+        }
+        case NIL_LITERAL: {
+            vm_add_const(compiler_context->vm, NIL());
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                LOAD_CONST,
+                compiler_context->vm->constant_count - 1
+            );
             break;
         }
     }

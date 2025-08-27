@@ -1,9 +1,9 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include "parser/parser.h"
 
 #include "error/error.h"
 #include "parser/statement_vector.h"
-#include "stdbool.h"
 
 #include "parser/statements.h"
 #include "parser/expressions.h"
@@ -121,19 +121,26 @@ static struct BlockStatement *parser_block_statement(struct Parser *parser) {
 }
 
 static struct LetStatement *parser_let_statement(struct Parser *parser) {
-    parser_consume(parser, IDENTIFIER_TOKEN, "Expected identifier");
-    char *identifier_name = parser_previous(parser).string;
-
-    parser_consume(parser, EQUAL_TOKEN, "Expected =");
-
-    struct Expression *expression = parser_expression(parser);
-    parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
-
     struct LetStatement *let_statement = malloc(sizeof(struct LetStatement));
 
     if (!let_statement) {
         error_throw(MALLOC_ERROR, "Failed to allocate memory for let_statement");
     }
+
+    parser_consume(parser, IDENTIFIER_TOKEN, "Expected identifier");
+    char *identifier_name = parser_previous(parser).string;
+
+    if (!parser_match(parser, (enum TokenType[]){EQUAL_TOKEN}, 1)) {
+        parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
+
+        let_statement->statement.type = LET_STATEMENT;
+        let_statement->identifier_name = identifier_name;
+        let_statement->is_nil = true;
+        return let_statement;
+    }
+
+    struct Expression *expression = parser_expression(parser);
+    parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
 
     let_statement->statement.type = LET_STATEMENT;
     let_statement->expression = expression;
@@ -218,34 +225,50 @@ static struct Expression *parser_multiply(struct Parser *parser) {
 }
 
 static struct Expression *parser_literal(struct Parser *parser) {
+    struct LiteralExpression *literal_expression = malloc(sizeof(struct LiteralExpression));;
+
+    if (!literal_expression) {
+        error_throw(MALLOC_ERROR, "Failed to allocate new expression");
+    }
+
+    literal_expression->expression.type = LITERAL_EXPRESSION;
+
     if (parser_match(parser, (enum TokenType[]){NUMBER_TOKEN}, 1)) {
-        struct LiteralExpression *expression = malloc(sizeof(struct LiteralExpression));
-
-        if (!expression) {
-            error_throw(MALLOC_ERROR, "Failed to allocate new expression");
-        }
-
         const double value = parser_previous(parser).number;
-        expression->expression.type = LITERAL_EXPRESSION;
-        expression->literal_type = NUMBER_LITERAL;
-        expression->number = value;
+        literal_expression->literal_type = NUMBER_LITERAL;
+        literal_expression->number = value;
 
-        return (struct Expression *)expression;
+        return (struct Expression *)literal_expression;
     }
 
     if (parser_match(parser, (enum TokenType[]){IDENTIFIER_TOKEN}, 1)) {
-        struct LiteralExpression *expression = malloc(sizeof(struct LiteralExpression));
-
-        if (!expression) {
-            error_throw(MALLOC_ERROR, "Failed to allocate new expression");
-        }
-
         char *value = parser_previous(parser).string;
-        expression->expression.type = LITERAL_EXPRESSION;
-        expression->literal_type = IDENTIFIER_LITERAL;
-        expression->identifier = value;
+        literal_expression->literal_type = IDENTIFIER_LITERAL;
+        literal_expression->identifier = value;
 
-        return (struct Expression *)expression;
+        return (struct Expression *)literal_expression;
+    }
+
+    if (parser_match(parser, (enum TokenType[]){STRING_TOKEN}, 1)) {
+        char *value = parser_previous(parser).string;
+        literal_expression->literal_type = STRING_LITERAL;
+        literal_expression->string = value;
+
+        return (struct Expression *)literal_expression;
+    }
+
+    if (parser_match(parser, (enum TokenType[]){BOOLEAN_TOKEN}, 1)) {
+        const bool value = parser_previous(parser).boolean;
+        literal_expression->literal_type = BOOLEAN_LITERAL;
+        literal_expression->boolean = value;
+
+        return (struct Expression *)literal_expression;
+    }
+
+    if (parser_match(parser, (enum TokenType[]){NIL_TOKEN}, 1)) {
+        literal_expression->literal_type = NIL_LITERAL;
+
+        return (struct Expression *)literal_expression;
     }
 
     if (parser_match(parser, (enum TokenType[]){L_BRACKET_TOKEN}, 1)) {

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 #include "error/error.h"
 #include "parser/token_vector.h"
 #include "parser/hash_tables/keywords.h"
@@ -16,6 +16,7 @@
 
 static struct Token create_number(struct Lexer *lexer, char previous_char);
 static struct Token create_keyword(struct Lexer *lexer, char previous_char);
+static struct Token create_string(struct Lexer *lexer);
 
 struct CharVector {
     char *string;
@@ -23,7 +24,7 @@ struct CharVector {
     size_t size;
 };
 
-static inline int lexer_has_char(const struct Lexer *lexer) {
+static inline bool lexer_has_char(const struct Lexer *lexer) {
     return lexer->current - lexer->input < lexer->size;
 }
 
@@ -102,6 +103,9 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_insert(&lexer->keywords, "do", DO_TOKEN);
     keywords_insert(&lexer->keywords, "end", END_TOKEN);
     keywords_insert(&lexer->keywords, "let", LET_TOKEN);
+    keywords_insert(&lexer->keywords, "true", BOOLEAN_TOKEN);
+    keywords_insert(&lexer->keywords, "false", BOOLEAN_TOKEN);
+    keywords_insert(&lexer->keywords, "null", NIL_TOKEN);
 
     return lexer;
 }
@@ -118,6 +122,7 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case ')': return (struct Token){.type = R_BRACKET_TOKEN};
         case ';': return (struct Token){.type = SEMI_COLON_TOKEN};
         case '=': return (struct Token){.type = EQUAL_TOKEN};
+        case '"': return create_string(lexer);
 
         default: {
             if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT)
@@ -174,6 +179,33 @@ static struct Token create_keyword(struct Lexer *lexer, const char previous_char
 
     if (token_type == IDENTIFIER_TOKEN)
         token.string = strdup(char_vector->string);
+
+    if (token_type == BOOLEAN_TOKEN) {
+        token.boolean = strcmp(char_vector->string, "true") == 0 ? "true" : "false";
+    }
+
+    char_vector_free(char_vector);
+
+    return token;
+}
+
+static struct Token create_string(struct Lexer *lexer) {
+    struct CharVector *char_vector = char_vector_init();
+
+    while (lexer_has_char(lexer) && lexer_peek(lexer) != '"' && lexer_peek(lexer) != '\n') {
+        char_vector_insert(char_vector, *(lexer->current++));
+    }
+
+    if (lexer_peek(lexer) != '"') {
+        error_throw(LEXICAL_ERROR, "String unterminated");
+    }
+
+    lexer->current++;
+
+    char_vector_insert(char_vector, '\0');
+
+    const enum TokenType token_type = STRING_TOKEN;
+    const struct Token token = {.type = token_type, .string = strdup(char_vector->string)};
 
     char_vector_free(char_vector);
 

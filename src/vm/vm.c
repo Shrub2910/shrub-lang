@@ -69,6 +69,11 @@ static bool compare(const struct Value operand_1, const struct Value operand_2, 
     }
   }
 
+  if (operand_1.type == TYPE_NIL) {
+    // Both types are the same
+    return true; // nil == nil -> true
+  }
+
   return result;
 }
 
@@ -131,6 +136,9 @@ void vm_exec(struct VM *vm) {
             break;
           case TYPE_BOOLEAN:
             printf("%s\n", value_to_print.boolean ? "true" : "false");
+            break;
+          case TYPE_NIL:
+            printf("null\n");
             break;
           default:
             error_throw(TYPE_ERROR, "Object not printable");
@@ -261,13 +269,15 @@ void vm_exec(struct VM *vm) {
 
         struct Value value = vm_pop_stack(vm->stack);
 
-        if (value.type != TYPE_BOOLEAN) {
-          error_throw(TYPE_ERROR, "Jumps must use boolean types");
+        if (value.type == TYPE_NIL) {
+          break;
         }
 
-        if (value.boolean) {
-          vm->program_counter += offset;
+        if (value.type == TYPE_BOOLEAN && !value.boolean) {
+          break;
         }
+
+        vm->program_counter += offset;
         break;
       }
       case JUMP_IF_FALSE: {
@@ -278,13 +288,16 @@ void vm_exec(struct VM *vm) {
 
         struct Value value = vm_pop_stack(vm->stack);
 
-        if (value.type != TYPE_BOOLEAN) {
-          error_throw(TYPE_ERROR, "Jumps must use boolean types");
+        if (value.type == TYPE_NIL) {
+          vm->program_counter += offset;
+          break;
         }
 
-        if (!value.boolean) {
+        if (value.type == TYPE_BOOLEAN && !value.boolean) {
           vm->program_counter += offset;
+          break;
         }
+
         break;
       }
       // Compares values and pushes a boolean to the top of the vm_pop_stack
@@ -303,6 +316,10 @@ void vm_exec(struct VM *vm) {
       }
       case POP_TOP: {
         vm_pop_stack(vm->stack);
+        break;
+      }
+      case PUSH_NIL: {
+        vm_push_stack(vm->stack, NIL());
         break;
       }
       default: {
