@@ -26,4 +26,6 @@
 #define PUSH_NIL 0x16
 #define NEGATE 0x17
 #define NOT 0x18
+#define OR 0x19
+#define AND 0x1A
 #endif 

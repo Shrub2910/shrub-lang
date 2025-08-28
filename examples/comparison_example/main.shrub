@@ -1,9 +1,8 @@
 let x = 5;
-let y = x;
+let y = 7;
+let z = 11;
 
-print x == y;
-print x != y;
-print x > y;
-print x < y;
-print x >= y;
-print x <= y;
+print x > y and z;
+print x < y and z;
+print x > y or z;
+print x < y or z;

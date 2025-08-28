@@ -37,11 +37,12 @@ int main(const int argc, char **argv) {
 
   compiler_compile_statements(&compiler_context, parser->statement_vector);
 
-  vm_exec(vm);
-
   lexer_free(lexer);
   parser_free(parser);
   compiler_free_environment(&environment);
+
+  vm_exec(vm);
+
   vm_free(vm);
   free(shrub_file.contents);
 

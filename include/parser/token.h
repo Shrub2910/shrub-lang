@@ -28,6 +28,8 @@ enum TokenType {
     LESS_EQUAL_TOKEN,
     NIL_TOKEN,
     BANG_TOKEN,
+    AND_TOKEN,
+    OR_TOKEN,
     NOTHING_TOKEN,
 };
 

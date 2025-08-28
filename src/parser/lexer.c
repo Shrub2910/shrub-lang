@@ -105,6 +105,8 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_insert(&lexer->keywords, "let", LET_TOKEN);
     keywords_insert(&lexer->keywords, "true", BOOLEAN_TOKEN);
     keywords_insert(&lexer->keywords, "false", BOOLEAN_TOKEN);
+    keywords_insert(&lexer->keywords, "and", AND_TOKEN);
+    keywords_insert(&lexer->keywords, "or", OR_TOKEN);
     keywords_insert(&lexer->keywords, "null", NIL_TOKEN);
 
     return lexer;

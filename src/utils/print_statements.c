@@ -34,6 +34,14 @@ static void print_expression(struct Expression *expression, const size_t indent_
             case MINUS_TOKEN: printf("%sBin(-)\n", indent); break;
             case TIMES_TOKEN: printf("%sBin(*)\n", indent); break;
             case DIVIDE_TOKEN: printf("%sBin(/)\n", indent); break;
+            case DOUBLE_EQUAL_TOKEN: printf("%sBin(==)\n", indent); break;
+            case NOT_EQUAL_TOKEN: printf("%sBin(!=)\n", indent); break;
+            case LESS_TOKEN: printf("%sBin(<)\n", indent); break;
+            case GREATER_TOKEN: printf("%sBin(>)\n", indent); break;
+            case GREATER_EQUAL_TOKEN: printf("%sBin(>=)\n", indent); break;
+            case LESS_EQUAL_TOKEN: printf("%sBin(<=)\n", indent); break;
+            case AND_TOKEN: printf("%sBin(&&)\n", indent); break;
+            case OR_TOKEN: printf("%sBin(||)\n", indent); break;
             default: break;
         }
 

@@ -41,12 +41,13 @@ void keywords_insert(struct KeywordsTable *keywords, const char *key, const enum
 }
 
 enum TokenType keywords_index(const struct KeywordsTable *keywords, const char *key) {
-    const size_t index = hash_string(key) % KEYWORDS_TABLE_SIZE;
+    size_t index = hash_string(key) % KEYWORDS_TABLE_SIZE;
 
     while (keywords->table[index].key != NULL) {
         if (strcmp(keywords->table[index].key , key) == 0) {
             return keywords->table[index].type;
         }
+        index = (index + 1) % KEYWORDS_TABLE_SIZE;
     }
 
     return IDENTIFIER_TOKEN;

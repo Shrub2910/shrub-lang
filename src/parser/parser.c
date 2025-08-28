@@ -19,6 +19,8 @@ static void parser_consume(struct Parser *parser, enum TokenType type, const cha
 static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
 static struct Token parser_peek(const struct Parser *parser);
 static struct Expression *parser_expression(struct Parser *parser);
+static struct Expression *parser_or(struct Parser *parser);
+struct Expression *parser_and(struct Parser *parser);
 static struct Expression *parser_comparison(struct Parser *parser);
 static struct Expression *parser_assignment(struct Parser *parser);
 static struct Expression *parser_add(struct Parser *parser);
@@ -168,7 +170,7 @@ static struct Expression *parser_assignment(struct Parser *parser) {
 
             assignment_expression->expression.type = ASSIGNMENT_EXPRESSION;
             assignment_expression->identifier_name = identifier_name;
-            assignment_expression->right = parser_assignment(parser);
+            assignment_expression->right = parser_or(parser);
 
             return (struct Expression *)assignment_expression;
         }
@@ -177,7 +179,53 @@ static struct Expression *parser_assignment(struct Parser *parser) {
         parser->index--;
     }
 
-    return parser_comparison(parser);
+    return parser_or(parser);
+}
+
+static struct Expression *parser_or(struct Parser *parser) {
+    struct Expression *left = parser_and(parser);
+
+    while (parser_match(parser, (enum TokenType[]){OR_TOKEN}, 1)) {
+        const enum TokenType operator = parser_previous(parser).type;
+        struct Expression *right = parser_and(parser);
+        struct BinaryExpression *new_left = malloc(sizeof(struct BinaryExpression));
+
+        if (!new_left) {
+            error_throw(MALLOC_ERROR, "Failed to allocate memory for binary_expression");
+        }
+
+        new_left->expression.type = BINARY_EXPRESSION;
+        new_left->operator = operator;
+        new_left->left = left;
+        new_left->right = right;
+
+        left = (struct Expression *)new_left;
+    }
+
+    return left;
+}
+
+struct Expression *parser_and(struct Parser *parser) {
+    struct Expression *left = parser_comparison(parser);
+
+    while (parser_match(parser, (enum TokenType[]){AND_TOKEN}, 1)) {
+        const enum TokenType operator = parser_previous(parser).type;
+        struct Expression *right = parser_comparison(parser);
+        struct BinaryExpression *new_left = malloc(sizeof(struct BinaryExpression));
+
+        if (!new_left) {
+            error_throw(MALLOC_ERROR, "Failed to allocate memory for binary_expression");
+        }
+
+        new_left->expression.type = BINARY_EXPRESSION;
+        new_left->operator = operator;
+        new_left->left = left;
+        new_left->right = right;
+
+        left = (struct Expression *)new_left;
+    }
+
+    return left;
 }
 
 static struct Expression *parser_comparison(struct Parser *parser) {

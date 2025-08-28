@@ -18,65 +18,8 @@
 
 #define READ_BYTE() (*(vm->program_counter++))
 
-// To be called for all comparison operations 
-static bool compare(const struct Value operand_1, const struct Value operand_2, const uint8_t opcode) {
-  if (operand_1.type != operand_2.type) {
-    // NOT_EQUAL is the only instruction that can return true
-    return opcode == NOT_EQUAL;
-  }
-
-  bool result = false;
-
-  if (operand_1.type == TYPE_NUMBER) {
-    switch (opcode) {
-      case EQUAL: result = operand_1.number == operand_2.number; break;
-      case NOT_EQUAL: result = operand_1.number != operand_2.number; break;
-      case GREATER: result = operand_1.number > operand_2.number; break;
-      case LESS: result = operand_1.number < operand_2.number; break;
-      case GREATER_EQUAL: result = operand_1.number >= operand_2.number; break;
-      case LESS_EQUAL: result = operand_1.number <= operand_2.number; break;
-      default: result = false;
-    }
-  }
-
-  if (operand_1.type == TYPE_BOOLEAN) {
-    switch (opcode) {
-      case EQUAL: result = operand_1.boolean == operand_2.boolean; break;
-      case NOT_EQUAL: result = operand_1.boolean != operand_2.boolean; break;
-      case GREATER: result = operand_1.boolean > operand_2.boolean; break;
-      case LESS: result = operand_1.boolean < operand_2.boolean; break;
-      case GREATER_EQUAL: result = operand_1.boolean >= operand_2.boolean; break;
-      case LESS_EQUAL: result = operand_1.boolean <= operand_2.boolean; break;
-      default: result = false;
-    }
-  }
-  
-  // Uses strcmp to evaluate equality, inequality and lexicographical ordering
-  if (operand_1.type == TYPE_STRING) {
-    switch (opcode) {
-      case EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) == 0;
-        break;
-      case NOT_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) != 0;
-				break;
-      case GREATER: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) > 0;
-				break;
-      case LESS: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) < 0;
-				break;
-      case GREATER_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) >= 0;
-				break;
-      case LESS_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) <= 0;
-				break;
-      default: result = false;
-    }
-  }
-
-  if (operand_1.type == TYPE_NIL) {
-    // Both types are the same
-    return true; // nil == nil -> true
-  }
-
-  return result;
-}
+static bool compare(struct Value operand_1, struct Value operand_2, uint8_t opcode);
+static bool is_falsy(struct Value operand);
 
 // Returns a preconfigured vm struct to be used in the main function 
 struct VM *vm_init(void) {
@@ -250,6 +193,32 @@ void vm_exec(struct VM *vm) {
         object_release(operand_2);
         break;
       }
+      case OR : {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (is_falsy(operand_1)) {
+          object_release(operand_1);
+          vm_push_stack(vm->stack, operand_2);
+        } else {
+          object_release(operand_2);
+          vm_push_stack(vm->stack, operand_1);
+        }
+        break;
+      }
+      case AND: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (is_falsy(operand_1)) {
+          object_release(operand_2);
+          vm_push_stack(vm->stack, operand_1);
+        } else {
+          object_release(operand_1);
+          vm_push_stack(vm->stack, operand_2);
+        }
+        break;
+      }
       // Will store a variable at an offset to the frame pointer
       case STORE_VAR: {
         struct Value value = vm_pop_stack(vm->stack);
@@ -386,10 +355,7 @@ void vm_exec(struct VM *vm) {
       case NOT: {
         struct Value value = vm_pop_stack(vm->stack);
 
-        if (value.type == TYPE_NIL) {
-          vm_push_stack(vm->stack, BOOLEAN(true));
-        }
-        else if (value.type == TYPE_BOOLEAN && !value.boolean) {
+        if (value.type == TYPE_NIL || value.type == TYPE_BOOLEAN && !value.boolean) {
           vm_push_stack(vm->stack, BOOLEAN(true));
         }
         else {
@@ -443,4 +409,69 @@ void vm_free(struct VM *vm) {
   vm_pop_frame(&vm->stack_frame, &vm->program_counter);
 
   free(vm);
+}
+
+// To be called for all comparison operations
+static bool compare(const struct Value operand_1, const struct Value operand_2, const uint8_t opcode) {
+  if (operand_1.type != operand_2.type) {
+    // NOT_EQUAL is the only instruction that can return true
+    return opcode == NOT_EQUAL;
+  }
+
+  bool result = false;
+
+  if (operand_1.type == TYPE_NUMBER) {
+    switch (opcode) {
+      case EQUAL: result = operand_1.number == operand_2.number; break;
+      case NOT_EQUAL: result = operand_1.number != operand_2.number; break;
+      case GREATER: result = operand_1.number > operand_2.number; break;
+      case LESS: result = operand_1.number < operand_2.number; break;
+      case GREATER_EQUAL: result = operand_1.number >= operand_2.number; break;
+      case LESS_EQUAL: result = operand_1.number <= operand_2.number; break;
+      default: result = false;
+    }
+  }
+
+  if (operand_1.type == TYPE_BOOLEAN) {
+    switch (opcode) {
+      case EQUAL: result = operand_1.boolean == operand_2.boolean; break;
+      case NOT_EQUAL: result = operand_1.boolean != operand_2.boolean; break;
+      case GREATER: result = operand_1.boolean > operand_2.boolean; break;
+      case LESS: result = operand_1.boolean < operand_2.boolean; break;
+      case GREATER_EQUAL: result = operand_1.boolean >= operand_2.boolean; break;
+      case LESS_EQUAL: result = operand_1.boolean <= operand_2.boolean; break;
+      default: result = false;
+    }
+  }
+
+  // Uses strcmp to evaluate equality, inequality and lexicographical ordering
+  if (operand_1.type == TYPE_STRING) {
+    switch (opcode) {
+      case EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) == 0;
+        break;
+      case NOT_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) != 0;
+				break;
+      case GREATER: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) > 0;
+				break;
+      case LESS: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) < 0;
+				break;
+      case GREATER_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) >= 0;
+				break;
+      case LESS_EQUAL: result = strcmp(operand_1.string->buffer, operand_2.string->buffer) <= 0;
+				break;
+      default: result = false;
+    }
+  }
+
+  if (operand_1.type == TYPE_NIL) {
+    // Both types are the same
+    return true; // nil == nil -> true
+  }
+
+  return result;
+}
+
+static bool is_falsy(const struct Value operand) {
+  return operand.type == TYPE_NIL
+    || operand.type == TYPE_BOOLEAN && !operand.boolean;
 }

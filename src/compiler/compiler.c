@@ -219,6 +219,14 @@ static void compiler_compile_binary_expression(
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER_EQUAL);
             break;
         }
+        case AND_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, AND);
+            break;
+        }
+        case OR_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, OR);
+            break;
+        }
         default: break;
     }
 }
