@@ -121,7 +121,33 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case '(': return (struct Token){.type = L_BRACKET_TOKEN};
         case ')': return (struct Token){.type = R_BRACKET_TOKEN};
         case ';': return (struct Token){.type = SEMI_COLON_TOKEN};
-        case '=': return (struct Token){.type = EQUAL_TOKEN};
+        case '=': {
+            if (lexer_peek(lexer) == '=') {
+                lexer->current++;
+                return (struct Token){.type =  DOUBLE_EQUAL_TOKEN};
+            }
+            return (struct Token){.type = EQUAL_TOKEN};
+        }
+        case '>': {
+            if (lexer_peek(lexer) == '=') {
+                lexer->current++;
+                return (struct Token){.type = GREATER_EQUAL_TOKEN};
+            }
+            return (struct Token){.type = GREATER_TOKEN};
+        }
+        case '<': {
+            if (lexer_peek(lexer) == '=') {
+                lexer->current++;
+                return (struct Token){.type = LESS_EQUAL_TOKEN};
+            }
+            return (struct Token){.type = LESS_TOKEN};
+        }
+        case '!': {
+            if (lexer_peek(lexer) == '=') {
+                lexer->current++;
+                return (struct Token){.type = NOT_EQUAL_TOKEN};
+            }
+        }
         case '"': return create_string(lexer);
 
         default: {

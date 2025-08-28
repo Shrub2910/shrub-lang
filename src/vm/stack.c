@@ -34,12 +34,6 @@ void vm_push_stack(struct Stack *stack, struct Value value) {
   }
 
   stack->stack_pointer[stack->used++] = value;
-
-  if (value.type == TYPE_STRING) {
-    string_retain(value.string);
-  } else if (value.type == TYPE_FUNCTION) {
-    function_retain(value.function);
-  }
 }
 
 // Used by many instructions to pop a value from the stack 
@@ -49,12 +43,6 @@ struct Value vm_pop_stack(struct Stack *stack) {
   }
 
   const struct Value value = stack->stack_pointer[--stack->used];
-  
-  if (value.type == TYPE_STRING) {
-    string_release(value.string);
-  } else if (value.type == TYPE_FUNCTION) {
-    function_retain(value.function);
-  }
 
   return value;
 }

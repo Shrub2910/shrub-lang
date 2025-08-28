@@ -46,6 +46,8 @@ set(SOURCES
         src/compiler/scope.c
         include/compiler/environment.h
         src/compiler/envrionment.c
+        src/objects/reference_counter.c
+        include/objects/reference_counter.h
 )
 
 # Create executable

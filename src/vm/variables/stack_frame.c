@@ -6,6 +6,7 @@
 #include "vm/values.h"
 #include "objects/string.h"
 #include "objects/function.h"
+#include "objects/reference_counter.h"
 
 // Allocate and initialise new stack frame for function call or top level scope
 // data[0] = return address 
@@ -41,18 +42,10 @@ struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t off
 
 // Set the value of a local variable on the stack frame
 void vm_set_local(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
-  // If heap allocated object already defined release it
   if (stack_frame->data[offset].string != NULL) {
     string_release(stack_frame->data[offset].string);
   } else if (stack_frame->data[offset].function != NULL) {
     function_release(stack_frame->data[offset].function);
-  }
-
-  // Ensure heap allocated objects continue to live
-  if (value.type == TYPE_STRING) {
-    string_retain(value.string);
-  } else if (value.type == TYPE_FUNCTION) {
-    function_retain(value.function);
   }
 
   stack_frame->data[stack_frame->num_args + offset] = value;
@@ -65,11 +58,10 @@ struct Value vm_get_arg(const struct StackFrame *stack_frame, const size_t offse
 
 // Set the value of an argument on the stack frame 
 void vm_set_arg(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
-  // Ensure heap allocated objects continue to live
-  if (value.type == TYPE_STRING) {
-    string_retain(value.string);
-  } else if (value.type == TYPE_FUNCTION) {
-    function_retain(value.function);
+  if (stack_frame->data[offset].string != NULL) {
+    string_release(stack_frame->data[offset].string);
+  } else if (stack_frame->data[offset].function != NULL) {
+    function_release(stack_frame->data[offset].function);
   }
 
   stack_frame->data[offset] = value;
@@ -111,11 +103,7 @@ void vm_free_frame(struct StackFrame *stack_frame) {
   // Ensure heap allocated objects are released if necessary
   for (size_t i = 1; i < (stack_frame->num_locals + stack_frame->num_args); ++i) {
     const struct Value value = stack_frame->data[i];
-    if (value.type == TYPE_STRING) {
-      string_release(value.string);
-    } else if (value.type == TYPE_FUNCTION) {
-      function_retain(value.function);
-    } 
+    object_release(value);
   }
 
   stack_frame->previous_stack_frame = NULL;

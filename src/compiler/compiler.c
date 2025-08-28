@@ -103,7 +103,7 @@ static void compiler_compile_statement(
         case EXPRESSION_STATEMENT: {
             const struct ExpressionStatement *expression_statement = (const struct ExpressionStatement *)statement;
             compiler_compile_expression(compiler_context, expression_statement->expression);
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, POP_TOP);
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, DISCARD);
             break;
         }
     }
@@ -184,6 +184,30 @@ static void compiler_compile_binary_expression(
         }
         case DIVIDE_TOKEN: {
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, DIV);
+            break;
+        }
+        case DOUBLE_EQUAL_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, EQUAL);
+            break;
+        }
+        case NOT_EQUAL_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NOT_EQUAL);
+            break;
+        }
+        case LESS_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LESS);
+            break;
+        }
+        case GREATER_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER);
+            break;
+        }
+        case LESS_EQUAL_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LESS_EQUAL);
+            break;
+        }
+        case GREATER_EQUAL_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER_EQUAL);
             break;
         }
         default: break;

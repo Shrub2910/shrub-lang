@@ -1,6 +1,8 @@
 #ifndef STRING_H
 #define STRING_H
 
+#include <stddef.h>
+
 struct String {
   char *buffer;
   size_t length;

@@ -14,6 +14,7 @@
 #include "objects/function.h"
 #include "utils/operand_conversion.h"
 #include "vm/variables/stack_frame.h"
+#include "objects/reference_counter.h"
 
 #define READ_BYTE() (*(vm->program_counter++))
 
@@ -143,12 +144,15 @@ void vm_exec(struct VM *vm) {
           default:
             error_throw(TYPE_ERROR, "Object not printable");
         }
+        object_release(value_to_print);
         break;
       }
       // Push constants onto the stack 
       case LOAD_CONST: {
         uint8_t const_index = READ_BYTE();
         struct Value value = vm->constants[const_index];
+
+        object_retain(value);
 
         vm_push_stack(vm->stack, value);
 
@@ -168,6 +172,34 @@ void vm_exec(struct VM *vm) {
           double result = operand_1.number + operand_2.number;
           vm_push_stack(vm->stack, NUMBER(result));
         }
+
+        if (operand_1.type == TYPE_BOOLEAN) {
+          double result = operand_1.boolean + operand_2.boolean;
+          vm_push_stack(vm->stack, NUMBER(result));
+        }
+
+        if (operand_1.type == TYPE_NIL) {
+          vm_push_stack(vm->stack, NIL());
+        }
+
+        if (operand_1.type == TYPE_STRING) {
+          char *str1 = operand_1.string->buffer;
+          char *str2 = operand_2.string->buffer;
+
+          size_t size = strlen(str1) + strlen(str2);
+
+          char *new_string = malloc(size + 1);
+          new_string[0] = '\0';
+
+          strcat(new_string, str1);
+          strcat(new_string, str2);
+
+          vm_push_stack(vm->stack, STRING(new_string, size));
+        }
+
+        object_release(operand_1);
+        object_release(operand_2);
+
         break;
       }
       case SUB: {
@@ -182,6 +214,8 @@ void vm_exec(struct VM *vm) {
           double result = operand_1.number - operand_2.number;
           vm_push_stack(vm->stack, NUMBER(result));
         }
+        object_release(operand_1);
+        object_release(operand_2);
         break;
       }
       case MUL: {
@@ -196,6 +230,8 @@ void vm_exec(struct VM *vm) {
           double result = operand_1.number * operand_2.number;
           vm_push_stack(vm->stack, NUMBER(result));
         }
+        object_release(operand_1);
+        object_release(operand_2);
         break;
       }
       case DIV: {
@@ -210,6 +246,8 @@ void vm_exec(struct VM *vm) {
           double result = operand_1.number / operand_2.number;
           vm_push_stack(vm->stack, NUMBER(result));
         }
+        object_release(operand_1);
+        object_release(operand_2);
         break;
       }
       // Will store a variable at an offset to the frame pointer
@@ -217,14 +255,15 @@ void vm_exec(struct VM *vm) {
         struct Value value = vm_pop_stack(vm->stack);
         size_t offset = READ_BYTE();
         
-        vm_set_local(vm->stack_frame, offset, value); 
+        vm_set_local(vm->stack_frame, offset, value);
+        object_release(value);
         break;
       }
       // Will load a variable at an offset to the frame pointer  
       case LOAD_VAR: {
         size_t offset = READ_BYTE();
         struct Value value = vm_get_local(vm->stack_frame, offset);
-
+        object_retain(value);
         vm_push_stack(vm->stack, value);
         break;
       }
@@ -232,7 +271,7 @@ void vm_exec(struct VM *vm) {
       case LOAD_ARG: {
         size_t offset = READ_BYTE();
         struct Value value = vm_get_arg(vm->stack_frame, offset);
-
+        object_retain(value);
         vm_push_stack(vm->stack, value);
         break;
       }
@@ -241,7 +280,8 @@ void vm_exec(struct VM *vm) {
       // Stack underflow will occur if insufficient arguments are provided
       case CALL: {
         struct Value value = vm_pop_stack(vm->stack);
-        function_call(value.function, vm); 
+        function_call(value.function, vm);
+        object_release(value);
         break;
       }
       // Pops the current stack frame 
@@ -278,6 +318,7 @@ void vm_exec(struct VM *vm) {
         }
 
         vm->program_counter += offset;
+        object_release(value);
         break;
       }
       case JUMP_IF_FALSE: {
@@ -297,7 +338,7 @@ void vm_exec(struct VM *vm) {
           vm->program_counter += offset;
           break;
         }
-
+        object_release(value);
         break;
       }
       // Compares values and pushes a boolean to the top of the vm_pop_stack
@@ -312,14 +353,18 @@ void vm_exec(struct VM *vm) {
         struct Value operand_1 = vm_pop_stack(vm->stack);
         
         vm_push_stack(vm->stack, BOOLEAN(compare(operand_1, operand_2, current_instruction)));
-        break;
-      }
-      case POP_TOP: {
-        vm_pop_stack(vm->stack);
+        object_release(operand_1);
+        object_release(operand_2);
         break;
       }
       case PUSH_NIL: {
         vm_push_stack(vm->stack, NIL());
+        break;
+      }
+      case DISCARD: {
+        struct Value value = vm_pop_stack(vm->stack);
+
+        object_release(value);
         break;
       }
       default: {
@@ -335,7 +380,7 @@ void vm_add_const(struct VM *vm, const struct Value value) {
   if (vm->constant_count == CONST_POOL_SIZE) {
     printf("Error Too Many Constants!"); // TEMPORARY
   }
-  
+
   vm->constants[vm->constant_count++] = value; 
 }
 
@@ -344,9 +389,7 @@ void vm_free_consts(struct VM *vm) {
   for (size_t i = 0; i < vm->constant_count; ++i) {
     const struct Value value = vm->constants[i];
 
-    if (value.type == TYPE_STRING) {
-      string_free(value.string);
-    }
+    object_release(value);
   }
 
   free(vm->constants);
@@ -364,6 +407,8 @@ void vm_free(struct VM *vm) {
 
   vm_free_stack(vm->stack);
   vm->stack = NULL;
+
+  vm_pop_frame(&vm->stack_frame, &vm->program_counter);
 
   free(vm);
 }
