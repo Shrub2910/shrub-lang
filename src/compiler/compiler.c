@@ -149,6 +149,24 @@ static void compiler_compile_statement(
             } else {
                 patch_jump_position(instruction_buffer, jf_position, get_current_position(instruction_buffer));
             }
+            break;
+        }
+        case WHILE_STATEMENT: {
+            const struct WhileStatement *while_statement = (const struct WhileStatement *)statement;
+            struct InstructionBuffer *instruction_buffer = compiler_context->instruction_buffer;
+
+            const size_t j_position = get_current_position(instruction_buffer);
+            compiler_compile_expression(compiler_context, while_statement->condition);
+            INSERT_INSTRUCTIONS(instruction_buffer, JUMP_IF_FALSE, 0, 0);
+            const size_t jf_position = get_jump_position(instruction_buffer);
+            compiler_compile_statement(compiler_context, (struct Statement *)while_statement->body);
+            INSERT_INSTRUCTIONS(
+                instruction_buffer,
+                JUMP,
+                FROM_SIGNED_WORD(j_position - (get_current_position(instruction_buffer) + 3))
+            );
+            patch_jump_position(instruction_buffer, jf_position, get_current_position(instruction_buffer));
+            break;
         }
     }
 }

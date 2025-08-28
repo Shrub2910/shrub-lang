@@ -34,6 +34,7 @@ enum TokenType {
     ELSE_IF_TOKEN,
     ELSE_TOKEN,
     THEN_TOKEN,
+    WHILE_TOKEN,
     NOTHING_TOKEN,
 };
 

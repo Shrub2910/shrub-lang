@@ -15,6 +15,7 @@ static struct PrintStatement *parser_print_statement(struct Parser *parser);
 static struct BlockStatement *parser_block_statement(struct Parser *parser);
 static struct LetStatement *parser_let_statement(struct Parser *parser);
 static struct IfStatement *parser_if_statement(struct Parser *parser);
+static struct WhileStatement *parser_while_statement(struct Parser *parser);
 static struct Token parser_previous(const struct Parser *parser);
 static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
 static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
@@ -73,6 +74,10 @@ static struct Statement *parser_statement(struct Parser *parser) {
 
     if (parser_match(parser, (enum TokenType[]) {IF_TOKEN}, 1)) {
         return (struct Statement *)parser_if_statement(parser);
+    }
+
+    if (parser_match(parser, (enum TokenType[]) {WHILE_TOKEN}, 1)) {
+        return (struct Statement *)parser_while_statement(parser);
     }
 
     return (struct Statement *)parser_expression_statement(parser);
@@ -186,6 +191,25 @@ static struct IfStatement *parser_if_statement(struct Parser *parser) {
     }
 
     return if_statement;
+}
+
+static struct WhileStatement *parser_while_statement(struct Parser *parser) {
+    struct WhileStatement *while_statement = malloc(sizeof(struct WhileStatement));
+
+    if (!while_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for while statement");
+    }
+
+    while_statement->statement.type = WHILE_STATEMENT;
+    while_statement->condition = parser_expression(parser);
+
+    parser_consume(parser, DO_TOKEN, "Expected do token");
+
+    while_statement->body = parser_block_statement(parser);
+
+    parser_consume(parser, END_TOKEN, "Expected end of while statement");
+
+    return while_statement;
 }
 
 static struct Expression *parser_expression(struct Parser *parser) {

@@ -112,6 +112,7 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_insert(&lexer->keywords, "else", ELSE_TOKEN);
     keywords_insert(&lexer->keywords, "elseif", ELSE_IF_TOKEN);
     keywords_insert(&lexer->keywords, "then", THEN_TOKEN);
+    keywords_insert(&lexer->keywords, "while", WHILE_TOKEN);
 
     return lexer;
 }
@@ -214,7 +215,7 @@ static struct Token create_keyword(struct Lexer *lexer, const char previous_char
         token.string = strdup(char_vector->string);
 
     if (token_type == BOOLEAN_TOKEN) {
-        token.boolean = strcmp(char_vector->string, "true") == 0 ? "true" : "false";
+        token.boolean = strcmp(char_vector->string, "true") == 0 ? true : false;
     }
 
     char_vector_free(char_vector);
