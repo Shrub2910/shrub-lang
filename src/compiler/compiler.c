@@ -189,6 +189,7 @@ static void compiler_compile_expression(
                 compiler_context,
                 (struct AssignmentExpression *)expression
             );
+            break;
         }
         case BINARY_EXPRESSION:
             compiler_compile_binary_expression(
@@ -201,6 +202,7 @@ static void compiler_compile_expression(
                 compiler_context,
                 (struct UnaryExpression *) expression
             );
+            break;
         case LITERAL_EXPRESSION:
             compiler_compile_literal_expression(
                 compiler_context,
@@ -283,6 +285,10 @@ static void compiler_compile_binary_expression(
         }
         case OR_TOKEN: {
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, OR);
+            break;
+        }
+        case MOD_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, MOD);
             break;
         }
         default: break;

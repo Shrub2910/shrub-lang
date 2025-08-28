@@ -66,6 +66,7 @@ static struct Statement *parser_statement(struct Parser *parser) {
     if (parser_match(parser, (enum TokenType[]) {DO_TOKEN}, 1)) {
         struct Statement *statement = (struct Statement *)parser_block_statement(parser);
         parser_consume(parser, END_TOKEN, "Expected end");
+        return statement;
     }
 
     if (parser_match(parser, (enum TokenType[]) {LET_TOKEN}, 1)) {
@@ -343,7 +344,7 @@ static struct Expression *parser_add(struct Parser *parser) {
 static struct Expression *parser_multiply(struct Parser *parser) {
     struct Expression *left = parser_unary(parser);
 
-    while (parser_match(parser, (enum TokenType[]){TIMES_TOKEN, DIVIDE_TOKEN}, 2)) {
+    while (parser_match(parser, (enum TokenType[]){TIMES_TOKEN, DIVIDE_TOKEN, MOD_TOKEN}, 3)) {
         const enum TokenType operator = parser_previous(parser).type;
         struct Expression *right = parser_unary(parser);
         struct BinaryExpression *new_left = malloc(sizeof(struct BinaryExpression));

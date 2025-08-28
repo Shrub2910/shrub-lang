@@ -125,6 +125,7 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case '*': return (struct Token){.type = TIMES_TOKEN};
         case '-': return (struct Token){.type = MINUS_TOKEN};
         case '/': return (struct Token){.type = DIVIDE_TOKEN};
+        case '%': return (struct Token){.type = MOD_TOKEN};
         case '(': return (struct Token){.type = L_BRACKET_TOKEN};
         case ')': return (struct Token){.type = R_BRACKET_TOKEN};
         case ';': return (struct Token){.type = SEMI_COLON_TOKEN};

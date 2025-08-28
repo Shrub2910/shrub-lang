@@ -1,4 +1,0 @@
-let x = "Hello ";
-let y = "world";
-
-print x + y;

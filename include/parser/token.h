@@ -35,6 +35,7 @@ enum TokenType {
     ELSE_TOKEN,
     THEN_TOKEN,
     WHILE_TOKEN,
+    MOD_TOKEN,
     NOTHING_TOKEN,
 };
 

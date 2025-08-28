@@ -52,3 +52,10 @@ set(SOURCES
 
 # Create executable
 add_executable(shrub_lang ${SOURCES})
+target_link_libraries(shrub_lang m)
+
+target_compile_options(shrub_lang PRIVATE
+        $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Wimplicit-fallthrough -Wshadow -Wpedantic>
+        $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Wimplicit-fallthrough -Wshadow -Wpedantic>
+        $<$<C_COMPILER_ID:MSVC>:/W4 /permissive->
+)

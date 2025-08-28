@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "vm/instruction_buffer.h"
 #include "vm/opcodes.h"
@@ -217,6 +218,24 @@ void vm_exec(struct VM *vm) {
           object_release(operand_1);
           vm_push_stack(vm->stack, operand_2);
         }
+        break;
+      }
+      case MOD: {
+        struct Value operand_2 = vm_pop_stack(vm->stack);
+        struct Value operand_1 = vm_pop_stack(vm->stack);
+
+        if (!VALUES_ARE_SAME_TYPE(operand_1, operand_2)) {
+          error_throw(TYPE_ERROR, "Attempt to divide values of different types");
+        }
+
+        if (operand_1.type == TYPE_NUMBER) {
+          double result = fmod(operand_1.number, operand_2.number);
+          vm_push_stack(vm->stack, NUMBER(result));
+        }
+
+        object_release(operand_1);
+        object_release(operand_2);
+
         break;
       }
       // Will store a variable at an offset to the frame pointer

@@ -28,4 +28,5 @@
 #define NOT 0x18
 #define OR 0x19
 #define AND 0x1A
+#define MOD 0x1B
 #endif 

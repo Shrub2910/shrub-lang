@@ -42,6 +42,7 @@ static void print_expression(struct Expression *expression, const size_t indent_
             case LESS_EQUAL_TOKEN: printf("%sBin(<=)\n", indent); break;
             case AND_TOKEN: printf("%sBin(&&)\n", indent); break;
             case OR_TOKEN: printf("%sBin(||)\n", indent); break;
+            case MOD_TOKEN: printf("%sBin(%%)\n", indent); break;
             default: break;
         }
 
@@ -114,6 +115,16 @@ static void print_statement(struct Statement *statement, const size_t indent_cou
         if (if_statement->else_block) {
             print_statement(if_statement->else_block, indent_count + 1);
         }
+        free(indent);
+        return;
+    }
+
+    if (statement->type == WHILE_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct WhileStatement *while_statement = (struct WhileStatement *)statement;
+        printf("%sWhile\n", indent);
+        print_expression(while_statement->condition, indent_count + 1);
+        print_statement((struct Statement *)while_statement->body, indent_count + 1);
         free(indent);
         return;
     }
