@@ -27,20 +27,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/examples/addition_example/main.shrub" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/comparison_example/main.shrub" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/include/objects/reference_counter.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/objects/reference_counter.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/unary_example/main.shrub" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/objects/string.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/objects/string.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/addition_example/main.shrub" beforeDir="false" afterPath="$PROJECT_DIR$/examples/addition_example/main.shrub" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/parser/expressions.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/expressions.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/vm/opcodes.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/opcodes.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/stack.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/stack.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,6 +88,7 @@
     "CMake Application.comparison example.executor": "Run",
     "CMake Application.shrub_lang.executor": "Run",
     "CMake Application.test program.executor": "Run",
+    "CMake Application.unary_example.executor": "Run",
     "CMake Application.variable example.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
@@ -105,7 +101,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/equality-operators",
+    "git-widget-placeholder": "feature/unary-operators",
     "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -116,10 +112,10 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="CMake Application.addition example">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+  <component name="RunManager" selected="CMake Application.unary_example">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="addition example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/addition_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
@@ -142,6 +138,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="unary_example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/unary_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="variable example" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/variable_example/main.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -153,6 +154,7 @@
       <item itemvalue="CMake Application.variable example" />
       <item itemvalue="CMake Application.comparison example" />
       <item itemvalue="CMake Application.addition example" />
+      <item itemvalue="CMake Application.unary_example" />
     </list>
   </component>
   <component name="TaskManager">
@@ -179,6 +181,7 @@
       <workItem from="1756286526901" duration="19990000" />
       <workItem from="1756324529325" duration="5495000" />
       <workItem from="1756331971875" duration="9001000" />
+      <workItem from="1756341318495" duration="1403000" />
     </task>
     <servers />
   </component>

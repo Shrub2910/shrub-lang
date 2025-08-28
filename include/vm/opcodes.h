@@ -24,4 +24,6 @@
 #define LOAD_ARG 0x14
 #define DISCARD 0x15
 #define PUSH_NIL 0x16
+#define NEGATE 0x17
+#define NOT 0x18
 #endif 

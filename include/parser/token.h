@@ -27,6 +27,7 @@ enum TokenType {
     GREATER_EQUAL_TOKEN,
     LESS_EQUAL_TOKEN,
     NIL_TOKEN,
+    BANG_TOKEN,
     NOTHING_TOKEN,
 };
 

@@ -8,6 +8,7 @@ enum ExpressionType {
     LITERAL_EXPRESSION,
     BINARY_EXPRESSION,
     ASSIGNMENT_EXPRESSION,
+    UNARY_EXPRESSION,
 };
 
 enum LiteralType {
@@ -37,6 +38,12 @@ struct BinaryExpression {
     struct Expression expression;
     struct Expression *left;
     struct Expression *right;
+    enum TokenType operator;
+};
+
+struct UnaryExpression {
+    struct Expression expression;
+    struct Expression *operand;
     enum TokenType operator;
 };
 

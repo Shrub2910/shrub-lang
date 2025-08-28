@@ -23,6 +23,7 @@ static struct Expression *parser_comparison(struct Parser *parser);
 static struct Expression *parser_assignment(struct Parser *parser);
 static struct Expression *parser_add(struct Parser *parser);
 static struct Expression *parser_multiply(struct Parser *parser);
+static struct Expression *parser_unary(struct Parser *parser);
 static struct Expression *parser_literal(struct Parser *parser);
 
 struct Parser *parser_init(struct TokenVector *token_vector) {
@@ -233,11 +234,11 @@ static struct Expression *parser_add(struct Parser *parser) {
 }
 
 static struct Expression *parser_multiply(struct Parser *parser) {
-    struct Expression *left = parser_literal(parser);
+    struct Expression *left = parser_unary(parser);
 
     while (parser_match(parser, (enum TokenType[]){TIMES_TOKEN, DIVIDE_TOKEN}, 2)) {
         const enum TokenType operator = parser_previous(parser).type;
-        struct Expression *right = parser_literal(parser);
+        struct Expression *right = parser_unary(parser);
         struct BinaryExpression *new_left = malloc(sizeof(struct BinaryExpression));
 
         if (!new_left) {
@@ -253,6 +254,26 @@ static struct Expression *parser_multiply(struct Parser *parser) {
     }
 
     return left;
+}
+
+static struct Expression *parser_unary(struct Parser *parser) {
+    if (parser_match(parser, (enum TokenType[]){MINUS_TOKEN, BANG_TOKEN}, 2)) {
+        const enum TokenType operator = parser_previous(parser).type;
+        struct Expression *operand = parser_unary(parser);
+        struct UnaryExpression *unary_expression = malloc(sizeof(struct UnaryExpression));
+
+        if (!unary_expression) {
+            error_throw(MALLOC_ERROR, "Failed to allocate memory for unary_expression");
+        }
+
+        unary_expression->expression.type = UNARY_EXPRESSION;
+        unary_expression->operator = operator;
+        unary_expression->operand = operand;
+
+        return (struct Expression *)unary_expression;
+    }
+
+    return parser_literal(parser);
 }
 
 static struct Expression *parser_literal(struct Parser *parser) {

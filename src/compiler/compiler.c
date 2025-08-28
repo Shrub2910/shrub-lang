@@ -23,6 +23,10 @@ static void compiler_compile_binary_expression(
     struct CompilerContext *compiler_context,
     const struct BinaryExpression *expression
 );
+static void compiler_compile_unary_expression(
+    struct CompilerContext *compiler_context,
+    const struct UnaryExpression *unary_expression
+);
 static void compiler_compile_literal_expression(
     const struct CompilerContext *compiler_context,
     const struct LiteralExpression *expression
@@ -134,6 +138,11 @@ static void compiler_compile_expression(
                 (struct BinaryExpression *) expression
             );
             break;
+        case UNARY_EXPRESSION:
+            compiler_compile_unary_expression(
+                compiler_context,
+                (struct UnaryExpression *) expression
+            );
         case LITERAL_EXPRESSION:
             compiler_compile_literal_expression(
                 compiler_context,
@@ -208,6 +217,25 @@ static void compiler_compile_binary_expression(
         }
         case GREATER_EQUAL_TOKEN: {
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER_EQUAL);
+            break;
+        }
+        default: break;
+    }
+}
+
+static void compiler_compile_unary_expression(
+    struct CompilerContext *compiler_context,
+    const struct UnaryExpression *unary_expression
+) {
+    compiler_compile_expression(compiler_context, unary_expression->operand);
+
+    switch (unary_expression->operator) {
+        case MINUS_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NEGATE);
+            break;
+        }
+        case BANG_TOKEN: {
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NOT);
             break;
         }
         default: break;

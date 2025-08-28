@@ -1,0 +1,8 @@
+let x = true;
+print !x;
+print !!x;
+print !!!x;
+print -x;
+x = 10;
+print -x;
+print !true;

@@ -367,6 +367,38 @@ void vm_exec(struct VM *vm) {
         object_release(value);
         break;
       }
+      case NEGATE: {
+        struct Value value = vm_pop_stack(vm->stack);
+
+        if (value.type == TYPE_NUMBER) {
+          vm_push_stack(vm->stack, NUMBER(-value.number));
+        }
+        else if (value.type == TYPE_BOOLEAN) {
+          vm_push_stack(vm->stack, NUMBER(-value.boolean));
+        }
+        else {
+          error_throw(TYPE_ERROR, "Failed attempt to negate value");
+        }
+
+        object_release(value);
+        break;
+      }
+      case NOT: {
+        struct Value value = vm_pop_stack(vm->stack);
+
+        if (value.type == TYPE_NIL) {
+          vm_push_stack(vm->stack, BOOLEAN(true));
+        }
+        else if (value.type == TYPE_BOOLEAN && !value.boolean) {
+          vm_push_stack(vm->stack, BOOLEAN(true));
+        }
+        else {
+          vm_push_stack(vm->stack, BOOLEAN(false));
+        }
+
+        object_release(value);
+        break;
+      }
       default: {
         printf("Instruction opcode: %d", current_instruction);
         error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");

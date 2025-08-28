@@ -147,6 +147,7 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
                 lexer->current++;
                 return (struct Token){.type = NOT_EQUAL_TOKEN};
             }
+            return (struct Token){.type = BANG_TOKEN};
         }
         case '"': return create_string(lexer);
 
