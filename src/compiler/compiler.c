@@ -11,6 +11,7 @@
 #include "parser/statements.h"
 #include "parser/expressions.h"
 #include "parser/token.h"
+#include "utils/operand_conversion.h"
 #include "vm/opcodes.h"
 #include "vm/values.h"
 #include "vm/instruction_buffer.h"
@@ -43,6 +44,22 @@ static void compiler_compile_print_statement(
     struct CompilerContext *compiler_context,
     const struct PrintStatement *print_statement
 );
+
+static inline size_t get_current_position(const struct InstructionBuffer *instruction_buffer) {
+    return instruction_buffer->used;
+}
+
+static inline size_t get_jump_position(const struct InstructionBuffer *instruction_buffer) {
+    return instruction_buffer->used - 2;
+}
+
+static void patch_jump_position(struct InstructionBuffer *instruction_buffer, size_t start, size_t end) {
+    uint8_t *operands = instruction_buffer->buffer + start;
+    uint8_t new_operands[] = {FROM_SIGNED_WORD(end - (start + 2))};
+
+    operands[0] = new_operands[0];
+    operands[1] = new_operands[1];
+}
 
 void compiler_compile_statements(
     struct CompilerContext *compiler_context,
@@ -109,6 +126,29 @@ static void compiler_compile_statement(
             compiler_compile_expression(compiler_context, expression_statement->expression);
             INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, DISCARD);
             break;
+        }
+        case IF_STATEMENT: {
+            const struct IfStatement *if_statement = (const struct IfStatement *)statement;
+            struct InstructionBuffer *instruction_buffer = compiler_context->instruction_buffer;
+
+            compiler_compile_expression(compiler_context, if_statement->condition);
+
+            INSERT_INSTRUCTIONS(instruction_buffer, JUMP_IF_FALSE, 0, 0);
+            size_t jf_position = get_jump_position(instruction_buffer);
+
+            compiler_compile_statement(compiler_context, (struct Statement *)if_statement->then_block);
+
+            if (if_statement->else_block) {
+                INSERT_INSTRUCTIONS(instruction_buffer, JUMP, 0, 0);
+                size_t j_position = get_jump_position(instruction_buffer);
+
+                patch_jump_position(instruction_buffer, jf_position, get_current_position(instruction_buffer));
+
+                compiler_compile_statement(compiler_context, if_statement->else_block);
+                patch_jump_position(instruction_buffer, j_position, get_current_position(instruction_buffer));
+            } else {
+                patch_jump_position(instruction_buffer, jf_position, get_current_position(instruction_buffer));
+            }
         }
     }
 }

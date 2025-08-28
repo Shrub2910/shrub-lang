@@ -30,6 +30,10 @@ enum TokenType {
     BANG_TOKEN,
     AND_TOKEN,
     OR_TOKEN,
+    IF_TOKEN,
+    ELSE_IF_TOKEN,
+    ELSE_TOKEN,
+    THEN_TOKEN,
     NOTHING_TOKEN,
 };
 

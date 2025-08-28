@@ -1,8 +1,4 @@
-let x = 5;
-let y = 7;
-let z = 11;
+let x = 2;
+let y = 3;
 
-print x > y and z;
-print x < y and z;
-print x > y or z;
-print x < y or z;
+print x < y and "skibidi" or "not skibidi";

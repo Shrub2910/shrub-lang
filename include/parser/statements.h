@@ -11,6 +11,7 @@ enum StatementType {
     BLOCK_STATEMENT,
     EXPRESSION_STATEMENT,
     LET_STATEMENT,
+    IF_STATEMENT,
 };
 
 struct Statement {
@@ -33,6 +34,13 @@ struct LetStatement {
     struct Expression *expression;
 
     bool is_nil;
+};
+
+struct IfStatement {
+    struct Statement statement;
+    struct Expression *condition;
+    struct BlockStatement *then_block;
+    struct Statement *else_block;
 };
 
 struct ExpressionStatement {

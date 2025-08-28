@@ -14,6 +14,7 @@ static struct ExpressionStatement *parser_expression_statement(struct Parser *pa
 static struct PrintStatement *parser_print_statement(struct Parser *parser);
 static struct BlockStatement *parser_block_statement(struct Parser *parser);
 static struct LetStatement *parser_let_statement(struct Parser *parser);
+static struct IfStatement *parser_if_statement(struct Parser *parser);
 static struct Token parser_previous(const struct Parser *parser);
 static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
 static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
@@ -62,11 +63,16 @@ static struct Statement *parser_statement(struct Parser *parser) {
     }
 
     if (parser_match(parser, (enum TokenType[]) {DO_TOKEN}, 1)) {
-        return (struct Statement *)parser_block_statement(parser);
+        struct Statement *statement = (struct Statement *)parser_block_statement(parser);
+        parser_consume(parser, END_TOKEN, "Expected end");
     }
 
     if (parser_match(parser, (enum TokenType[]) {LET_TOKEN}, 1)) {
         return (struct Statement *)parser_let_statement(parser);
+    }
+
+    if (parser_match(parser, (enum TokenType[]) {IF_TOKEN}, 1)) {
+        return (struct Statement *)parser_if_statement(parser);
     }
 
     return (struct Statement *)parser_expression_statement(parser);
@@ -107,10 +113,12 @@ static struct PrintStatement *parser_print_statement(struct Parser *parser) {
 static struct BlockStatement *parser_block_statement(struct Parser *parser) {
     struct StatementVector *statement_vector = parser_statement_vector_init();
     while (parser->index < parser->token_vector->used
-        && parser_peek(parser).type != END_TOKEN) {
+        && !parser_match(parser, (enum TokenType[]) {END_TOKEN, ELSE_TOKEN, ELSE_IF_TOKEN}, 3)) {
         parser_statement_vector_insert(statement_vector, parser_statement(parser));
     }
-    parser_consume(parser, END_TOKEN, "Expected end");
+
+    parser->current_token--;
+    parser->index--;
 
     struct BlockStatement *block_statement = malloc(sizeof(struct BlockStatement));
 
@@ -151,6 +159,33 @@ static struct LetStatement *parser_let_statement(struct Parser *parser) {
     let_statement->identifier_name = identifier_name;
 
     return let_statement;
+}
+
+static struct IfStatement *parser_if_statement(struct Parser *parser) {
+    struct IfStatement *if_statement = malloc(sizeof(struct IfStatement));
+
+    if (!if_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for if_statement");
+    }
+
+    if_statement->statement.type = IF_STATEMENT;
+    if_statement->condition = parser_expression(parser);
+
+    parser_consume(parser, THEN_TOKEN, "Expected then");
+
+    if_statement->then_block = parser_block_statement(parser);
+
+    if (parser_match(parser, (enum TokenType[]){ELSE_IF_TOKEN}, 1)) {
+        if_statement->else_block = (struct Statement *)parser_if_statement(parser);
+    } else if (parser_match(parser, (enum TokenType[]){ELSE_TOKEN}, 1)) {
+        if_statement->else_block = (struct Statement *)parser_block_statement(parser);
+        parser_consume(parser, END_TOKEN, "Expected end");
+    } else {
+        if_statement->else_block = NULL;
+        parser_consume(parser, END_TOKEN, "Expected end");
+    }
+
+    return if_statement;
 }
 
 static struct Expression *parser_expression(struct Parser *parser) {

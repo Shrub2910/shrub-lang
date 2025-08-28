@@ -105,6 +105,19 @@ static void print_statement(struct Statement *statement, const size_t indent_cou
         return;
     }
 
+    if (statement->type == IF_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct IfStatement *if_statement = (struct IfStatement *)statement;
+        printf("%sIf\n", indent);
+        print_expression(if_statement->condition, indent_count + 1);
+        print_statement((struct Statement *)if_statement->then_block, indent_count + 1);
+        if (if_statement->else_block) {
+            print_statement(if_statement->else_block, indent_count + 1);
+        }
+        free(indent);
+        return;
+    }
+
     const struct ExpressionStatement *expression_statement = (struct ExpressionStatement *)statement;
     printf("Statement\n");
 
