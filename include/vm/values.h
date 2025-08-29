@@ -7,6 +7,7 @@
 
 
 enum Type {
+  TYPE_UNSET = 0,
   TYPE_NUMBER,
   TYPE_BOOLEAN,
   TYPE_STRING,

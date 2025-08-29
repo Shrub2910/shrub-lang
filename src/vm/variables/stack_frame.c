@@ -4,7 +4,6 @@
 
 #include "vm/variables/stack_frame.h"
 #include "vm/values.h"
-#include "objects/string.h"
 #include "objects/function.h"
 #include "objects/reference_counter.h"
 
@@ -42,13 +41,13 @@ struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t off
 
 // Set the value of a local variable on the stack frame
 void vm_set_local(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
-  if (stack_frame->data[offset].string != NULL) {
-    string_release(stack_frame->data[offset].string);
-  } else if (stack_frame->data[offset].function != NULL) {
-    function_release(stack_frame->data[offset].function);
+  struct Value *old_value = &stack_frame->data[stack_frame->num_args + offset];
+
+  if (old_value->type != TYPE_UNSET) {
+    object_release(*old_value);
   }
 
-  stack_frame->data[stack_frame->num_args + offset] = value;
+  *old_value = value;
 }
 
 // Retrieve the value of an argument from the stack frame 
@@ -58,13 +57,13 @@ struct Value vm_get_arg(const struct StackFrame *stack_frame, const size_t offse
 
 // Set the value of an argument on the stack frame 
 void vm_set_arg(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
-  if (stack_frame->data[offset].string != NULL) {
-    string_release(stack_frame->data[offset].string);
-  } else if (stack_frame->data[offset].function != NULL) {
-    function_release(stack_frame->data[offset].function);
+  struct Value *old_value = &stack_frame->data[offset];
+
+  if (old_value->type != TYPE_UNSET) {
+    object_release(*old_value);
   }
 
-  stack_frame->data[offset] = value;
+  *old_value = value;
 }
 
 // Push a new frame and point to it,
