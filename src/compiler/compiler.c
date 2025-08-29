@@ -97,13 +97,6 @@ static void compiler_compile_statement(
         case LET_STATEMENT: {
             const struct LetStatement *let_statement = (struct LetStatement *)statement;
 
-            if (compiler_search_scope(
-                compiler_get_top_scope(compiler_context->environment),
-                let_statement->identifier_name
-            )) {
-                error_throw(NAME_ERROR, "Can only define variable once per scope");
-            }
-
             if (let_statement->is_nil) {
                 INSERT_INSTRUCTIONS(
                     compiler_context->instruction_buffer,
@@ -117,7 +110,7 @@ static void compiler_compile_statement(
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 STORE_VAR,
-                compiler_context->environment->variable_count++
+                let_statement->offset
             );
             break;
         }
@@ -217,18 +210,9 @@ static void compiler_compile_assignment_expression(
     struct CompilerContext *compiler_context,
     const struct AssignmentExpression *assignment_expression
 ) {
-    struct ScopeVariable *variable = compiler_search_environment(
-        compiler_context->environment,
-        assignment_expression->identifier_name
-    );
-
-    if (!variable) {
-        error_throw(NAME_ERROR, "Variable undefined");
-    }
-
     compiler_compile_expression(compiler_context, assignment_expression->right);
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, STORE_VAR, variable->offset);
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, variable->offset);
+    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, STORE_VAR, assignment_expression->offset);
+    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, assignment_expression->offset);
 }
 
 static void compiler_compile_binary_expression(
@@ -330,14 +314,7 @@ static void compiler_compile_literal_expression
             break;
         }
         case IDENTIFIER_LITERAL: {
-            struct ScopeVariable *scope_variable =
-                compiler_search_environment(compiler_context->environment, expression->identifier);
-
-            if (!scope_variable) {
-                error_throw(NAME_ERROR, "Variable not defined");
-            }
-
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, scope_variable->offset);
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, expression->offset);
             break;
         }
         case STRING_LITERAL: {

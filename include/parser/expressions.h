@@ -28,7 +28,10 @@ struct LiteralExpression {
     enum LiteralType literal_type;
     union {
         double number;
-        char *identifier;
+        struct {
+            char *identifier;
+            size_t offset;
+        };
         char *string;
         bool boolean;
     };
@@ -51,6 +54,8 @@ struct AssignmentExpression {
     struct Expression expression;
     char *identifier_name;
     struct Expression *right;
+
+    size_t offset;
 };
 
 #endif

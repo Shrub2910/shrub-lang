@@ -2,6 +2,7 @@
 #define STATEMENTS_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "expressions.h"
 #include "statement_vector.h"
@@ -35,6 +36,7 @@ struct LetStatement {
     struct Expression *expression;
 
     bool is_nil;
+    size_t offset;
 };
 
 struct IfStatement {

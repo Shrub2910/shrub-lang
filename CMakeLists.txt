@@ -48,6 +48,8 @@ set(SOURCES
         src/compiler/envrionment.c
         src/objects/reference_counter.c
         include/objects/reference_counter.h
+        src/compiler/name_resolver.c
+        include/compiler/name_resolver.h
 )
 
 # Create executable

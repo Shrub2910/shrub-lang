@@ -5,6 +5,7 @@
 #include "vm/vm.h"
 #include "compiler/compiler.h"
 #include "compiler/environment.h"
+#include "compiler/name_resolver.h"
 #include "utils/print_statements.h"
 #include "error/error.h"
 #include "error/error_types.h"
@@ -35,6 +36,7 @@ int main(const int argc, char **argv) {
     .environment = &environment
   };
 
+  compiler_resolve_statements(&compiler_context, parser->statement_vector);
   compiler_compile_statements(&compiler_context, parser->statement_vector);
 
   lexer_free(lexer);

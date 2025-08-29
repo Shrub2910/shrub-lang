@@ -1,0 +1,116 @@
+#include <stddef.h>
+
+#include "compiler/name_resolver.h"
+#include "compiler/compiler.h"
+#include "compiler/scope.h"
+#include "compiler/environment.h"
+
+#include "parser/statements.h"
+#include "parser/statement_vector.h"
+
+#include "error/error.h"
+#include "error/error_types.h"
+
+void compiler_resolve_expression(struct CompilerContext *compiler_context, struct Expression *expression) {
+    switch (expression->type) {
+        case LITERAL_EXPRESSION: {
+            struct LiteralExpression *literal_expression = (struct LiteralExpression *)expression;
+            if (literal_expression->literal_type == IDENTIFIER_LITERAL) {
+                struct ScopeVariable *scope_variable =
+                compiler_search_environment(compiler_context->environment, literal_expression->identifier);
+
+                if (!scope_variable) {
+                    error_throw(NAME_ERROR, "Variable not defined");
+                }
+
+                literal_expression->offset = scope_variable->offset;
+            }
+            break;
+        }
+        case BINARY_EXPRESSION: {
+            struct BinaryExpression *binary_expression = (struct BinaryExpression *)expression;
+            compiler_resolve_expression(compiler_context, binary_expression->left);
+            compiler_resolve_expression(compiler_context, binary_expression->right);
+            break;
+        }
+        case ASSIGNMENT_EXPRESSION: {
+            struct AssignmentExpression *assignment_expression = (struct AssignmentExpression *)expression;
+
+            struct ScopeVariable *variable = compiler_search_environment(
+                 compiler_context->environment,
+                 assignment_expression->identifier_name
+             );
+
+            if (!variable) {
+                error_throw(NAME_ERROR, "Variable undefined");
+            }
+
+            assignment_expression->offset = variable->offset;
+            break;
+        }
+        case UNARY_EXPRESSION: {
+            struct UnaryExpression *unary_expression = (struct UnaryExpression *)expression;
+            compiler_resolve_expression(compiler_context, unary_expression->operand);
+            break;
+        }
+    }
+}
+
+void compiler_resolve_statement(struct CompilerContext *compiler_context, struct Statement *statement) {
+    switch (statement->type) {
+        case PRINT_STATEMENT: {
+            struct PrintStatement *print_statement = (struct PrintStatement *)statement;
+            compiler_resolve_expression(compiler_context, print_statement->expression);
+            break;
+        }
+        case BLOCK_STATEMENT: {
+            struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+            compiler_resolve_statements(compiler_context, block_statement->statement_vector);
+            break;
+        }
+        case EXPRESSION_STATEMENT: {
+            struct ExpressionStatement *expression_statement = (struct ExpressionStatement *)statement;
+            compiler_resolve_expression(compiler_context, expression_statement->expression);
+            break;
+        }
+        case LET_STATEMENT: {
+            struct LetStatement *let_statement = (struct LetStatement *)statement;
+
+            if (compiler_search_scope(
+                compiler_get_top_scope(compiler_context->environment),
+                let_statement->identifier_name
+            )) {
+                error_throw(NAME_ERROR, "Can only define variable once per scope");
+            }
+
+            compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
+            let_statement->offset = compiler_context->environment->variable_count++;
+
+            compiler_resolve_expression(compiler_context, let_statement->expression);
+            break;
+        }
+        case IF_STATEMENT: {
+            struct IfStatement *if_statement = (struct IfStatement *)statement;
+            compiler_resolve_statement(compiler_context, (struct Statement *)if_statement->then_block);
+            compiler_resolve_statement(compiler_context, if_statement->else_block);
+            break;
+        }
+        case WHILE_STATEMENT: {
+            struct WhileStatement *while_statement = (struct WhileStatement *)statement;
+            compiler_resolve_statement(compiler_context, (struct Statement *)while_statement->body);
+            break;
+        }
+    }
+}
+
+void compiler_resolve_statements
+(
+    struct CompilerContext *compiler_context,
+    struct StatementVector *statement_vector
+)
+{
+    for (size_t i = 0; i < statement_vector->used; ++i) {
+        struct Statement *statement = statement_vector->statements[i];
+        compiler_resolve_statement(compiler_context, statement);
+    }
+}
