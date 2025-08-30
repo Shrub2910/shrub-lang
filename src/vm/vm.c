@@ -55,7 +55,7 @@ struct VM *vm_init(void) {
   
   // For testing purposes the top level stack frame is initialised with a lot of space
   // No return address or previous stack frame; they are both NULL 
-  vm->stack_frame = vm_init_stack_frame(255, 256, NULL, RETURN_ADDRESS(NULL));
+  vm->stack_frame = vm_init_stack_frame(255, NULL, RETURN_ADDRESS(NULL));
 
   return vm;
 }
@@ -255,14 +255,6 @@ void vm_exec(struct VM *vm) {
         vm_push_stack(vm->stack, value);
         break;
       }
-      // Will load an argument at an offset to the frame pointer 
-      case LOAD_ARG: {
-        size_t offset = READ_BYTE();
-        struct Value value = vm_get_arg(vm->stack_frame, offset);
-        object_retain(value);
-        vm_push_stack(vm->stack, value);
-        break;
-      }
       // Call popped function passing in popped values 
       // function_call handles the popping of arguments 
       // Stack underflow will occur if insufficient arguments are provided
@@ -374,7 +366,7 @@ void vm_exec(struct VM *vm) {
       case NOT: {
         struct Value value = vm_pop_stack(vm->stack);
 
-        if (value.type == TYPE_NIL || value.type == TYPE_BOOLEAN && !value.boolean) {
+        if (value.type == TYPE_NIL || (value.type == TYPE_BOOLEAN && !value.boolean)) {
           vm_push_stack(vm->stack, BOOLEAN(true));
         }
         else {
@@ -492,5 +484,5 @@ static bool compare(const struct Value operand_1, const struct Value operand_2, 
 
 static bool is_falsy(const struct Value operand) {
   return operand.type == TYPE_NIL
-    || operand.type == TYPE_BOOLEAN && !operand.boolean;
+    || (operand.type == TYPE_BOOLEAN && !operand.boolean);
 }

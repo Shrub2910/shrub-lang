@@ -8,13 +8,11 @@
 
 struct StackFrame {
   struct StackFrame *previous_stack_frame;
-  size_t num_args;
   size_t num_locals;
   struct Value data[];
 };
 
 struct StackFrame *vm_init_stack_frame(
-  size_t num_args,
   size_t num_locals,
   struct StackFrame *previous_stack_frame,
   struct Value return_address
@@ -31,7 +29,6 @@ void vm_set_arg(struct StackFrame *stack_frame, size_t offset, struct Value valu
 void vm_push_frame
 (
  struct StackFrame **current_stack_frame,
- size_t num_args,
  size_t num_locals,
  struct Value return_address
 );

@@ -22,7 +22,6 @@ struct Function *function_init(const size_t num_args, const size_t num_locals) {
 void function_call(const struct Function *function, struct VM *vm) {
   vm_push_frame(
     &vm->stack_frame,
-    function->num_args,
     function->num_locals,
     RETURN_ADDRESS(vm->program_counter) // Return address is instruction after call
   ); 
@@ -32,7 +31,7 @@ void function_call(const struct Function *function, struct VM *vm) {
   
   // Loads the arguments in reverse order to simplify bytecode
   for (size_t i = function->num_args; i > 0; --i) {
-    vm_set_arg(vm->stack_frame, i, vm_pop_stack(vm->stack));
+    vm_set_local(vm->stack_frame, i, vm_pop_stack(vm->stack));
   }
 }
 

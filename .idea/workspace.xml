@@ -26,10 +26,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="add separate name resolution pass to compiler">
+    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="clean stack_frame.c code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/vm/values.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/values.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/objects/function.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/objects/function.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -481,7 +483,9 @@
       <workItem from="1756407624519" duration="2745000" />
       <workItem from="1756410518219" duration="4488000" />
       <workItem from="1756483357275" duration="4599000" />
-      <workItem from="1756493155099" duration="877000" />
+      <workItem from="1756493155099" duration="1052000" />
+      <workItem from="1756494510686" duration="1207000" />
+      <workItem from="1756550601653" duration="827000" />
     </task>
     <task id="LOCAL-00001" summary="add separate name resolution pass to compiler">
       <option name="closed" value="true" />
@@ -491,7 +495,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756487930843</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="clean stack_frame.c code">
+      <option name="closed" value="true" />
+      <created>1756494072307</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1756494072307</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -515,7 +527,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add separate name resolution pass to compiler" />
-    <option name="LAST_COMMIT_MESSAGE" value="add separate name resolution pass to compiler" />
+    <MESSAGE value="clean stack_frame.c code" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean stack_frame.c code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
