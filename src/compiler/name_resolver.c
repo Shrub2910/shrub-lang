@@ -1,6 +1,9 @@
 #include <stddef.h>
 
 #include "compiler/name_resolver.h"
+
+#include <stdio.h>
+
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
 #include "compiler/environment.h"
@@ -22,7 +25,6 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
                 if (!scope_variable) {
                     error_throw(NAME_ERROR, "Variable not defined");
                 }
-
                 literal_expression->offset = scope_variable->offset;
             }
             break;
@@ -36,6 +38,8 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
         case ASSIGNMENT_EXPRESSION: {
             struct AssignmentExpression *assignment_expression = (struct AssignmentExpression *)expression;
 
+            compiler_resolve_expression(compiler_context, assignment_expression->right);
+
             struct ScopeVariable *variable = compiler_search_environment(
                  compiler_context->environment,
                  assignment_expression->identifier_name
@@ -44,7 +48,6 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
             if (!variable) {
                 error_throw(NAME_ERROR, "Variable undefined");
             }
-
             assignment_expression->offset = variable->offset;
             break;
         }
@@ -65,7 +68,9 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
         }
         case BLOCK_STATEMENT: {
             struct BlockStatement *block_statement = (struct BlockStatement *)statement;
+            compiler_push_scope(compiler_context->environment);
             compiler_resolve_statements(compiler_context, block_statement->statement_vector);
+            compiler_pop_scope(compiler_context->environment);
             break;
         }
         case EXPRESSION_STATEMENT: {
@@ -75,6 +80,8 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
         }
         case LET_STATEMENT: {
             struct LetStatement *let_statement = (struct LetStatement *)statement;
+
+            compiler_resolve_expression(compiler_context, let_statement->expression);
 
             if (compiler_search_scope(
                 compiler_get_top_scope(compiler_context->environment),
@@ -86,17 +93,18 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
             let_statement->offset = compiler_context->environment->variable_count++;
 
-            compiler_resolve_expression(compiler_context, let_statement->expression);
             break;
         }
         case IF_STATEMENT: {
             struct IfStatement *if_statement = (struct IfStatement *)statement;
+            compiler_resolve_expression(compiler_context, if_statement->condition);
             compiler_resolve_statement(compiler_context, (struct Statement *)if_statement->then_block);
             compiler_resolve_statement(compiler_context, if_statement->else_block);
             break;
         }
         case WHILE_STATEMENT: {
             struct WhileStatement *while_statement = (struct WhileStatement *)statement;
+            compiler_resolve_expression(compiler_context, while_statement->condition);
             compiler_resolve_statement(compiler_context, (struct Statement *)while_statement->body);
             break;
         }

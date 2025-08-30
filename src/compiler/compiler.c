@@ -4,6 +4,8 @@
 #include "vm/vm.h"
 #include "compiler/compiler.h"
 
+#include <stdio.h>
+
 #include "compiler/environment.h"
 #include "compiler/scope.h"
 #include "error/error.h"
@@ -84,14 +86,12 @@ static void compiler_compile_statement(
             break;
         case BLOCK_STATEMENT: {
             const struct BlockStatement *block_statement = (struct BlockStatement *)statement;
-            compiler_push_scope(compiler_context->environment);
             for (size_t i = 0; i < block_statement->statement_vector->used; ++i) {
                 compiler_compile_statement(
                     compiler_context,
                     block_statement->statement_vector->statements[i]
                 );
             }
-            compiler_pop_scope(compiler_context->environment);
             break;
         }
         case LET_STATEMENT: {

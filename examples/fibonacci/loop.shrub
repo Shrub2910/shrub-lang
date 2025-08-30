@@ -1,0 +1,12 @@
+let a = 0;
+let b = 1;
+let i = 0;
+
+while i <= 1000 do
+    print "-----------";
+    let tmp = a;
+    a = b;
+    b = tmp + b;
+    print a;
+    i = i + 1;
+end

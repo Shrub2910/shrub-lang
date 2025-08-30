@@ -34,12 +34,12 @@ struct StackFrame *vm_init_stack_frame
 
 // Retrieve the value of a local variable from the stack frame 
 struct Value vm_get_local(const struct StackFrame *stack_frame, const size_t offset) {
-  return stack_frame->data[offset];
+  return stack_frame->data[offset + 1];
 }
 
 // Set the value of a local variable on the stack frame
 void vm_set_local(struct StackFrame *stack_frame, const size_t offset, const struct Value value) {
-  struct Value *old_value = &stack_frame->data[offset];
+  struct Value *old_value = &stack_frame->data[offset + 1];
 
   if (old_value->type != TYPE_UNSET) {
     object_release(*old_value);

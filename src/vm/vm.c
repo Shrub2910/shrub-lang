@@ -74,7 +74,11 @@ void vm_exec(struct VM *vm) {
         struct Value value_to_print = vm_pop_stack(vm->stack);
         switch (value_to_print.type) {
           case TYPE_NUMBER:
-            printf("%f\n", value_to_print.number);
+            if (floor(value_to_print.number) == value_to_print.number) {
+              printf("%.0f\n", value_to_print.number);
+            } else {
+              printf("%g\n", value_to_print.number);
+            }
             break;
           case TYPE_STRING:
             printf("%s\n", value_to_print.string->buffer);
