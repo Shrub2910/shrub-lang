@@ -26,19 +26,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="add return statement and permit recursion">
-      <change afterPath="$PROJECT_DIR$/examples/function_fun/main.shrub" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/compiler/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/compiler.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/objects/function.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/objects/function.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/vm/vm.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/vm.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/name_resolver.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/name_resolver.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/objects/function.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/objects/function.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
-    </list>
+    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="separate const pool" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -396,7 +384,7 @@
       <workItem from="1756596052320" duration="11294000" />
       <workItem from="1756635969843" duration="6981000" />
       <workItem from="1756660819790" duration="2655000" />
-      <workItem from="1756670445643" duration="4249000" />
+      <workItem from="1756670445643" duration="4281000" />
     </task>
     <task id="LOCAL-00001" summary="add separate name resolution pass to compiler">
       <option name="closed" value="true" />
@@ -446,7 +434,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756641629418</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="separate const pool">
+      <option name="closed" value="true" />
+      <created>1756674722473</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1756674722473</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,7 +471,8 @@
     <MESSAGE value="add fib example and fix name resolution" />
     <MESSAGE value="add basic functions" />
     <MESSAGE value="add return statement and permit recursion" />
-    <option name="LAST_COMMIT_MESSAGE" value="add return statement and permit recursion" />
+    <MESSAGE value="separate const pool" />
+    <option name="LAST_COMMIT_MESSAGE" value="separate const pool" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
