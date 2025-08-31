@@ -21,7 +21,7 @@ struct Closure {
 
 struct Function *function_init(size_t num_args, size_t num_locals);
 struct Closure *closure_init(struct Function *function);
-void closure_call(const struct Closure *closure, struct VM *vm);
+void closure_call(struct Closure *closure, struct VM *vm);
 void closure_return(struct VM *vm);
 void closure_retain(struct Closure *closure);
 void closure_release(struct Closure *closure);

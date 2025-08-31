@@ -7,6 +7,8 @@
 #include "objects/function.h"
 #include "objects/reference_counter.h"
 
+#define NUMBER_OF_PRE_DEFINED_LOCALS 2
+
 // Allocate and initialise new stack frame for function call or top level scope
 // data[0] = return address 
 // arguments come first, then locals 
@@ -17,14 +19,14 @@ struct StackFrame *vm_init_stack_frame
   const struct Value return_address
 ) 
 {
-  const size_t data_size = num_locals + 1;
+  const size_t data_size = num_locals + NUMBER_OF_PRE_DEFINED_LOCALS;
 
   struct StackFrame *stack_frame = 
     malloc(sizeof(struct StackFrame) + sizeof(struct Value) * data_size);
 
   stack_frame->previous_stack_frame = previous_stack_frame;
 
-  stack_frame->num_locals = num_locals + 1;
+  stack_frame->num_locals = num_locals + NUMBER_OF_PRE_DEFINED_LOCALS;
 
   memset(stack_frame->data, 0, data_size * sizeof(struct Value));
   stack_frame->data[0] = return_address;

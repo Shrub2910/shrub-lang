@@ -15,6 +15,7 @@ enum StatementType {
     IF_STATEMENT,
     WHILE_STATEMENT,
     FUNCTION_STATEMENT,
+    RETURN_STATEMENT,
 };
 
 struct Statement {
@@ -65,6 +66,11 @@ struct FunctionStatement {
 };
 
 struct ExpressionStatement {
+    struct Statement statement;
+    struct Expression *expression;
+};
+
+struct ReturnStatement {
     struct Statement statement;
     struct Expression *expression;
 };

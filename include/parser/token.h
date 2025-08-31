@@ -38,6 +38,7 @@ enum TokenType {
     MOD_TOKEN,
     FUNCTION_TOKEN,
     COMMA_TOKEN,
+    RETURN_TOKEN,
     NOTHING_TOKEN,
 };
 

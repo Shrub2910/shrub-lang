@@ -266,6 +266,17 @@ void vm_exec(struct VM *vm) {
       // Stack underflow will occur if insufficient arguments are provided
       case CALL: {
         struct Value value = vm_pop_stack(vm->stack);
+
+        if (value.type != TYPE_CLOSURE) {
+          error_throw(TYPE_ERROR, "Attempt to call a non function");
+        }
+
+        size_t num_args = READ_BYTE();
+
+        if (num_args != value.closure->function->num_args) {
+          error_throw(TYPE_ERROR, "Attempt to call a function with wrong number of arguments");
+        }
+
         closure_call(value.closure, vm);
         object_release(value);
         break;

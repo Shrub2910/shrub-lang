@@ -62,6 +62,10 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
                 call_expression->function_name
             );
 
+            if (!scope_variable) {
+                error_throw(NAME_ERROR, "Variable not defined");
+            }
+
             for (size_t i = 0; i < call_expression->arguments_count; i++) {
                 compiler_resolve_expression(compiler_context, call_expression->arguments[i]);
             }
@@ -116,7 +120,9 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             struct IfStatement *if_statement = (struct IfStatement *)statement;
             compiler_resolve_expression(compiler_context, if_statement->condition);
             compiler_resolve_statement(compiler_context, (struct Statement *)if_statement->then_block);
-            compiler_resolve_statement(compiler_context, if_statement->else_block);
+            if (if_statement->else_block) {
+                compiler_resolve_statement(compiler_context, if_statement->else_block);
+            }
             break;
         }
         case WHILE_STATEMENT: {
@@ -134,6 +140,9 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
 
             struct Environment new_environment = compiler_init_environment();
 
+            compiler_insert_environment(&new_environment, function_statement->name);
+            new_environment.variable_count++;
+
             for (size_t i = 0; i < function_statement->num_parameters; i++) {
                 check_duplicate_declaration(&new_environment, function_statement->parameters[i]);
                 compiler_insert_environment(&new_environment, function_statement->parameters[i]);
@@ -150,6 +159,10 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             function_statement->offset = compiler_context->environment->variable_count++;
             function_statement->num_locals = new_environment.variable_count - function_statement->num_parameters;
             break;
+        }
+        case RETURN_STATEMENT: {
+            struct ReturnStatement *return_statement = (struct ReturnStatement *)statement;
+            compiler_resolve_expression(compiler_context, return_statement->expression);
         }
     }
 }

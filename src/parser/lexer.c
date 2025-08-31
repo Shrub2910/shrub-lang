@@ -114,6 +114,7 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_insert(&lexer->keywords, "then", THEN_TOKEN);
     keywords_insert(&lexer->keywords, "while", WHILE_TOKEN);
     keywords_insert(&lexer->keywords, "fn", FUNCTION_TOKEN);
+    keywords_insert(&lexer->keywords, "return", RETURN_TOKEN);
 
     return lexer;
 }

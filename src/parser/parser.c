@@ -18,6 +18,7 @@ static struct LetStatement *parser_let_statement(struct Parser *parser);
 static struct IfStatement *parser_if_statement(struct Parser *parser);
 static struct WhileStatement *parser_while_statement(struct Parser *parser);
 static struct FunctionStatement *parser_function_statement(struct Parser *parser);
+static struct ReturnStatement *parser_return_statement(struct Parser *parser);
 
 
 static struct Expression *parser_expression(struct Parser *parser);
@@ -89,6 +90,10 @@ static struct Statement *parser_statement(struct Parser *parser) {
 
     if (parser_match(parser, (enum TokenType[]) {FUNCTION_TOKEN}, 1)) {
         return (struct Statement *)parser_function_statement(parser);
+    }
+
+    if (parser_match(parser, (enum TokenType[]) {RETURN_TOKEN}, 1)) {
+        return (struct Statement *)parser_return_statement(parser);
     }
 
     return (struct Statement *)parser_expression_statement(parser);
@@ -265,6 +270,22 @@ static struct FunctionStatement *parser_function_statement(struct Parser *parser
     function_statement->num_parameters = num_parameters;
 
     return function_statement;
+}
+
+static struct ReturnStatement *parser_return_statement(struct Parser *parser) {
+    struct Expression *expression = parser_expression(parser);
+    parser_consume(parser, SEMI_COLON_TOKEN, "Expected ;");
+
+    struct ReturnStatement *return_statement = malloc(sizeof(struct ReturnStatement));
+
+    if (!return_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for return statement");
+    }
+
+    return_statement->statement.type = RETURN_STATEMENT;
+    return_statement->expression = expression;
+
+    return return_statement;
 }
 
 static struct Expression *parser_expression(struct Parser *parser) {

@@ -2,10 +2,15 @@
 #include <stddef.h>
 
 #include "objects/function.h"
+
+#include "error/error.h"
+#include "objects/reference_counter.h"
+
 #include "vm/vm.h"
 #include "vm/instruction_buffer.h"
 #include "vm/stack.h"
 #include "vm/variables/stack_frame.h"
+#include "vm/values.h"
 
 // Initialise the function object and make it the right size
 struct Function *function_init(const size_t num_args, const size_t num_locals) {
@@ -26,7 +31,7 @@ struct Closure *closure_init(struct Function *function) {
 }
 
 // Used by the call instruction to push a new stack frame, update program counter, and load arguments
-void closure_call(const struct Closure *closure, struct VM *vm) {
+void closure_call(struct Closure *closure, struct VM *vm) {
   vm_push_frame(
     &vm->stack_frame,
     closure->function->num_locals,
@@ -35,10 +40,14 @@ void closure_call(const struct Closure *closure, struct VM *vm) {
 
   // Program-counter points to called function's instructions
   vm->program_counter = closure->function->instruction_buffer->buffer;
+
+  struct Value value = {.type = TYPE_CLOSURE, .closure = closure};
+  vm_set_local(vm->stack_frame, 0, value);
+  object_retain(value);
   
   // Loads the arguments in reverse order to simplify bytecode
   for (size_t i = closure->function->num_args; i > 0; --i) {
-    vm_set_local(vm->stack_frame, i-1, vm_pop_stack(vm->stack));
+    vm_set_local(vm->stack_frame, i, vm_pop_stack(vm->stack));
   }
 }
 

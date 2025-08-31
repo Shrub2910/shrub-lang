@@ -25,7 +25,9 @@ int main(const int argc, char **argv) {
   struct Parser *parser = parser_init(lexer->token_vector);
   parser_parse(parser);
 
+#ifdef SHOW_AST
   print_statements(parser->statement_vector, 0);
+#endif
 
   struct VM *vm = vm_init();
 

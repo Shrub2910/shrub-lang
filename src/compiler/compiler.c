@@ -189,6 +189,12 @@ static void compiler_compile_statement(
             );
 
             vm_add_function(compiler_context->vm, function);
+            break;
+        }
+        case RETURN_STATEMENT: {
+            const struct ReturnStatement *return_statement = (const struct ReturnStatement *)statement;
+            compiler_compile_expression(compiler_context, return_statement->expression);
+            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, RETURN);
         }
     }
 }
@@ -240,7 +246,8 @@ static void compiler_compile_expression(
                 compiler_context->instruction_buffer,
                 LOAD_VAR,
                 call_expression->offset,
-                CALL
+                CALL,
+                call_expression->arguments_count
             );
             break;
         }

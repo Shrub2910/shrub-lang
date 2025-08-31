@@ -1,6 +1,14 @@
-let x = 5;
-fn add(a, b)
-    print a + b;
+fn fib(n)
+    if n <= 1 then
+        return 1;
+    end
+
+    return fib(n - 1) + fib(n - 2);
 end
 
-add(7, 123);
+let i = 0;
+while i <= 100 do
+    print i;
+    print fib(i);
+    i = i + 1;
+end
