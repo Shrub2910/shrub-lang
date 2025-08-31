@@ -8,6 +8,7 @@
 #include "parser/statements.h"
 #include "parser/expressions.h"
 #include "parser/token.h"
+#include "vm/values.h"
 
 static struct Statement *parser_statement(struct Parser *parser);
 static struct ExpressionStatement *parser_expression_statement(struct Parser *parser);
@@ -16,10 +17,9 @@ static struct BlockStatement *parser_block_statement(struct Parser *parser);
 static struct LetStatement *parser_let_statement(struct Parser *parser);
 static struct IfStatement *parser_if_statement(struct Parser *parser);
 static struct WhileStatement *parser_while_statement(struct Parser *parser);
-static struct Token parser_previous(const struct Parser *parser);
-static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
-static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
-static struct Token parser_peek(const struct Parser *parser);
+static struct FunctionStatement *parser_function_statement(struct Parser *parser);
+
+
 static struct Expression *parser_expression(struct Parser *parser);
 static struct Expression *parser_or(struct Parser *parser);
 struct Expression *parser_and(struct Parser *parser);
@@ -28,7 +28,13 @@ static struct Expression *parser_assignment(struct Parser *parser);
 static struct Expression *parser_add(struct Parser *parser);
 static struct Expression *parser_multiply(struct Parser *parser);
 static struct Expression *parser_unary(struct Parser *parser);
+static struct Expression *parser_call(struct Parser *parser);
 static struct Expression *parser_literal(struct Parser *parser);
+
+static struct Token parser_previous(const struct Parser *parser);
+static void parser_consume(struct Parser *parser, enum TokenType type, const char *error_message);
+static bool parser_match(struct Parser *parser, const enum TokenType *types, size_t amount);
+static struct Token parser_peek(const struct Parser *parser);
 
 struct Parser *parser_init(struct TokenVector *token_vector) {
     struct Parser *parser = malloc(sizeof(struct Parser));
@@ -79,6 +85,10 @@ static struct Statement *parser_statement(struct Parser *parser) {
 
     if (parser_match(parser, (enum TokenType[]) {WHILE_TOKEN}, 1)) {
         return (struct Statement *)parser_while_statement(parser);
+    }
+
+    if (parser_match(parser, (enum TokenType[]) {FUNCTION_TOKEN}, 1)) {
+        return (struct Statement *)parser_function_statement(parser);
     }
 
     return (struct Statement *)parser_expression_statement(parser);
@@ -211,6 +221,50 @@ static struct WhileStatement *parser_while_statement(struct Parser *parser) {
     parser_consume(parser, END_TOKEN, "Expected end of while statement");
 
     return while_statement;
+}
+
+static struct FunctionStatement *parser_function_statement(struct Parser *parser) {
+    parser_consume(parser, IDENTIFIER_TOKEN, "Expected identifier");
+    char *name = parser_previous(parser).string;
+
+    parser_consume(parser, L_BRACKET_TOKEN, "Expected (");
+
+    char *parameters[MAX_FUNCTION_ARGS];
+    size_t num_parameters = 0;
+
+    if (parser_match(parser, (enum TokenType[]){IDENTIFIER_TOKEN}, 1)) {
+        parameters[num_parameters++] = parser_previous(parser).string;
+        while (parser_match(parser, (enum TokenType[]) {COMMA_TOKEN}, 1)) {
+            parser_consume(parser, IDENTIFIER_TOKEN, "Expected identifier");
+            parameters[num_parameters++] = parser_previous(parser).string;
+        }
+    }
+
+    parser_consume(parser, R_BRACKET_TOKEN, "Expected )");
+
+    struct FunctionStatement *function_statement = malloc(sizeof(struct FunctionStatement));
+
+    if (!function_statement) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for function statement");
+    }
+
+    function_statement->parameters = malloc(sizeof(char *) * num_parameters);
+
+    if (!function_statement->parameters) {
+        error_throw(MALLOC_ERROR, "Failed to allocate memory for arguments");
+    }
+
+    for (size_t i = 0; i < num_parameters; i++) {
+        function_statement->parameters[i] = parameters[i];
+    }
+
+    function_statement->statement.type = FUNCTION_STATEMENT;
+    function_statement->name = name;
+    function_statement->body = parser_block_statement(parser);
+    parser_consume(parser, END_TOKEN, "Expected end of function statement");
+    function_statement->num_parameters = num_parameters;
+
+    return function_statement;
 }
 
 static struct Expression *parser_expression(struct Parser *parser) {
@@ -381,6 +435,41 @@ static struct Expression *parser_unary(struct Parser *parser) {
         return (struct Expression *)unary_expression;
     }
 
+    return parser_call(parser);
+}
+
+static struct Expression *parser_call(struct Parser *parser) {
+    if (parser_match(parser, (enum TokenType[]){IDENTIFIER_TOKEN}, 1)) {
+        char *function_name = parser_previous(parser).string;
+
+        if (!parser_match(parser, (enum TokenType[]){L_BRACKET_TOKEN}, 1)) {
+            parser->current_token--;
+            parser->index--;
+            return parser_literal(parser);
+        }
+
+        struct Expression *expressions[MAX_FUNCTION_ARGS];
+        size_t count = 0;
+        if (!parser_match(parser, (enum TokenType[]){R_BRACKET_TOKEN}, 1)) {
+            expressions[count++] = parser_expression(parser);
+            while (!parser_match(parser, (enum TokenType[]){R_BRACKET_TOKEN}, 1)) {
+                parser_consume(parser, COMMA_TOKEN, "Expected comma or right bracket");
+                expressions[count++] = parser_expression(parser);
+            }
+        }
+
+        struct CallExpression *call_expression = malloc(sizeof(struct CallExpression));
+        call_expression->expression.type = CALL_EXPRESSION;
+        call_expression->function_name = function_name;
+        call_expression->arguments_count = count;
+        call_expression->arguments = malloc(sizeof(struct Expression *) * count);
+
+        for (size_t i = 0; i < count; i++) {
+            call_expression->arguments[i] = expressions[i];
+        }
+
+        return (struct Expression *)call_expression;
+    }
     return parser_literal(parser);
 }
 

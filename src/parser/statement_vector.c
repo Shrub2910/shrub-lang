@@ -10,7 +10,7 @@
 static void parser_statement_free(struct Statement *statement);
 static void parser_expression_free(struct Expression *expression);
 
-struct StatementVector *parser_statement_vector_init() {
+struct StatementVector *parser_statement_vector_init(void) {
     struct StatementVector *statement_vector = malloc(sizeof(struct StatementVector));
 
     if (!statement_vector) {

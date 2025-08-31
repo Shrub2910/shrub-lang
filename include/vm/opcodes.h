@@ -29,4 +29,5 @@
 #define OR 0x19
 #define AND 0x1A
 #define MOD 0x1B
+#define CREATE_CLOSURE 0x1C
 #endif 

@@ -17,4 +17,6 @@ struct Parser *parser_init(struct TokenVector *token_vector);
 void parser_parse(struct Parser *parser);
 void parser_free(struct Parser *parser);
 
+#define MAX_FUNCTION_ARGS 256
+
 #endif

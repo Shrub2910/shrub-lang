@@ -7,16 +7,19 @@
 #include <stdio.h>
 
 #include "compiler/environment.h"
-#include "compiler/scope.h"
-#include "error/error.h"
+
 #include "parser/statement_vector.h"
 #include "parser/statements.h"
 #include "parser/expressions.h"
 #include "parser/token.h"
+
 #include "utils/operand_conversion.h"
+
 #include "vm/opcodes.h"
 #include "vm/values.h"
 #include "vm/instruction_buffer.h"
+
+#include "objects/function.h"
 
 static void compiler_compile_expression(
     struct CompilerContext *compiler_context,
@@ -70,7 +73,6 @@ void compiler_compile_statements(
     for (size_t i = 0; i < statement_vector->used; ++i) {
         compiler_compile_statement(compiler_context, statement_vector->statements[i]);
     }
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, HALT);
 }
 
 static void compiler_compile_statement(
@@ -161,6 +163,33 @@ static void compiler_compile_statement(
             patch_jump_position(instruction_buffer, jf_position, get_current_position(instruction_buffer));
             break;
         }
+        case FUNCTION_STATEMENT: {
+            const struct FunctionStatement *function_statement = (const struct FunctionStatement *)statement;
+
+            struct Function *function = function_init(function_statement->num_parameters,
+                function_statement->num_locals);
+
+            function->instruction_buffer = vm_init_instruction_buffer();
+
+            struct CompilerContext new_function_context = {
+                .vm = compiler_context->vm,
+                .instruction_buffer = function->instruction_buffer,
+                .environment = compiler_context->environment
+            };
+
+            compiler_compile_statements(&new_function_context, function_statement->body->statement_vector);
+            INSERT_INSTRUCTIONS(function->instruction_buffer, PUSH_NIL, RETURN);
+
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                CREATE_CLOSURE,
+                compiler_context->vm->function_count,
+                STORE_VAR,
+                function_statement->offset,
+            );
+
+            vm_add_function(compiler_context->vm, function);
+        }
     }
 }
 
@@ -202,7 +231,19 @@ static void compiler_compile_expression(
                 (struct LiteralExpression *) expression
             );
             break;
-        default: break;
+        case CALL_EXPRESSION: {
+            const struct CallExpression *call_expression = (const struct CallExpression *)expression;
+            for (size_t i = 0; i < call_expression->arguments_count; i++) {
+                compiler_compile_expression(compiler_context, call_expression->arguments[i]);
+            }
+            INSERT_INSTRUCTIONS(
+                compiler_context->instruction_buffer,
+                LOAD_VAR,
+                call_expression->offset,
+                CALL
+            );
+            break;
+        }
     }
 }
 

@@ -12,13 +12,18 @@ struct Function {
   struct InstructionBuffer *instruction_buffer;
   size_t num_args;
   size_t num_locals;
+};
+
+struct Closure {
+  struct Function *function;
   size_t references;
 };
 
 struct Function *function_init(size_t num_args, size_t num_locals);
-void function_call(const struct Function *function, struct VM *vm);
-void function_return(struct VM *vm);
-void function_retain(struct Function *function);
-void function_release(struct Function *function);
+struct Closure *closure_init(struct Function *function);
+void closure_call(const struct Closure *closure, struct VM *vm);
+void closure_return(struct VM *vm);
+void closure_retain(struct Closure *closure);
+void closure_release(struct Closure *closure);
 
 #endif 

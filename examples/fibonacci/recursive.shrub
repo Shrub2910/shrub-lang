@@ -1,0 +1,6 @@
+let x = 5;
+fn add(a, b)
+    print a + b;
+end
+
+add(7, 123);

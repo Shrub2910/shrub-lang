@@ -13,41 +13,48 @@ struct Function *function_init(const size_t num_args, const size_t num_locals) {
   function->instruction_buffer = vm_init_instruction_buffer();
   function->num_args = num_args;
   function->num_locals = num_locals;
-  function->references = 1;
 
   return function;
 }
 
+struct Closure *closure_init(struct Function *function) {
+  struct Closure *closure = malloc(sizeof(struct Closure));
+  closure->function = function;
+  closure->references = 1;
+
+  return closure;
+}
+
 // Used by the call instruction to push a new stack frame, update program counter, and load arguments
-void function_call(const struct Function *function, struct VM *vm) {
+void closure_call(const struct Closure *closure, struct VM *vm) {
   vm_push_frame(
     &vm->stack_frame,
-    function->num_locals,
+    closure->function->num_locals,
     RETURN_ADDRESS(vm->program_counter) // Return address is instruction after call
   ); 
 
   // Program-counter points to called function's instructions
-  vm->program_counter = function->instruction_buffer->buffer;
+  vm->program_counter = closure->function->instruction_buffer->buffer;
   
   // Loads the arguments in reverse order to simplify bytecode
-  for (size_t i = function->num_args; i > 0; --i) {
-    vm_set_local(vm->stack_frame, i, vm_pop_stack(vm->stack));
+  for (size_t i = closure->function->num_args; i > 0; --i) {
+    vm_set_local(vm->stack_frame, i-1, vm_pop_stack(vm->stack));
   }
 }
 
 // Pops the top level frame and updates the program counter
-void function_return(struct VM *vm) {
+void closure_return(struct VM *vm) {
   vm_pop_frame(&vm->stack_frame, &vm->program_counter);
 }
 
 // Insures the function object will live 
-void function_retain(struct Function *function) {
-  function->references++;
+void closure_retain(struct Closure *closure) {
+  closure->references++;
 }
 
 // Insures the function object will be freed
-void function_release(struct Function *function) {
-  if (--function->references <= 0) {
-    free(function);
+void closure_release(struct Closure *closure) {
+  if (--closure->references <= 0) {
+    free(closure);
   }
 }

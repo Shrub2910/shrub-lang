@@ -9,6 +9,7 @@ enum ExpressionType {
     BINARY_EXPRESSION,
     ASSIGNMENT_EXPRESSION,
     UNARY_EXPRESSION,
+    CALL_EXPRESSION,
 };
 
 enum LiteralType {
@@ -54,6 +55,15 @@ struct AssignmentExpression {
     struct Expression expression;
     char *identifier_name;
     struct Expression *right;
+
+    size_t offset;
+};
+
+struct CallExpression {
+    struct Expression expression;
+    char *function_name;
+    struct Expression **arguments;
+    size_t arguments_count;
 
     size_t offset;
 };

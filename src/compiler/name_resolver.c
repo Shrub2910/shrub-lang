@@ -2,8 +2,6 @@
 
 #include "compiler/name_resolver.h"
 
-#include <stdio.h>
-
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
 #include "compiler/environment.h"
@@ -56,6 +54,30 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
             compiler_resolve_expression(compiler_context, unary_expression->operand);
             break;
         }
+        case CALL_EXPRESSION: {
+            struct CallExpression *call_expression = (struct CallExpression *)expression;
+
+            struct ScopeVariable *scope_variable = compiler_search_environment(
+                compiler_context->environment,
+                call_expression->function_name
+            );
+
+            for (size_t i = 0; i < call_expression->arguments_count; i++) {
+                compiler_resolve_expression(compiler_context, call_expression->arguments[i]);
+            }
+
+            call_expression->offset = scope_variable->offset;
+            break;
+        }
+    }
+}
+
+static void check_duplicate_declaration(const struct Environment *environment, const char *name) {
+    if (compiler_search_scope(
+        compiler_get_top_scope(environment),
+        name
+    )) {
+        error_throw(NAME_ERROR, "Can only define variable once per scope");
     }
 }
 
@@ -83,12 +105,7 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
 
             compiler_resolve_expression(compiler_context, let_statement->expression);
 
-            if (compiler_search_scope(
-                compiler_get_top_scope(compiler_context->environment),
-                let_statement->identifier_name
-            )) {
-                error_throw(NAME_ERROR, "Can only define variable once per scope");
-            }
+            check_duplicate_declaration(compiler_context->environment, let_statement->identifier_name);
 
             compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
             let_statement->offset = compiler_context->environment->variable_count++;
@@ -106,6 +123,32 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             struct WhileStatement *while_statement = (struct WhileStatement *)statement;
             compiler_resolve_expression(compiler_context, while_statement->condition);
             compiler_resolve_statement(compiler_context, (struct Statement *)while_statement->body);
+            break;
+        }
+        case FUNCTION_STATEMENT: {
+            struct FunctionStatement *function_statement = (struct FunctionStatement *)statement;
+
+            check_duplicate_declaration(compiler_context->environment, function_statement->name);
+
+            compiler_insert_environment(compiler_context->environment, function_statement->name);
+
+            struct Environment new_environment = compiler_init_environment();
+
+            for (size_t i = 0; i < function_statement->num_parameters; i++) {
+                check_duplicate_declaration(&new_environment, function_statement->parameters[i]);
+                compiler_insert_environment(&new_environment, function_statement->parameters[i]);
+                new_environment.variable_count++;
+            }
+
+            struct CompilerContext new_function_context = {
+                .vm = compiler_context->vm,
+                .environment = &new_environment,
+                .instruction_buffer = compiler_context->instruction_buffer,
+            };
+
+            compiler_resolve_statements(&new_function_context, function_statement->body->statement_vector);
+            function_statement->offset = compiler_context->environment->variable_count++;
+            function_statement->num_locals = new_environment.variable_count - function_statement->num_parameters;
             break;
         }
     }

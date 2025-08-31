@@ -14,6 +14,7 @@ enum StatementType {
     LET_STATEMENT,
     IF_STATEMENT,
     WHILE_STATEMENT,
+    FUNCTION_STATEMENT,
 };
 
 struct Statement {
@@ -50,6 +51,17 @@ struct WhileStatement {
     struct Statement statement;
     struct Expression *condition;
     struct BlockStatement *body;
+};
+
+struct FunctionStatement {
+    struct Statement statement;
+    char *name;
+    struct BlockStatement *body;
+    size_t num_parameters;
+    char **parameters;
+
+    size_t offset;
+    size_t num_locals;
 };
 
 struct ExpressionStatement {

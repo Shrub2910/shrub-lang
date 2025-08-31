@@ -113,6 +113,7 @@ struct Lexer *lexer_init(char *input, const size_t size) {
     keywords_insert(&lexer->keywords, "elseif", ELSE_IF_TOKEN);
     keywords_insert(&lexer->keywords, "then", THEN_TOKEN);
     keywords_insert(&lexer->keywords, "while", WHILE_TOKEN);
+    keywords_insert(&lexer->keywords, "fn", FUNCTION_TOKEN);
 
     return lexer;
 }
@@ -129,6 +130,7 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case '(': return (struct Token){.type = L_BRACKET_TOKEN};
         case ')': return (struct Token){.type = R_BRACKET_TOKEN};
         case ';': return (struct Token){.type = SEMI_COLON_TOKEN};
+        case ',': return (struct Token){.type = COMMA_TOKEN};
         case '=': {
             if (lexer_peek(lexer) == '=') {
                 lexer->current++;

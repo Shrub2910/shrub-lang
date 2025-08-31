@@ -36,6 +36,8 @@ enum TokenType {
     THEN_TOKEN,
     WHILE_TOKEN,
     MOD_TOKEN,
+    FUNCTION_TOKEN,
+    COMMA_TOKEN,
     NOTHING_TOKEN,
 };
 

@@ -10,6 +10,7 @@
 #include "error/error.h"
 #include "error/error_types.h"
 #include "file/file_read.h"
+#include "vm/opcodes.h"
 
 int main(const int argc, char **argv) {
   if (argc != 2) {
@@ -38,6 +39,8 @@ int main(const int argc, char **argv) {
 
   compiler_resolve_statements(&compiler_context, parser->statement_vector);
   compiler_compile_statements(&compiler_context, parser->statement_vector);
+
+  INSERT_INSTRUCTIONS(compiler_context.instruction_buffer, HALT);
 
   lexer_free(lexer);
   parser_free(parser);

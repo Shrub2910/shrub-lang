@@ -39,7 +39,10 @@ struct VM *vm_init(void) {
   }
   
   vm->constant_count = 0;
-  vm->constants = (struct Value *) malloc(CONST_POOL_SIZE * sizeof(struct Value));
+  vm->constants = malloc(CONST_POOL_SIZE * sizeof(struct Value));
+
+  vm->function_count = 0;
+  vm->functions = malloc(FUNCTION_POOL_SIZE * sizeof(struct Function));
 
   if (!vm->constants) {
     vm_free(vm);
@@ -248,7 +251,6 @@ void vm_exec(struct VM *vm) {
         size_t offset = READ_BYTE();
         
         vm_set_local(vm->stack_frame, offset, value);
-        object_release(value);
         break;
       }
       // Will load a variable at an offset to the frame pointer  
@@ -264,14 +266,14 @@ void vm_exec(struct VM *vm) {
       // Stack underflow will occur if insufficient arguments are provided
       case CALL: {
         struct Value value = vm_pop_stack(vm->stack);
-        function_call(value.function, vm);
+        closure_call(value.closure, vm);
         object_release(value);
         break;
       }
       // Pops the current stack frame 
       // Program counter returns back to where it was prior to the call 
       case RETURN: {
-        function_return(vm);
+        closure_return(vm);
         break;
       }
       // Useful for infinite loops or goto statements
@@ -380,6 +382,13 @@ void vm_exec(struct VM *vm) {
         object_release(value);
         break;
       }
+      case CREATE_CLOSURE: {
+        size_t offset = READ_BYTE();
+
+        struct Value value = {.type = TYPE_CLOSURE, .closure = closure_init(vm->functions[offset])};
+        vm_push_stack(vm->stack, value);
+        break;
+      }
       default: {
         printf("Instruction opcode: %d", current_instruction);
         error_throw(INSTRUCTION_ERROR, "Unrecognised instruction");
@@ -407,6 +416,23 @@ void vm_free_consts(struct VM *vm) {
 
   free(vm->constants);
   vm->constants = NULL;
+}
+
+void vm_add_function(struct VM *vm, struct Function *function) {
+  if (vm->function_count == FUNCTION_POOL_SIZE) {
+    printf("Error Too Many Functions!");
+  }
+
+  vm->functions[vm->function_count++] = function;
+}
+
+void vm_free_functions(struct VM *vm) {
+  for (size_t i = 0; i < vm->function_count; ++i) {
+    free(vm->functions[i]);
+  }
+
+  free(vm->functions);
+  vm->functions = NULL;
 }
 
 // Cleans up the virtual machine when no longer needed

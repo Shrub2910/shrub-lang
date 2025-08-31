@@ -8,7 +8,7 @@ struct StatementVector {
     size_t size;
 };
 
-struct StatementVector *parser_statement_vector_init();
+struct StatementVector *parser_statement_vector_init(void);
 void parser_statement_vector_insert(struct StatementVector *statement_vector, struct Statement *statement);
 void parser_statement_vector_free(struct StatementVector *statement_vector);
 
