@@ -12,6 +12,12 @@ struct Function {
   struct InstructionBuffer *instruction_buffer;
   size_t num_args;
   size_t num_locals;
+
+  struct Value *constants;
+  size_t constant_count;
+
+  struct Function **functions;
+  size_t function_count;
 };
 
 struct Closure {

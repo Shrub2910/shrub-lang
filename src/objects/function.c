@@ -38,6 +38,8 @@ void closure_call(struct Closure *closure, struct VM *vm) {
     RETURN_ADDRESS(vm->program_counter) // Return address is instruction after call
   ); 
 
+  vm->stack_frame->closure = closure;
+
   // Program-counter points to called function's instructions
   vm->program_counter = closure->function->instruction_buffer->buffer;
 

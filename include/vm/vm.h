@@ -9,14 +9,6 @@
 struct VM {
   struct Stack *stack;
 
-  struct Value *constants;
-  size_t constant_count;
-
-  struct Function **functions;
-  size_t function_count;
-
-  struct InstructionBuffer *instruction_buffer;
-
   struct StackFrame *stack_frame;
 
   uint8_t *program_counter;
@@ -24,15 +16,9 @@ struct VM {
 
 // VM methods
 
-struct VM *vm_init(void);
+struct VM *vm_init(struct Closure *main_closure);
 void vm_exec(struct VM *vm);
 void vm_free(struct VM *vm);
-
-void vm_add_const(struct VM *vm, struct Value value);
-void vm_free_consts(struct VM *vm);
-
-void vm_add_function(struct VM *vm, struct Function *function);
-void vm_free_functions(struct VM *vm);
 
 // VM Setup
 

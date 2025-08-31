@@ -2,6 +2,8 @@
 
 #include "compiler/name_resolver.h"
 
+#include <stdlib.h>
+
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
 #include "compiler/environment.h"
@@ -150,7 +152,6 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             }
 
             struct CompilerContext new_function_context = {
-                .vm = compiler_context->vm,
                 .environment = &new_environment,
                 .instruction_buffer = compiler_context->instruction_buffer,
             };
@@ -158,6 +159,7 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
             compiler_resolve_statements(&new_function_context, function_statement->body->statement_vector);
             function_statement->offset = compiler_context->environment->variable_count++;
             function_statement->num_locals = new_environment.variable_count - function_statement->num_parameters;
+
             break;
         }
         case RETURN_STATEMENT: {

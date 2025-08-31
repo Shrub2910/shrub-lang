@@ -23,30 +23,12 @@ static bool compare(struct Value operand_1, struct Value operand_2, uint8_t opco
 static bool is_falsy(struct Value operand);
 
 // Returns a preconfigured vm struct to be used in the main function 
-struct VM *vm_init(void) {
+struct VM *vm_init(struct Closure *main_closure) {
    
   struct VM *vm = (struct VM *) malloc(sizeof(struct VM));
 
   if (!vm) {
     error_throw(MALLOC_ERROR, "Failed to allocate vm");
-  }
-
-  vm->instruction_buffer = vm_init_instruction_buffer();
-
-  if (!vm->instruction_buffer) {
-    vm_free(vm);
-    error_throw(MALLOC_ERROR, "Failed to allocate instruction buffer");
-  }
-  
-  vm->constant_count = 0;
-  vm->constants = malloc(CONST_POOL_SIZE * sizeof(struct Value));
-
-  vm->function_count = 0;
-  vm->functions = malloc(FUNCTION_POOL_SIZE * sizeof(struct Function));
-
-  if (!vm->constants) {
-    vm_free(vm);
-    error_throw(MALLOC_ERROR, "Failed to allocate constants pool");
   }
 
   vm->stack = vm_init_stack();
@@ -56,15 +38,13 @@ struct VM *vm_init(void) {
     error_throw(MALLOC_ERROR, "Failed to allocate stack");
   }
   
-  // For testing purposes the top level stack frame is initialised with a lot of space
-  // No return address or previous stack frame; they are both NULL 
-  vm->stack_frame = vm_init_stack_frame(255, NULL, RETURN_ADDRESS(NULL));
+  closure_call(main_closure, vm);
 
   return vm;
 }
 
 void vm_exec(struct VM *vm) {
-  vm->program_counter = vm->instruction_buffer->buffer;
+  vm->program_counter = vm->stack_frame->closure->function->instruction_buffer->buffer;
   // Program only finishes execution when it should
   for (;;) {
     uint8_t current_instruction = READ_BYTE();
@@ -101,7 +81,7 @@ void vm_exec(struct VM *vm) {
       // Push constants onto the stack 
       case LOAD_CONST: {
         uint8_t const_index = READ_BYTE();
-        struct Value value = vm->constants[const_index];
+        struct Value value = vm->stack_frame->closure->function->constants[const_index];
 
         object_retain(value);
 
@@ -396,7 +376,10 @@ void vm_exec(struct VM *vm) {
       case CREATE_CLOSURE: {
         size_t offset = READ_BYTE();
 
-        struct Value value = {.type = TYPE_CLOSURE, .closure = closure_init(vm->functions[offset])};
+        struct Value value = {
+          .type = TYPE_CLOSURE,
+          .closure = closure_init(vm->stack_frame->closure->function->functions[offset])
+        };
         vm_push_stack(vm->stack, value);
         break;
       }
@@ -408,52 +391,11 @@ void vm_exec(struct VM *vm) {
   } 
 }
 
-// Adding constants to the constant pool 
-void vm_add_const(struct VM *vm, const struct Value value) {
-  if (vm->constant_count == CONST_POOL_SIZE) {
-    printf("Error Too Many Constants!"); // TEMPORARY
-  }
-
-  vm->constants[vm->constant_count++] = value; 
-}
-
-// Handles clean up of constants 
-void vm_free_consts(struct VM *vm) {
-  for (size_t i = 0; i < vm->constant_count; ++i) {
-    const struct Value value = vm->constants[i];
-
-    object_release(value);
-  }
-
-  free(vm->constants);
-  vm->constants = NULL;
-}
-
-void vm_add_function(struct VM *vm, struct Function *function) {
-  if (vm->function_count == FUNCTION_POOL_SIZE) {
-    printf("Error Too Many Functions!");
-  }
-
-  vm->functions[vm->function_count++] = function;
-}
-
-void vm_free_functions(struct VM *vm) {
-  for (size_t i = 0; i < vm->function_count; ++i) {
-    free(vm->functions[i]);
-  }
-
-  free(vm->functions);
-  vm->functions = NULL;
-}
 
 // Cleans up the virtual machine when no longer needed
 void vm_free(struct VM *vm) {
-  vm_free_instruction_buffer(vm->instruction_buffer);
-  vm->instruction_buffer = NULL;
 
   vm->program_counter = NULL;
-
-  vm_free_consts(vm);
 
   vm_free_stack(vm->stack);
   vm->stack = NULL;

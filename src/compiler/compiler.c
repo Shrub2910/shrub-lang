@@ -34,7 +34,7 @@ static void compiler_compile_unary_expression(
     const struct UnaryExpression *unary_expression
 );
 static void compiler_compile_literal_expression(
-    const struct CompilerContext *compiler_context,
+    struct CompilerContext *compiler_context,
     const struct LiteralExpression *expression
 );
 static void compiler_compile_assignment_expression(
@@ -172,23 +172,36 @@ static void compiler_compile_statement(
             function->instruction_buffer = vm_init_instruction_buffer();
 
             struct CompilerContext new_function_context = {
-                .vm = compiler_context->vm,
                 .instruction_buffer = function->instruction_buffer,
-                .environment = compiler_context->environment
+                .environment = compiler_context->environment,
+
+
+                .constants = malloc(sizeof(struct Value) * CONST_POOL_SIZE),
+                .constant_count = 0,
+
+                .functions = malloc(sizeof(struct Function *) * FUNCTION_POOL_SIZE),
+                .function_count = 0,
             };
 
             compiler_compile_statements(&new_function_context, function_statement->body->statement_vector);
+
+            function->constants = new_function_context.constants;
+            function->constant_count = new_function_context.constant_count;
+            function->functions = new_function_context.functions;
+            function->function_count = new_function_context.function_count;
+
             INSERT_INSTRUCTIONS(function->instruction_buffer, PUSH_NIL, RETURN);
+
+            compiler_context->functions[compiler_context->function_count++] = function;
 
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 CREATE_CLOSURE,
-                compiler_context->vm->function_count,
+                compiler_context->function_count - 1,
                 STORE_VAR,
                 function_statement->offset,
             );
 
-            vm_add_function(compiler_context->vm, function);
             break;
         }
         case RETURN_STATEMENT: {
@@ -348,16 +361,16 @@ static void compiler_compile_unary_expression(
 
 static void compiler_compile_literal_expression
 (
-    const struct CompilerContext *compiler_context,
+    struct CompilerContext *compiler_context,
     const struct LiteralExpression *expression
 ) {
     switch (expression->literal_type) {
         case NUMBER_LITERAL: {
-            vm_add_const(compiler_context->vm, NUMBER(expression->number));
+            compiler_context->constants[compiler_context->constant_count++] = NUMBER(expression->number);
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->vm->constant_count - 1)
+                compiler_context->constant_count - 1)
             ;
             break;
         }
@@ -366,29 +379,30 @@ static void compiler_compile_literal_expression
             break;
         }
         case STRING_LITERAL: {
-            vm_add_const(compiler_context->vm, STRING(expression->string, strlen(expression->string)));
+            compiler_context->constants[compiler_context->constant_count++]
+                = STRING(expression->string, strlen(expression->string));
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->vm->constant_count - 1
+                compiler_context->constant_count - 1
             );
             break;
         }
         case BOOLEAN_LITERAL: {
-            vm_add_const(compiler_context->vm, BOOLEAN(expression->boolean));
+            compiler_context->constants[compiler_context->constant_count++] = BOOLEAN(expression->boolean);
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->vm->constant_count - 1
+                compiler_context->constant_count - 1
             );
             break;
         }
         case NIL_LITERAL: {
-            vm_add_const(compiler_context->vm, NIL());
+            compiler_context->constants[compiler_context->constant_count++] = NIL();
             INSERT_INSTRUCTIONS(
                 compiler_context->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->vm->constant_count - 1
+                compiler_context->constant_count - 1
             );
             break;
         }

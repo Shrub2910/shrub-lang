@@ -7,9 +7,12 @@
 #include "vm/values.h"
 
 struct StackFrame {
-  struct StackFrame *previous_stack_frame;
-  size_t num_locals;
-  struct Value data[];
+    struct StackFrame *previous_stack_frame;
+    size_t num_locals;
+
+    struct Closure *closure;
+
+    struct Value data[];
 };
 
 struct StackFrame *vm_init_stack_frame(
@@ -31,6 +34,7 @@ void vm_push_frame
  struct StackFrame **current_stack_frame,
  size_t num_locals,
  struct Value return_address
+
 );
 
 void vm_pop_frame(struct StackFrame **current_stack_frame, uint8_t **current_program_counter);

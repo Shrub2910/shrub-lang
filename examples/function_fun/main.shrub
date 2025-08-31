@@ -1,0 +1,20 @@
+fn add(adder, number)
+    return adder(number);
+end
+
+fn add_7(number)
+    return number + 7;
+end
+
+print add(add_7, 3);
+
+fn create_printer()
+    fn printer()
+        print "Hello!";
+    end
+
+    return printer;
+end
+
+let new_printer = create_printer();
+new_printer();
