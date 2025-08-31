@@ -77,6 +77,40 @@ static void parser_statement_free(struct Statement *statement) {
             free(expression_statement);
             break;
         }
+        case LET_STATEMENT: {
+            struct LetStatement *let_statement = (struct LetStatement *)statement;
+            parser_expression_free(let_statement->expression);
+            free(let_statement);
+            break;
+        }
+        case IF_STATEMENT: {
+            struct IfStatement *if_statement = (struct IfStatement *)statement;
+            parser_expression_free(if_statement->condition);
+            parser_statement_free((struct Statement *)if_statement->then_block);
+            if (if_statement->else_block) {
+                parser_statement_free((struct Statement *)if_statement->else_block);
+            }
+            free(if_statement);
+            break;
+        }
+        case WHILE_STATEMENT: {
+            struct WhileStatement *while_statement = (struct WhileStatement *)statement;
+            parser_expression_free(while_statement->condition);
+            parser_statement_free((struct Statement *)while_statement->body);
+            free(while_statement);
+            break;
+        }
+        case FUNCTION_STATEMENT: {
+            struct FunctionStatement *function_statement = (struct FunctionStatement *)statement;
+            parser_statement_free((struct Statement *)function_statement->body);
+            free(function_statement);
+            break;
+        }
+        case RETURN_STATEMENT: {
+            struct ReturnStatement *return_statement = (struct ReturnStatement *)statement;
+            parser_expression_free(return_statement->expression);
+            free(return_statement);
+        }
     }
 }
 
@@ -92,6 +126,26 @@ static void parser_expression_free(struct Expression *expression) {
         case LITERAL_EXPRESSION: {
             struct LiteralExpression *literal_expression = (struct LiteralExpression *)expression;
             free(literal_expression);
+            break;
+        }
+        case ASSIGNMENT_EXPRESSION: {
+            struct AssignmentExpression *assignment_expression = (struct AssignmentExpression *)expression;
+            parser_expression_free(assignment_expression->right);
+            free(assignment_expression);
+            break;
+        }
+        case UNARY_EXPRESSION: {
+            struct UnaryExpression *unary_expression = (struct UnaryExpression *)expression;
+            parser_expression_free(unary_expression->operand);
+            free(unary_expression);
+            break;
+        }
+        case CALL_EXPRESSION: {
+            struct CallExpression *call_expression = (struct CallExpression *)expression;
+            for (size_t i = 0; i < call_expression->arguments_count; i++) {
+                parser_expression_free(call_expression->arguments[i]);
+            }
+            free(call_expression);
             break;
         }
     }

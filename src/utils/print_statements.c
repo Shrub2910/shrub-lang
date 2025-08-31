@@ -58,6 +58,37 @@ static void print_expression(struct Expression *expression, const size_t indent_
 
         printf("%sAssignment(%s)\n", indent, assignment_expression->identifier_name);
         print_expression(assignment_expression->right, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (expression->type == UNARY_EXPRESSION) {
+        char *indent = make_indent(indent_count);
+        const struct UnaryExpression *unary_expression = (struct UnaryExpression *)expression;
+
+        switch (unary_expression->operator) {
+            case PLUS_TOKEN: printf("%sUnary(+)\n", indent); break;
+            case MINUS_TOKEN: printf("%sUnary(-)\n", indent); break;
+            default: break;
+        }
+
+        print_expression(unary_expression->operand, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (expression->type == CALL_EXPRESSION) {
+        char *indent = make_indent(indent_count);
+        const struct CallExpression *call_expression = (struct CallExpression *)expression;
+
+        printf("%sCall(%s)\n", indent, call_expression->function_name);
+
+        for (size_t i = 0; i < call_expression->arguments_count; i++) {
+            print_expression(call_expression->arguments[i], indent_count + 1);
+        }
+
+        free(indent);
+        return;
     }
 
     char *indent = make_indent(indent_count);
@@ -125,6 +156,24 @@ static void print_statement(struct Statement *statement, const size_t indent_cou
         printf("%sWhile\n", indent);
         print_expression(while_statement->condition, indent_count + 1);
         print_statement((struct Statement *)while_statement->body, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (statement->type == FUNCTION_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct FunctionStatement *function_statement = (struct FunctionStatement *)statement;
+        printf("%sFunction\n", indent);
+        print_statement((struct Statement *)function_statement->body, indent_count + 1);
+        free(indent);
+        return;
+    }
+
+    if (statement->type == RETURN_STATEMENT) {
+        char *indent = make_indent(indent_count);
+        const struct ReturnStatement *return_statement = (struct ReturnStatement *)statement;
+        printf("%sReturn\n", indent);
+        print_expression(return_statement->expression, indent_count + 1);
         free(indent);
         return;
     }

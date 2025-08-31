@@ -26,20 +26,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="add basic functions">
+    <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="add return statement and permit recursion">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/fibonacci/recursive.shrub" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fibonacci/recursive.shrub" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/objects/function.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/objects/function.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/token.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/name_resolver.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/name_resolver.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/objects/function.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/objects/function.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/statement_vector.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/statement_vector.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/print_statements.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/print_statements.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -410,7 +402,7 @@
       <workItem from="1756550601653" duration="7836000" />
       <workItem from="1756563276329" duration="5695000" />
       <workItem from="1756596052320" duration="11294000" />
-      <workItem from="1756635969843" duration="5640000" />
+      <workItem from="1756635969843" duration="6981000" />
     </task>
     <task id="LOCAL-00001" summary="add separate name resolution pass to compiler">
       <option name="closed" value="true" />
@@ -452,7 +444,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756607314961</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="add return statement and permit recursion">
+      <option name="closed" value="true" />
+      <created>1756641629418</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1756641629418</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -480,7 +480,8 @@
     <MESSAGE value="treat args as locals to simplify vm" />
     <MESSAGE value="add fib example and fix name resolution" />
     <MESSAGE value="add basic functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="add basic functions" />
+    <MESSAGE value="add return statement and permit recursion" />
+    <option name="LAST_COMMIT_MESSAGE" value="add return statement and permit recursion" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

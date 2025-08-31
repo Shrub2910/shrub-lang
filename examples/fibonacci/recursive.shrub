@@ -7,8 +7,7 @@ fn fib(n)
 end
 
 let i = 0;
-while i <= 100 do
-    print i;
+while i <= 30 do
     print fib(i);
     i = i + 1;
 end

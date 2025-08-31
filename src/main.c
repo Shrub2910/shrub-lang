@@ -12,6 +12,8 @@
 #include "file/file_read.h"
 #include "vm/opcodes.h"
 
+#define SHOW_AST
+
 int main(const int argc, char **argv) {
   if (argc != 2) {
     error_throw(ARGUMENT_ERROR, "Expects one 1 argument (File Path)");
