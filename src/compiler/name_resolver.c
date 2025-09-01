@@ -2,8 +2,6 @@
 
 #include "compiler/name_resolver.h"
 
-#include <stdlib.h>
-
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
 #include "compiler/environment.h"
@@ -153,7 +151,6 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
 
             struct CompilerContext new_function_context = {
                 .environment = &new_environment,
-                .instruction_buffer = compiler_context->instruction_buffer,
             };
 
             compiler_resolve_statements(&new_function_context, function_statement->body->statement_vector);

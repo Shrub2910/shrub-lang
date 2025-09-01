@@ -33,37 +33,25 @@ int main(const int argc, char **argv) {
 #endif
 
   struct Environment environment = compiler_init_environment();
-  struct InstructionBuffer *instruction_buffer = vm_init_instruction_buffer();
 
   struct Value *constants = malloc(sizeof(struct Value) * CONST_POOL_SIZE);
   struct Function **functions = malloc(sizeof(struct Function *) * FUNCTION_POOL_SIZE);
 
   struct CompilerContext compiler_context = {
     .environment = &environment,
-    .instruction_buffer = instruction_buffer,
-
-    .constants = constants,
-    .constant_count = 0,
-
-    .functions = functions,
-    .function_count = 0,
+    .function = function_init()
   };
 
   compiler_resolve_statements(&compiler_context, parser->statement_vector);
   compiler_compile_statements(&compiler_context, parser->statement_vector);
 
-  struct Function *main_function = function_init(0, environment.variable_count);
-  main_function->constants = compiler_context.constants;
-  main_function->constant_count = compiler_context.constant_count;
-  main_function->functions = compiler_context.functions;
-  main_function->function_count = compiler_context.function_count;
-  main_function->instruction_buffer = instruction_buffer;
+  compiler_context.function->num_locals = compiler_context.environment->variable_count;
 
-  struct Closure *main_closure = closure_init(main_function);
+  struct Closure *main_closure = closure_init(compiler_context.function);
 
   struct VM *vm = vm_init(main_closure);
 
-  INSERT_INSTRUCTIONS(compiler_context.instruction_buffer, HALT);
+  INSERT_INSTRUCTIONS(compiler_context.function->instruction_buffer, HALT);
 
   lexer_free(lexer);
   parser_free(parser);

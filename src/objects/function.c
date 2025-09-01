@@ -13,11 +13,15 @@
 #include "vm/values.h"
 
 // Initialise the function object and make it the right size
-struct Function *function_init(const size_t num_args, const size_t num_locals) {
+struct Function *function_init(void) {
   struct Function *function = malloc(sizeof(struct Function));
   function->instruction_buffer = vm_init_instruction_buffer();
-  function->num_args = num_args;
-  function->num_locals = num_locals;
+  function->num_args = 0;
+  function->num_locals = 0;
+  function->constants = malloc(sizeof(struct Value) * CONST_POOL_SIZE);
+  function->constant_count = 0;
+  function->functions = malloc(sizeof(struct Function *) * FUNCTION_POOL_SIZE);
+  function->function_count = 0;
 
   return function;
 }

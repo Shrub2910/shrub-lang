@@ -101,7 +101,7 @@ static void compiler_compile_statement(
 
             if (let_statement->is_nil) {
                 INSERT_INSTRUCTIONS(
-                    compiler_context->instruction_buffer,
+                    compiler_context->function->instruction_buffer,
                     PUSH_NIL
                 );
             } else {
@@ -110,7 +110,7 @@ static void compiler_compile_statement(
 
             compiler_insert_environment(compiler_context->environment, let_statement->identifier_name);
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 STORE_VAR,
                 let_statement->offset
             );
@@ -119,12 +119,12 @@ static void compiler_compile_statement(
         case EXPRESSION_STATEMENT: {
             const struct ExpressionStatement *expression_statement = (const struct ExpressionStatement *)statement;
             compiler_compile_expression(compiler_context, expression_statement->expression);
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, DISCARD);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, DISCARD);
             break;
         }
         case IF_STATEMENT: {
             const struct IfStatement *if_statement = (const struct IfStatement *)statement;
-            struct InstructionBuffer *instruction_buffer = compiler_context->instruction_buffer;
+            struct InstructionBuffer *instruction_buffer = compiler_context->function->instruction_buffer;
 
             compiler_compile_expression(compiler_context, if_statement->condition);
 
@@ -148,7 +148,7 @@ static void compiler_compile_statement(
         }
         case WHILE_STATEMENT: {
             const struct WhileStatement *while_statement = (const struct WhileStatement *)statement;
-            struct InstructionBuffer *instruction_buffer = compiler_context->instruction_buffer;
+            struct InstructionBuffer *instruction_buffer = compiler_context->function->instruction_buffer;
 
             const size_t j_position = get_current_position(instruction_buffer);
             compiler_compile_expression(compiler_context, while_statement->condition);
@@ -166,38 +166,25 @@ static void compiler_compile_statement(
         case FUNCTION_STATEMENT: {
             const struct FunctionStatement *function_statement = (const struct FunctionStatement *)statement;
 
-            struct Function *function = function_init(function_statement->num_parameters,
-                function_statement->num_locals);
-
-            function->instruction_buffer = vm_init_instruction_buffer();
+            struct Function *function = function_init();
+            function->num_locals = function_statement->num_locals;
+            function->num_args = function_statement->num_parameters;
 
             struct CompilerContext new_function_context = {
-                .instruction_buffer = function->instruction_buffer,
                 .environment = compiler_context->environment,
-
-
-                .constants = malloc(sizeof(struct Value) * CONST_POOL_SIZE),
-                .constant_count = 0,
-
-                .functions = malloc(sizeof(struct Function *) * FUNCTION_POOL_SIZE),
-                .function_count = 0,
+                .function = function,
             };
 
             compiler_compile_statements(&new_function_context, function_statement->body->statement_vector);
 
-            function->constants = new_function_context.constants;
-            function->constant_count = new_function_context.constant_count;
-            function->functions = new_function_context.functions;
-            function->function_count = new_function_context.function_count;
-
             INSERT_INSTRUCTIONS(function->instruction_buffer, PUSH_NIL, RETURN);
 
-            compiler_context->functions[compiler_context->function_count++] = function;
+            compiler_context->function->functions[compiler_context->function->function_count++] = function;
 
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 CREATE_CLOSURE,
-                compiler_context->function_count - 1,
+                compiler_context->function->function_count - 1,
                 STORE_VAR,
                 function_statement->offset,
             );
@@ -207,7 +194,7 @@ static void compiler_compile_statement(
         case RETURN_STATEMENT: {
             const struct ReturnStatement *return_statement = (const struct ReturnStatement *)statement;
             compiler_compile_expression(compiler_context, return_statement->expression);
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, RETURN);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, RETURN);
         }
     }
 }
@@ -217,7 +204,7 @@ static void compiler_compile_print_statement(
     const struct PrintStatement *print_statement
 ) {
     compiler_compile_expression(compiler_context, print_statement->expression);
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, PRINT);
+    INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, PRINT);
 }
 
 static void compiler_compile_expression(
@@ -256,7 +243,7 @@ static void compiler_compile_expression(
                 compiler_compile_expression(compiler_context, call_expression->arguments[i]);
             }
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 LOAD_VAR,
                 call_expression->offset,
                 CALL,
@@ -272,8 +259,8 @@ static void compiler_compile_assignment_expression(
     const struct AssignmentExpression *assignment_expression
 ) {
     compiler_compile_expression(compiler_context, assignment_expression->right);
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, STORE_VAR, assignment_expression->offset);
-    INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, assignment_expression->offset);
+    INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, STORE_VAR, assignment_expression->offset);
+    INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LOAD_VAR, assignment_expression->offset);
 }
 
 static void compiler_compile_binary_expression(
@@ -285,55 +272,55 @@ static void compiler_compile_binary_expression(
 
     switch (expression->operator) {
         case PLUS_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, ADD);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, ADD);
             break;
         }
         case MINUS_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, SUB);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, SUB);
             break;
         }
         case TIMES_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, MUL);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, MUL);
             break;
         }
         case DIVIDE_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, DIV);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, DIV);
             break;
         }
         case DOUBLE_EQUAL_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, EQUAL);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, EQUAL);
             break;
         }
         case NOT_EQUAL_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NOT_EQUAL);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, NOT_EQUAL);
             break;
         }
         case LESS_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LESS);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LESS);
             break;
         }
         case GREATER_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, GREATER);
             break;
         }
         case LESS_EQUAL_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LESS_EQUAL);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LESS_EQUAL);
             break;
         }
         case GREATER_EQUAL_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, GREATER_EQUAL);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, GREATER_EQUAL);
             break;
         }
         case AND_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, AND);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, AND);
             break;
         }
         case OR_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, OR);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, OR);
             break;
         }
         case MOD_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, MOD);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, MOD);
             break;
         }
         default: break;
@@ -348,11 +335,11 @@ static void compiler_compile_unary_expression(
 
     switch (unary_expression->operator) {
         case MINUS_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NEGATE);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, NEGATE);
             break;
         }
         case BANG_TOKEN: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, NOT);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, NOT);
             break;
         }
         default: break;
@@ -366,43 +353,47 @@ static void compiler_compile_literal_expression
 ) {
     switch (expression->literal_type) {
         case NUMBER_LITERAL: {
-            compiler_context->constants[compiler_context->constant_count++] = NUMBER(expression->number);
+            compiler_context->function->constants[compiler_context->function->constant_count++] =
+                NUMBER(expression->number);
+
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->constant_count - 1)
+                compiler_context->function->constant_count - 1)
             ;
             break;
         }
         case IDENTIFIER_LITERAL: {
-            INSERT_INSTRUCTIONS(compiler_context->instruction_buffer, LOAD_VAR, expression->offset);
+            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LOAD_VAR, expression->offset);
             break;
         }
         case STRING_LITERAL: {
-            compiler_context->constants[compiler_context->constant_count++]
+            compiler_context->function->constants[compiler_context->function->constant_count++]
                 = STRING(expression->string, strlen(expression->string));
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->constant_count - 1
+                compiler_context->function->constant_count - 1
             );
             break;
         }
         case BOOLEAN_LITERAL: {
-            compiler_context->constants[compiler_context->constant_count++] = BOOLEAN(expression->boolean);
+            compiler_context->function->constants[compiler_context->function->constant_count++] =
+                BOOLEAN(expression->boolean);
+
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->constant_count - 1
+                compiler_context->function->constant_count - 1
             );
             break;
         }
         case NIL_LITERAL: {
-            compiler_context->constants[compiler_context->constant_count++] = NIL();
+            compiler_context->function->constants[compiler_context->function->constant_count++] = NIL();
             INSERT_INSTRUCTIONS(
-                compiler_context->instruction_buffer,
+                compiler_context->function->instruction_buffer,
                 LOAD_CONST,
-                compiler_context->constant_count - 1
+                compiler_context->function->constant_count - 1
             );
             break;
         }

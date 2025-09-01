@@ -7,15 +7,8 @@
 #include "vm/instruction_buffer.h"
 
 struct CompilerContext {
-    struct InstructionBuffer *instruction_buffer;
-
     struct Environment *environment;
-
-    struct Value *constants;
-    size_t constant_count;
-
-    struct Function **functions;
-    size_t function_count;
+    struct Function *function;
 };
 
 void compiler_compile_statements(
