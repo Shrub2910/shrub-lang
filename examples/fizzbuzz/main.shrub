@@ -1,15 +1,21 @@
 let x = 1;
 
-while x <= 100 do
-    if x % 15 == 0 then
-        print "Fizz Buzz";
-    elseif x % 3 == 0 then
-        print "Fizz";
-    elseif x % 5 == 0 then
-        print "Buzz";
-    else
-        print x;
-    end
+while x<=100 do
+  let y = x % 3;
+  let z = x % 5;
 
-    x = x + 1;
+  if y==0 and z!=0 then
+    print "fizz";
+
+  elseif y!=0 and z==0 then
+    print "buzz";
+
+  elseif y==0 and z==0 then
+    print "fizzbuzz";
+
+  else
+    print x;
+  end
+
+  x = x + 1;
 end

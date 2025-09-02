@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include "vm/vm.h"
 #include "parser/statement_vector.h"
-#include "vm/instruction_buffer.h"
 
 struct CompilerContext {
     struct Environment *environment;

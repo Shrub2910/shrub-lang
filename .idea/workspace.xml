@@ -29,8 +29,13 @@
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="compiler context just takes in function object now">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/name_resolver.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/name_resolver.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/fizzbuzz/main.shrub" beforeDir="false" afterPath="$PROJECT_DIR$/examples/fizzbuzz/main.shrub" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/compiler/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/compiler.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/objects/function.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/objects/function.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/lexer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/lexer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parser/parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/stack.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/stack.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/variables/upvalues.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/variables/upvalues.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -516,7 +521,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/install&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/isaac/c_projects/shrub_lang&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -593,6 +598,8 @@
       <workItem from="1756846021133" duration="188000" />
       <workItem from="1756849146247" duration="123000" />
       <workItem from="1756849590503" duration="429000" />
+      <workItem from="1756850878457" duration="3133000" />
+      <workItem from="1756855436360" duration="121000" />
     </task>
     <task id="LOCAL-00001" summary="add separate name resolution pass to compiler">
       <option name="closed" value="true" />
@@ -692,15 +699,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="compiler context just takes in function object now" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/vm/vm.c</url>
-          <line>261</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
         <watch expression="*main_closure-&gt;function-&gt;instruction_buffer-&gt;buffer @ 14" custom="AddWatchAsArrayAction.marker:  @ 14" />

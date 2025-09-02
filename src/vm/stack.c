@@ -3,8 +3,6 @@
 #include "vm/values.h"
 #include "error/error.h"
 #include "error/error_types.h"
-#include "objects/string.h"
-#include "objects/function.h"
 
 // Initialises stack and sets its size to be what is specified in the header file 
 struct Stack *vm_init_stack(void) {

@@ -25,14 +25,14 @@ struct CharVector {
 };
 
 static inline bool lexer_has_char(const struct Lexer *lexer) {
-    return lexer->current - lexer->input < lexer->size;
+    return (size_t)(lexer->current - lexer->input) < lexer->size;
 }
 
-static inline char lexer_peek(const struct Lexer *lexer) {
+static inline int lexer_peek(const struct Lexer *lexer) {
     return lexer_has_char(lexer) ? *(lexer->current) : '\0';
 }
 
-struct CharVector *char_vector_init() {
+struct CharVector *char_vector_init(void) {
     struct CharVector *char_vector = malloc(sizeof(struct CharVector));
 
     if (!char_vector)
@@ -163,10 +163,10 @@ static struct Token lexer_get_next_token(struct Lexer *lexer) {
         case '"': return create_string(lexer);
 
         default: {
-            if ((lexer->char_table[previous_char] & CHAR_DIGIT) == CHAR_DIGIT)
+            if ((lexer->char_table[(unsigned char)previous_char] & CHAR_DIGIT) == CHAR_DIGIT)
                 return create_number(lexer, previous_char);
 
-            if ((lexer->char_table[previous_char] & CHAR_ALPHA) == CHAR_ALPHA)
+            if ((lexer->char_table[(unsigned char)previous_char] & CHAR_ALPHA) == CHAR_ALPHA)
                 return create_keyword(lexer, previous_char);
 
             char buffer[100];
@@ -181,14 +181,14 @@ static struct Token create_number(struct Lexer *lexer, const char previous_char)
 
     char_vector_insert(char_vector, previous_char);
 
-    while (lexer_has_char(lexer) && (lexer->char_table[lexer_peek(lexer)] & CHAR_DIGIT))
+    while (lexer_has_char(lexer) && (lexer->char_table[(unsigned char)lexer_peek(lexer)] & CHAR_DIGIT))
         char_vector_insert(char_vector, *(lexer->current++));
 
     if (lexer_has_char(lexer) && lexer_peek(lexer) == '.') {
         char_vector_insert(char_vector, '.');
         lexer->current++;
 
-        while (lexer_has_char(lexer) && (lexer->char_table[lexer_peek(lexer)] & CHAR_DIGIT))
+        while (lexer_has_char(lexer) && (lexer->char_table[(unsigned char)lexer_peek(lexer)] & CHAR_DIGIT))
             char_vector_insert(char_vector, *(lexer->current++));
     }
 
@@ -206,7 +206,7 @@ static struct Token create_keyword(struct Lexer *lexer, const char previous_char
     char_vector_insert(char_vector, previous_char);
 
     while (lexer_has_char(lexer) &&
-           ((lexer->char_table[lexer_peek(lexer)] & CHAR_ALPHA_NUMERIC) || lexer_peek(lexer) == '_'))
+           ((lexer->char_table[(unsigned char)lexer_peek(lexer)] & CHAR_ALPHA_NUMERIC) || lexer_peek(lexer) == '_'))
         char_vector_insert(char_vector, *(lexer->current++));
 
     char_vector_insert(char_vector, '\0');

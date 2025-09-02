@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 
-#include "objects/function.h"
 #include "objects/reference_counter.h"
 
 static void close_upvalue(struct Upvalue *upvalue) {

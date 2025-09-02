@@ -8,7 +8,7 @@
 #include "parser/statements.h"
 #include "parser/expressions.h"
 #include "parser/token.h"
-#include "vm/values.h"
+
 
 static struct Statement *parser_statement(struct Parser *parser);
 static struct ExpressionStatement *parser_expression_statement(struct Parser *parser);
@@ -178,7 +178,7 @@ static struct LetStatement *parser_let_statement(struct Parser *parser) {
     let_statement->statement.type = LET_STATEMENT;
     let_statement->expression = expression;
     let_statement->identifier_name = identifier_name;
-
+    let_statement->is_nil = false;
     return let_statement;
 }
 
