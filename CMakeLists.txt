@@ -50,6 +50,8 @@ set(SOURCES
         include/objects/reference_counter.h
         src/compiler/name_resolver.c
         include/compiler/name_resolver.h
+        src/vm/variables/upvalues.c
+        include/vm/variables/upvalues.h
 )
 
 # Create executable

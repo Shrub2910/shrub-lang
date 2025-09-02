@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "token.h"
+#include "compiler/environment.h"
 
 enum ExpressionType {
     LITERAL_EXPRESSION,
@@ -31,7 +32,7 @@ struct LiteralExpression {
         double number;
         struct {
             char *identifier;
-            size_t offset;
+            struct ResolveResult resolve_result;
         };
         char *string;
         bool boolean;
@@ -56,7 +57,7 @@ struct AssignmentExpression {
     char *identifier_name;
     struct Expression *right;
 
-    size_t offset;
+    struct ResolveResult resolve_result;
 };
 
 struct CallExpression {
@@ -65,7 +66,7 @@ struct CallExpression {
     struct Expression **arguments;
     size_t arguments_count;
 
-    size_t offset;
+    struct ResolveResult resolve_result;
 };
 
 #endif

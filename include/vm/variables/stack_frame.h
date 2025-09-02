@@ -12,6 +12,8 @@ struct StackFrame {
 
     struct Closure *closure;
 
+    struct Upvalue *upvalue;
+
     struct Value data[];
 };
 
@@ -20,6 +22,8 @@ struct StackFrame *vm_init_stack_frame(
   struct StackFrame *previous_stack_frame,
   struct Value return_address
 );
+
+void vm_add_upvalues(struct StackFrame *stack_frame, struct Closure *new_closure);
 
 struct Value vm_get_local(const struct StackFrame *stack_frame, size_t offset);
 

@@ -17,13 +17,13 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
         case LITERAL_EXPRESSION: {
             struct LiteralExpression *literal_expression = (struct LiteralExpression *)expression;
             if (literal_expression->literal_type == IDENTIFIER_LITERAL) {
-                struct ScopeVariable *scope_variable =
-                compiler_search_environment(compiler_context->environment, literal_expression->identifier);
+                struct ResolveResult resolve_result =
+                compiler_search_environment(compiler_context, literal_expression->identifier);
 
-                if (!scope_variable) {
+                if (resolve_result.kind == RESOLVE_NOT_FOUND) {
                     error_throw(NAME_ERROR, "Variable not defined");
                 }
-                literal_expression->offset = scope_variable->offset;
+                literal_expression->resolve_result = resolve_result;
             }
             break;
         }
@@ -38,15 +38,15 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
 
             compiler_resolve_expression(compiler_context, assignment_expression->right);
 
-            struct ScopeVariable *variable = compiler_search_environment(
-                 compiler_context->environment,
+            struct ResolveResult resolve_result = compiler_search_environment(
+                 compiler_context,
                  assignment_expression->identifier_name
              );
 
-            if (!variable) {
+            if (resolve_result.kind == RESOLVE_NOT_FOUND) {
                 error_throw(NAME_ERROR, "Variable undefined");
             }
-            assignment_expression->offset = variable->offset;
+            assignment_expression->resolve_result = resolve_result;
             break;
         }
         case UNARY_EXPRESSION: {
@@ -57,12 +57,12 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
         case CALL_EXPRESSION: {
             struct CallExpression *call_expression = (struct CallExpression *)expression;
 
-            struct ScopeVariable *scope_variable = compiler_search_environment(
-                compiler_context->environment,
+            struct ResolveResult resolve_result = compiler_search_environment(
+                compiler_context,
                 call_expression->function_name
             );
 
-            if (!scope_variable) {
+            if (resolve_result.kind == RESOLVE_NOT_FOUND) {
                 error_throw(NAME_ERROR, "Variable not defined");
             }
 
@@ -70,7 +70,7 @@ void compiler_resolve_expression(struct CompilerContext *compiler_context, struc
                 compiler_resolve_expression(compiler_context, call_expression->arguments[i]);
             }
 
-            call_expression->offset = scope_variable->offset;
+            call_expression->resolve_result = resolve_result;
             break;
         }
     }
@@ -149,14 +149,19 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
                 new_environment.variable_count++;
             }
 
+            struct Function *function = function_init();
+
             struct CompilerContext new_function_context = {
                 .environment = &new_environment,
+                .function = function,
+                .previous = compiler_context
             };
 
             compiler_resolve_statements(&new_function_context, function_statement->body->statement_vector);
             function_statement->offset = compiler_context->environment->variable_count++;
-            function_statement->num_locals = new_environment.variable_count - function_statement->num_parameters;
-
+            function_statement->function = function;
+            function->num_locals = new_environment.variable_count - function_statement->num_parameters;
+            function->num_args = function_statement->num_parameters;
             break;
         }
         case RETURN_STATEMENT: {

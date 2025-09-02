@@ -241,6 +241,21 @@ void vm_exec(struct VM *vm) {
         vm_push_stack(vm->stack, value);
         break;
       }
+      case LOAD_UPVALUE: {
+        size_t offset = READ_BYTE();
+        struct Value value = *vm->stack_frame->closure->upvalues[offset]->v;
+        object_retain(value);
+        vm_push_stack(vm->stack, value);
+        break;
+      }
+
+      case STORE_UPVALUE: {
+        struct Value value = vm_pop_stack(vm->stack);
+        size_t offset = READ_BYTE();
+
+        *vm->stack_frame->closure->upvalues[offset]->v = value;
+        break;
+      }
       // Call popped function passing in popped values 
       // function_call handles the popping of arguments 
       // Stack underflow will occur if insufficient arguments are provided
@@ -380,6 +395,7 @@ void vm_exec(struct VM *vm) {
           .type = TYPE_CLOSURE,
           .closure = closure_init(vm->stack_frame->closure->function->functions[offset])
         };
+        vm_add_upvalues(vm->stack_frame, value.closure);
         vm_push_stack(vm->stack, value);
         break;
       }

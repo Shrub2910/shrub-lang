@@ -63,6 +63,8 @@ struct FunctionStatement {
 
     size_t offset;
     size_t num_locals;
+
+    struct Function *function;
 };
 
 struct ExpressionStatement {

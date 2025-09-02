@@ -6,6 +6,7 @@
 #include "vm/values.h"
 #include "objects/function.h"
 #include "objects/reference_counter.h"
+#include "vm/variables/upvalues.h"
 
 #define NUMBER_OF_PRE_DEFINED_LOCALS 2
 
@@ -31,7 +32,41 @@ struct StackFrame *vm_init_stack_frame
   memset(stack_frame->data, 0, data_size * sizeof(struct Value));
   stack_frame->data[0] = return_address;
 
+  stack_frame->upvalue = NULL;
+
   return stack_frame;
+}
+
+void vm_add_upvalues(struct StackFrame *stack_frame, struct Closure *new_closure) {
+  for (size_t i = 0; i < new_closure->function->upvalue_descriptor_count; i++) {
+    struct UpvalueDesc descriptor = new_closure->function->upvalue_descriptors[i];
+    if (descriptor.is_local) {
+      struct Upvalue *upvalue = stack_frame->upvalue;
+      while (upvalue) {
+        if (upvalue->v == &stack_frame->data[descriptor.index + 1] ) {
+          new_closure->upvalues[i] = upvalue;
+          upvalue->reference_count++;
+          break;
+        }
+        upvalue = upvalue->next;
+      }
+
+      if (upvalue) continue;
+
+      struct Upvalue *new_upvalue = malloc(sizeof(struct Upvalue));
+      new_closure->upvalues[i] = new_upvalue;
+      new_upvalue->v = &stack_frame->data[descriptor.index + 1];
+      new_upvalue->next = stack_frame->upvalue;
+      new_upvalue->reference_count = 1;
+      stack_frame->upvalue = new_upvalue;
+
+
+    } else {
+      struct Upvalue *parent_upvalue = stack_frame->closure->upvalues[descriptor.index];
+      parent_upvalue->reference_count++;
+      new_closure->upvalues[i] = parent_upvalue;
+    }
+  }
 }
 
 // Retrieve the value of a local variable from the stack frame 
@@ -82,6 +117,8 @@ void vm_pop_frame(
 
 // Clean up stack frame once it has been popped
 void vm_free_frame(struct StackFrame *stack_frame) {
+  close_upvalues(stack_frame->upvalue);
+
   // Ensure heap allocated objects are released if necessary
   for (size_t i = 1; i < (stack_frame->num_locals); ++i) {
     const struct Value value = stack_frame->data[i];

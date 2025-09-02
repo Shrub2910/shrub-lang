@@ -21,13 +21,14 @@
 #define LESS 0x11
 #define GREATER_EQUAL 0x12
 #define LESS_EQUAL 0x13
-#define LOAD_ARG 0x14
-#define DISCARD 0x15
-#define PUSH_NIL 0x16
-#define NEGATE 0x17
-#define NOT 0x18
-#define OR 0x19
-#define AND 0x1A
-#define MOD 0x1B
-#define CREATE_CLOSURE 0x1C
+#define LOAD_UPVALUE 0x14
+#define STORE_UPVALUE 0x15
+#define DISCARD 0x16
+#define PUSH_NIL 0x17
+#define NEGATE 0x18
+#define NOT 0x19
+#define OR 0x1A
+#define AND 0x1B
+#define MOD 0x1C
+#define CREATE_CLOSURE 0x1D
 #endif 

@@ -1,20 +1,12 @@
-fn add(adder, number)
-    return adder(number);
-end
-
-fn add_7(number)
-    return number + 7;
-end
-
-print add(add_7, 3);
-
-fn create_printer()
-    fn printer()
-        print "Hello!";
+fn CreatePrinter()
+    let x = "hi";
+    let y = " bye";
+    let z = x + y;
+    fn Printer()
+        print z;
     end
-
-    return printer;
+    return Printer;
 end
 
-let new_printer = create_printer();
-new_printer();
+let newPrinter = CreatePrinter();
+newPrinter();

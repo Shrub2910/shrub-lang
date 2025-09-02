@@ -166,20 +166,17 @@ static void compiler_compile_statement(
         case FUNCTION_STATEMENT: {
             const struct FunctionStatement *function_statement = (const struct FunctionStatement *)statement;
 
-            struct Function *function = function_init();
-            function->num_locals = function_statement->num_locals;
-            function->num_args = function_statement->num_parameters;
-
             struct CompilerContext new_function_context = {
                 .environment = compiler_context->environment,
-                .function = function,
+                .function = function_statement->function,
             };
 
             compiler_compile_statements(&new_function_context, function_statement->body->statement_vector);
 
-            INSERT_INSTRUCTIONS(function->instruction_buffer, PUSH_NIL, RETURN);
+            INSERT_INSTRUCTIONS(new_function_context.function->instruction_buffer, PUSH_NIL, RETURN);
 
-            compiler_context->function->functions[compiler_context->function->function_count++] = function;
+            compiler_context->function->functions[compiler_context->function->function_count++] =
+                function_statement->function;
 
             INSERT_INSTRUCTIONS(
                 compiler_context->function->instruction_buffer,
@@ -242,10 +239,21 @@ static void compiler_compile_expression(
             for (size_t i = 0; i < call_expression->arguments_count; i++) {
                 compiler_compile_expression(compiler_context, call_expression->arguments[i]);
             }
+            if (call_expression->resolve_result.kind == RESOLVE_LOCAL) {
+                INSERT_INSTRUCTIONS(
+                    compiler_context->function->instruction_buffer,
+                    LOAD_VAR,
+                    call_expression->resolve_result.index
+                );
+            } else if (call_expression->resolve_result.kind == RESOLVE_UPVALUE) {
+                INSERT_INSTRUCTIONS(
+                    compiler_context->function->instruction_buffer,
+                    LOAD_UPVALUE,
+                    call_expression->resolve_result.index
+                );
+            }
             INSERT_INSTRUCTIONS(
                 compiler_context->function->instruction_buffer,
-                LOAD_VAR,
-                call_expression->offset,
                 CALL,
                 call_expression->arguments_count
             );
@@ -259,8 +267,33 @@ static void compiler_compile_assignment_expression(
     const struct AssignmentExpression *assignment_expression
 ) {
     compiler_compile_expression(compiler_context, assignment_expression->right);
-    INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, STORE_VAR, assignment_expression->offset);
-    INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LOAD_VAR, assignment_expression->offset);
+    if (assignment_expression->resolve_result.kind == RESOLVE_LOCAL) {
+        INSERT_INSTRUCTIONS(
+            compiler_context->function->instruction_buffer,
+            STORE_VAR,
+            assignment_expression->resolve_result.index
+        );
+    } else if (assignment_expression->resolve_result.kind == RESOLVE_UPVALUE) {
+        INSERT_INSTRUCTIONS(
+            compiler_context->function->instruction_buffer,
+            STORE_UPVALUE,
+            assignment_expression->resolve_result.index
+        );
+    }
+
+    if (assignment_expression->resolve_result.kind == RESOLVE_LOCAL) {
+        INSERT_INSTRUCTIONS(
+            compiler_context->function->instruction_buffer,
+            LOAD_VAR,
+            assignment_expression->resolve_result.index
+        );
+    } else if (assignment_expression->resolve_result.kind == RESOLVE_UPVALUE) {
+        INSERT_INSTRUCTIONS(
+            compiler_context->function->instruction_buffer,
+            LOAD_UPVALUE,
+            assignment_expression->resolve_result.index
+        );
+    }
 }
 
 static void compiler_compile_binary_expression(
@@ -364,7 +397,19 @@ static void compiler_compile_literal_expression
             break;
         }
         case IDENTIFIER_LITERAL: {
-            INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, LOAD_VAR, expression->offset);
+            if (expression->resolve_result.kind == RESOLVE_LOCAL) {
+                INSERT_INSTRUCTIONS(
+                    compiler_context->function->instruction_buffer,
+                    LOAD_VAR,
+                    expression->resolve_result.index
+                );
+            } else if (expression->resolve_result.kind == RESOLVE_UPVALUE) {
+                INSERT_INSTRUCTIONS(
+                    compiler_context->function->instruction_buffer,
+                    LOAD_UPVALUE,
+                    expression->resolve_result.index
+                );
+            }
             break;
         }
         case STRING_LITERAL: {

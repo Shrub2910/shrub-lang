@@ -39,7 +39,8 @@ int main(const int argc, char **argv) {
 
   struct CompilerContext compiler_context = {
     .environment = &environment,
-    .function = function_init()
+    .function = function_init(),
+    .previous = NULL
   };
 
   compiler_resolve_statements(&compiler_context, parser->statement_vector);

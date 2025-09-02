@@ -6,7 +6,7 @@
 
 #include "error/error.h"
 
-struct Scope compiler_init_scope() {
+struct Scope compiler_init_scope(void) {
     struct Scope scope = {.used = 0, .size = SCOPE_INITIAL_SIZE};
 
     struct ScopeVariable *variables = malloc(sizeof(struct ScopeVariable) * SCOPE_INITIAL_SIZE);

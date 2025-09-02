@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "compiler/compiler.h"
 #include "compiler/environment.h"
 #include "compiler/scope.h"
 #include "error/error.h"
@@ -36,15 +37,36 @@ void compiler_push_scope(struct Environment *environment) {
     environment->scopes[environment->used++] = compiler_init_scope();
 }
 
-struct ScopeVariable *compiler_search_environment(const struct Environment *environment, const char *name) {
-    for (size_t i = environment->used; i-- > 0;) {
-        const struct Scope *scope = &environment->scopes[i];
+struct ResolveResult compiler_search_environment(struct CompilerContext *compiler_context, const char *name) {
+    for (size_t i = compiler_context->environment->used; i-- > 0;) {
+        const struct Scope *scope = &compiler_context->environment->scopes[i];
         struct ScopeVariable *scope_variable = compiler_search_scope(scope, name);
         if (scope_variable) {
-            return scope_variable;
+            return (struct ResolveResult){.index = scope_variable->offset, .kind = RESOLVE_LOCAL};
         }
     }
-    return NULL;
+
+    if (compiler_context->previous == NULL) {
+        return (struct ResolveResult){.index = 0, .kind = RESOLVE_NOT_FOUND};
+    }
+
+    struct ResolveResult resolve_result = compiler_search_environment(compiler_context->previous, name);
+    struct Function *function = compiler_context->function;
+
+    if (resolve_result.kind == RESOLVE_LOCAL) {
+        size_t upvalue_index = function->upvalue_descriptor_count++;
+        function->upvalue_descriptors[upvalue_index] =
+            (struct UpvalueDesc){.is_local = true, .index = resolve_result.index};
+        return (struct ResolveResult){.kind = RESOLVE_UPVALUE, .index = upvalue_index};
+    } else if (resolve_result.kind == RESOLVE_UPVALUE) {
+        size_t upvalue_index = function->upvalue_descriptor_count++;
+        struct Function *previous_function = compiler_context->previous->function;
+        function->upvalue_descriptors[upvalue_index] =
+            (struct UpvalueDesc){.is_local = false, .index = previous_function->upvalue_descriptor_count - 1};
+        return (struct ResolveResult){.kind = RESOLVE_UPVALUE, .index = upvalue_index};
+    }
+
+    return (struct ResolveResult) {.kind = RESOLVE_NOT_FOUND};
 }
 
 void compiler_insert_environment(const struct Environment *environment, char *name) {

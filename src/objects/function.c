@@ -11,6 +11,7 @@
 #include "vm/stack.h"
 #include "vm/variables/stack_frame.h"
 #include "vm/values.h"
+#include "vm/variables/upvalues.h"
 
 // Initialise the function object and make it the right size
 struct Function *function_init(void) {
@@ -22,6 +23,8 @@ struct Function *function_init(void) {
   function->constant_count = 0;
   function->functions = malloc(sizeof(struct Function *) * FUNCTION_POOL_SIZE);
   function->function_count = 0;
+  function->upvalue_descriptors = malloc(sizeof(struct UpvalueDesc) * UPVALUE_POOL_SIZE);
+  function->upvalue_descriptor_count = 0;
 
   return function;
 }
@@ -30,6 +33,9 @@ struct Closure *closure_init(struct Function *function) {
   struct Closure *closure = malloc(sizeof(struct Closure));
   closure->function = function;
   closure->references = 1;
+
+  closure->upvalues = malloc(closure->function->upvalue_descriptor_count * sizeof(struct Upvalue *));
+  closure->upvalues_count = 0;
 
   return closure;
 }
@@ -70,6 +76,13 @@ void closure_retain(struct Closure *closure) {
 // Insures the function object will be freed
 void closure_release(struct Closure *closure) {
   if (--closure->references <= 0) {
+    for (size_t i = 0; i < closure->upvalues_count; i++) {
+      struct Upvalue *upvalue = closure->upvalues[i];
+      if (--upvalue->reference_count == 0) {
+        object_release(*upvalue->v);
+        free(upvalue);
+      }
+    }
     free(closure);
   }
 }

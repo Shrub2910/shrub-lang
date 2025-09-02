@@ -9,6 +9,11 @@
 struct CompilerContext {
     struct Environment *environment;
     struct Function *function;
+
+    struct CompilerContext *previous;
+
+    struct UpvalueDesc *upvalue_descriptors;
+    size_t upvalue_descriptor_count;
 };
 
 void compiler_compile_statements(
