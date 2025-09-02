@@ -167,6 +167,7 @@ void compiler_resolve_statement(struct CompilerContext *compiler_context, struct
         case RETURN_STATEMENT: {
             struct ReturnStatement *return_statement = (struct ReturnStatement *)statement;
             compiler_resolve_expression(compiler_context, return_statement->expression);
+            break;
         }
     }
 }

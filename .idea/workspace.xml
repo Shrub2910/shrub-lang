@@ -27,27 +27,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2569dffd-21b0-4d1c-b237-f213b2b4453d" name="Changes" comment="compiler context just takes in function object now">
-      <change afterPath="$PROJECT_DIR$/include/vm/variables/upvalues.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/vm/variables/upvalues.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/function_fun/main.shrub" beforeDir="false" afterPath="$PROJECT_DIR$/examples/function_fun/main.shrub" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/compiler/compiler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/compiler.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/compiler/environment.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/environment.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/compiler/scope.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/compiler/scope.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/objects/function.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/objects/function.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/expressions.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/expressions.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/parser/statements.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/parser/statements.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/vm/opcodes.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/opcodes.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/vm/variables/stack_frame.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/envrionment.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/envrionment.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/compiler/name_resolver.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/name_resolver.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/compiler/scope.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/scope.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/objects/function.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/objects/function.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/variables/stack_frame.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -507,49 +490,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "CMake Application.addition example.executor": "Run",
-    "CMake Application.block example.executor": "Run",
-    "CMake Application.comparison example.executor": "Run",
-    "CMake Application.fibonacci.executor": "Run",
-    "CMake Application.fizzbuzz.executor": "Run",
-    "CMake Application.function fun.executor": "Run",
-    "CMake Application.if_statements_example.executor": "Run",
-    "CMake Application.shrub_lang.executor": "Run",
-    "CMake Application.test program.executor": "Run",
-    "CMake Application.unary_example.executor": "Run",
-    "CMake Application.variable example.executor": "Run",
-    "CMake Application.while example.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/upvalues",
-    "last_opened_file_path": "/home/isaac/c_projects/shrub_lang",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.build",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;CMake Application.addition example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.block example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.comparison example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.fibonacci.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.fizzbuzz.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.function fun.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.if_statements_example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.shrub_lang.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.test program.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.unary_example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.variable example.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.while example.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/install&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/isaac/c_projects/shrub_lang&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="CMake Application.function fun">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
+}</component>
+  <component name="RunManager" selected="CMake Application.fizzbuzz">
     <configuration name="fibonacci" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../examples/fibonacci/recursive.shrub" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shrub_lang" TARGET_NAME="shrub_lang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shrub_lang" RUN_TARGET_NAME="shrub_lang">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -566,9 +544,9 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="CMake Application.fibonacci" />
       <item itemvalue="CMake Application.fizzbuzz" />
       <item itemvalue="CMake Application.function fun" />
-      <item itemvalue="CMake Application.fibonacci" />
     </list>
   </component>
   <component name="TaskManager">
@@ -612,6 +590,9 @@
       <workItem from="1756670445643" duration="4281000" />
       <workItem from="1756763057908" duration="8273000" />
       <workItem from="1756813850297" duration="18823000" />
+      <workItem from="1756846021133" duration="188000" />
+      <workItem from="1756849146247" duration="123000" />
+      <workItem from="1756849590503" duration="429000" />
     </task>
     <task id="LOCAL-00001" summary="add separate name resolution pass to compiler">
       <option name="closed" value="true" />

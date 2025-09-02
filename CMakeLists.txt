@@ -63,3 +63,5 @@ target_compile_options(shrub_lang PRIVATE
         $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Wimplicit-fallthrough -Wshadow -Wpedantic>
         $<$<C_COMPILER_ID:MSVC>:/W4 /permissive->
 )
+
+install(TARGETS shrub_lang RUNTIME DESTINATION bin)

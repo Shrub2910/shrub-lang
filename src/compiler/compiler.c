@@ -192,6 +192,7 @@ static void compiler_compile_statement(
             const struct ReturnStatement *return_statement = (const struct ReturnStatement *)statement;
             compiler_compile_expression(compiler_context, return_statement->expression);
             INSERT_INSTRUCTIONS(compiler_context->function->instruction_buffer, RETURN);
+            break;
         }
     }
 }
